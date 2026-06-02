@@ -133,6 +133,8 @@
       .tabs-bar{top:0}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
 </head>
 <body>
 
@@ -598,9 +600,15 @@
   }
 
   /* ── INIT ── */
-  buildPage();
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
+  function _pageInit() {
+    buildPage();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+  }
+
+  // Wait for Supabase cloud data before rendering
+  if (window.DB_READY) { _pageInit(); }
+  else { window.addEventListener('db-ready', _pageInit, { once: true }); }
 </script>
 <script src="shared.js"></script>
 </body>

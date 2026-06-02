@@ -123,6 +123,8 @@
       .im-meta-row{gap:14px}
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
 </head>
 <body>
 
@@ -630,7 +632,7 @@ function setLang(lang) {
 }
 
 /* ── Init ── */
-(function init() {
+function init() {
   // Apply admin theme immediately
   try {
     const s = JSON.parse(localStorage.getItem('ep_settings') || '{}');
@@ -642,7 +644,11 @@ function setLang(lang) {
 
   _allInsts = loadAllInstitutes();
   buildPage();
-})();
+}
+
+// Wait for Supabase cloud data before rendering
+if (window.DB_READY) { init(); }
+else { window.addEventListener('db-ready', init, { once: true }); }
 </script>
 <script src="shared.js"></script>
 </body>

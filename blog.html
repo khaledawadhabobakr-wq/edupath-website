@@ -127,6 +127,8 @@
     .reveal-ready { opacity: 0; transform: translateY(22px); transition: opacity .5s ease, transform .5s ease; }
     .revealed { opacity: 1; transform: translateY(0); }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
 </head>
 <body>
 
@@ -563,7 +565,7 @@
 <script>
 
 /* ── Render ALL published blog posts from admin localStorage ── */
-(function renderAdminPosts() {
+function renderAdminPosts() {
   try {
     const raw = localStorage.getItem('ep_blog_posts');
     if (!raw) return;
@@ -611,7 +613,11 @@
     // Replace the static blog cards grid with admin-managed posts
     grid.innerHTML = cards;
   } catch(e) { console.warn('Admin posts error', e); }
-})();
+}
+
+// Wait for Supabase cloud data before rendering
+if (window.DB_READY) { renderAdminPosts(); }
+else { window.addEventListener('db-ready', renderAdminPosts, { once: true }); }
 
 /* Full-screen post reader modal */
 function showAdminPost(id) {

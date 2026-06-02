@@ -129,6 +129,8 @@
     .reveal-ready { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
     .revealed { opacity: 1; transform: translateY(0); }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
 </head>
 <body>
 
@@ -602,7 +604,7 @@
 <script src="shared.js"></script>
 <script>
 /* ── Render ALL scholarships from admin localStorage ── */
-(function renderScholsFromAdmin() {
+function renderScholsFromAdmin() {
   try {
     const raw = localStorage.getItem('ep_scholarships');
     if (!raw) return;
@@ -648,10 +650,10 @@
     // REPLACE static HTML with admin data (admin is the source of truth)
     grid.innerHTML = cards;
   } catch(e) { console.warn('Admin scholarships error', e); }
-})();
+}
 
 /* ── Apply settings (WhatsApp, colors) from admin ── */
-(function applyAdminSettings() {
+function applyAdminSettings() {
   try {
     const raw = localStorage.getItem('ep_settings');
     if (!raw) return;
@@ -668,7 +670,12 @@
   } catch {}
   // Re-observe any new reveal-ready elements added by this render
   if(typeof observeRevealElements === 'function') observeRevealElements();
-})();
+}
+
+// Wait for Supabase cloud data before rendering
+function _scholInit() { renderScholsFromAdmin(); applyAdminSettings(); }
+if (window.DB_READY) { _scholInit(); }
+else { window.addEventListener('db-ready', _scholInit, { once: true }); }
 
 /* ── Filter scholarships ── */
 function filterSchol(type, btn) {

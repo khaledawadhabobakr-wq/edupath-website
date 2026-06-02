@@ -495,6 +495,8 @@ html[dir="rtl"] .lang-drop{right:auto;left:0}
 </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
 <script>
 /* ════════════════════════════════════════════
    TRANSLATIONS
@@ -1345,7 +1347,7 @@ function showToast(msg){
 /* ════════════════════════════════════════════
    INIT
 ════════════════════════════════════════════ */
-(function init(){
+function init(){
   // Apply language FIRST
   applyLang();
 
@@ -1360,7 +1362,11 @@ function showToast(msg){
       showDashboard();
     }
   }
-})();
+}
+
+// انتظر DB جاهز ثم شغّل init
+if(window.DB_READY){ init(); }
+else { window.addEventListener('db-ready', init, {once:true}); }
 </script>
 </body>
 </html>

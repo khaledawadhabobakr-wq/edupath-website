@@ -1118,6 +1118,8 @@ input,select,textarea,button{font-family:inherit}
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="db.js"></script>
 <script src="data.js"></script>
 <script>
 /* ══════════════════════════════════════
@@ -2837,13 +2839,15 @@ document.addEventListener('keydown', e => {
 });
 
 /* ══════════════════════════════════════
-   AUTO LOGIN
+   AUTO LOGIN — ينتظر DB جاهز أولاً
 ══════════════════════════════════════ */
-if(sessionStorage.getItem(K.session)==='1') {
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('adminShell').style.display='block';
-  initAdmin();
-}
+window.addEventListener('db-ready', () => {
+  if(sessionStorage.getItem(K.session)==='1') {
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminShell').style.display='block';
+    initAdmin();
+  }
+}, {once: true});
 </script>
 </body>
 </html>

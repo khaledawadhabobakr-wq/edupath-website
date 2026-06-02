@@ -110,6 +110,8 @@
       .filters-inner { padding: 12px 16px; }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="db.js"></script>
 </head>
 <body>
 
@@ -538,8 +540,9 @@ function applyProg(uniId, progName) {
   window.open(`https://wa.me/60123456789?text=${msg}`, "_blank");
 }
 
-// Init
-applyLang();
+// Wait for Supabase cloud data before rendering
+if (window.DB_READY) { applyLang(); }
+else { window.addEventListener('db-ready', applyLang, { once: true }); }
 </script>
 <script src="shared.js"></script>
 </body>
