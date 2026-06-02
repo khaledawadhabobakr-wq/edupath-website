@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduPath – Browse Programs in Malaysia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #0a5c8a; --primary-dark: #074166; --primary-light: #e8f4fb;
+      --accent: #f59e0b; --accent-light: #fef3c7;
+      --text: #1e293b; --text-muted: #64748b;
+      --border: #e2e8f0; --white: #ffffff; --bg: #f8fafc;
+      --radius: 12px; --shadow: 0 4px 24px rgba(10,92,138,.10); --shadow-lg: 0 12px 40px rgba(10,92,138,.15);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--bg); }
+    html[lang="ar"] body { font-family: 'Noto Kufi Arabic', 'Inter', sans-serif; }
+    html[lang="ja"] body { font-family: 'Noto Sans JP', 'Inter', sans-serif; }
+    html[lang="ko"] body { font-family: 'Noto Sans KR', 'Inter', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #1a7eb5 100%); color: white; padding: 48px 24px 44px; text-align: center; position: relative; overflow: hidden; }
+    .page-header::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .page-header h1 { font-size: clamp(24px, 3.5vw, 40px); font-weight: 800; margin-bottom: 10px; position: relative; }
+    .page-header p { font-size: 16px; color: rgba(255,255,255,.8); max-width: 580px; margin: 0 auto 28px; position: relative; }
+    .header-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; position: relative; }
+    .hstat { text-align: center; }
+    .hstat-num { font-size: 28px; font-weight: 800; color: var(--accent); display: block; line-height: 1; }
+    .hstat-lbl { font-size: 12px; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+    /* ── FILTERS ── */
+    .filters-wrap { background: white; border-bottom: 1px solid var(--border); position: sticky; top: 70px; z-index: 90; box-shadow: 0 2px 8px rgba(0,0,0,.04); }
+    .filters-inner { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+    .filters-row1 { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .search-wrap { flex: 1; min-width: 220px; position: relative; }
+    .search-wrap input { width: 100%; border: 1px solid var(--border); border-radius: 30px; padding: 11px 18px 11px 44px; font-size: 14px; font-family: inherit; outline: none; transition: .2s; background: var(--bg); }
+    html[dir="rtl"] .search-wrap input { padding: 11px 44px 11px 18px; }
+    .search-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); background: white; }
+    .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; fill: var(--text-muted); }
+    html[dir="rtl"] .search-wrap svg { left: auto; right: 14px; }
+    .filter-select { border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; cursor: pointer; transition: .2s; min-width: 160px; }
+    .filter-select:focus { border-color: var(--primary); }
+    .filters-row2 { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .level-btn { background: white; border: 1.5px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 30px; cursor: pointer; transition: .18s; font-family: inherit; }
+    .level-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .level-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .fee-wrap { display: flex; align-items: center; gap: 12px; margin-inline-start: auto; }
+    .fee-wrap label { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+    .fee-wrap input[type="range"] { width: 140px; accent-color: var(--primary); }
+    .fee-val { font-size: 13px; font-weight: 700; color: var(--primary); white-space: nowrap; min-width: 90px; }
+    .results-bar { max-width: 1200px; margin: 0 auto; padding: 14px 24px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .results-count { font-size: 14px; color: var(--text-muted); }
+    .results-count strong { color: var(--primary); font-weight: 700; }
+    .sort-select { border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; color: var(--text); background: white; outline: none; cursor: pointer; }
+
+    /* ── PROGRAM GRID ── */
+    .programs-section { max-width: 1200px; margin: 0 auto; padding: 20px 24px 60px; }
+    .programs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
+    .prog-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; transition: all .2s; display: flex; flex-direction: column; gap: 14px; cursor: pointer; }
+    .prog-card:hover { box-shadow: var(--shadow-lg); border-color: var(--primary); transform: translateY(-3px); }
+    .prog-card-top { display: flex; align-items: flex-start; gap: 14px; }
+    .uni-logo-sm { width: 44px; height: 44px; border-radius: 10px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+    .uni-logo-sm img { width: 44px; height: 44px; object-fit: contain; border-radius: 10px; }
+    .prog-info { flex: 1; min-width: 0; }
+    .prog-name { font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.35; margin-bottom: 4px; }
+    .uni-name-sm { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+    .prog-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+    .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .badge-bachelor { background: #dbeafe; color: #1d4ed8; }
+    .badge-master { background: #f3e8ff; color: #7c3aed; }
+    .badge-phd { background: #fce7f3; color: #be185d; }
+    .badge-diploma { background: #dcfce7; color: #15803d; }
+    .badge-foundation { background: #ffedd5; color: #c2410c; }
+    .badge-certificate { background: #f0fdf4; color: #166534; }
+    .badge-language { background: #fef3c7; color: #92400e; }
+    .badge-field { background: var(--bg); color: var(--text-muted); }
+    .prog-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; border-top: 1px solid var(--border); padding-top: 14px; }
+    .meta-item { display: flex; flex-direction: column; gap: 2px; }
+    .meta-lbl { font-size: 10.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .meta-val { font-size: 14px; font-weight: 700; color: var(--text); }
+    .meta-val.green { color: #15803d; }
+    .prog-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .apply-btn { background: var(--primary); color: white; border: none; border-radius: 8px; padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: .2s; flex-shrink: 0; }
+    .apply-btn:hover { background: var(--primary-dark); }
+    .ielts-chip { font-size: 12px; color: var(--text-muted); background: var(--bg); padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border); }
+    .empty-state { text-align: center; padding: 80px 20px; grid-column: 1/-1; }
+    .empty-state .empty-icon { font-size: 52px; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .empty-state p { color: var(--text-muted); font-size: 14px; }
+
+    /* ── SHOW MORE ── */
+    .show-more-wrap { display: flex; justify-content: center; margin-top: 32px; }
+    .show-more-btn { background: var(--primary); color: white; border: none; border-radius: 30px; padding: 13px 36px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: .2s; }
+    .show-more-btn:hover { background: var(--primary-dark); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .header-stats { gap: 20px; }
+      .hstat-num { font-size: 22px; }
+      .fee-wrap { width: 100%; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .prog-meta { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 480px) {
+      .page-header { padding: 32px 16px 28px; }
+      .filters-inner { padding: 12px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV — replaced by shared.js -->
+<nav class="s-nav" id="sNavEl">
+  <div class="s-nav-in">
+    <a href="index.html" class="s-logo">
+      <div class="s-logo-ico"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span>EduPath</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+  <h1 id="pgTitle">Browse Programs in Malaysia</h1>
+  <p id="pgDesc">Search all programs across 46 universities and language centres. Filter by level, field, and budget.</p>
+  <div class="header-stats">
+    <div class="hstat"><span class="hstat-num" id="statPrograms">304</span><div class="hstat-lbl" id="statProgLbl">Programs</div></div>
+    <div class="hstat"><span class="hstat-num">46</span><div class="hstat-lbl" id="statInsLbl">Institutions</div></div>
+    <div class="hstat"><span class="hstat-num" id="statFields">25</span><div class="hstat-lbl" id="statFieldLbl">Fields of Study</div></div>
+    <div class="hstat"><span class="hstat-num">Free</span><div class="hstat-lbl" id="statFeeLbl">Offer Letters</div></div>
+  </div>
+</div>
+
+<!-- ── FILTERS ── -->
+<div class="filters-wrap">
+  <div class="filters-inner">
+    <div class="filters-row1">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"/></svg>
+        <input type="text" id="progSearch" oninput="renderPrograms()" />
+      </div>
+      <select id="fieldFilter" class="filter-select" onchange="renderPrograms()">
+        <option value="">All Fields</option>
+      </select>
+      <select id="uniFilter" class="filter-select" onchange="renderPrograms()" style="min-width:200px">
+        <option value="">All Institutions</option>
+      </select>
+    </div>
+    <div class="filters-row2">
+      <button class="level-btn active" data-level="" onclick="setLevel('',this)" id="lvlAll">All Levels</button>
+      <button class="level-btn" data-level="Bachelor" onclick="setLevel('Bachelor',this)" id="lvlBachelor">Bachelor</button>
+      <button class="level-btn" data-level="Master" onclick="setLevel('Master',this)" id="lvlMaster">Master</button>
+      <button class="level-btn" data-level="PhD" onclick="setLevel('PhD',this)" id="lvlPhd">PhD</button>
+      <button class="level-btn" data-level="Diploma" onclick="setLevel('Diploma',this)" id="lvlDiploma">Diploma</button>
+      <button class="level-btn" data-level="Foundation" onclick="setLevel('Foundation',this)" id="lvlFoundation">Foundation</button>
+      <button class="level-btn" data-level="Certificate" onclick="setLevel('Certificate',this)" id="lvlCert">Certificate</button>
+      <div class="fee-wrap">
+        <label id="feeLbl">Max fee:</label>
+        <input type="range" id="feeSlider" min="0" max="40000" step="1000" value="40000" oninput="updateFee(this.value);renderPrograms()" />
+        <span class="fee-val" id="feeVal">Any</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="results-bar">
+  <div class="results-count" id="resultsCount"></div>
+  <select class="sort-select" id="sortSelect" onchange="renderPrograms()">
+    <option value="fee-asc" id="sortFeeAsc">Fee: Low → High</option>
+    <option value="fee-desc" id="sortFeeDesc">Fee: High → Low</option>
+    <option value="dur-asc" id="sortDurAsc">Duration: Shortest first</option>
+    <option value="name-az" id="sortNameAz">Name: A → Z</option>
+  </select>
+</div>
+
+<!-- ── PROGRAMS ── -->
+<div class="programs-section">
+  <div class="programs-grid" id="programsGrid"></div>
+  <div class="show-more-wrap" id="showMoreWrap" style="display:none">
+    <button class="show-more-btn" id="showMoreBtn" onclick="loadMore()"></button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* ── I18N ── */
+const CLANG_META = { en:{flag:"🇬🇧",label:"EN",dir:"ltr"}, ar:{flag:"🇸🇦",label:"AR",dir:"rtl"}, ja:{flag:"🇯🇵",label:"JA",dir:"ltr"}, ko:{flag:"🇰🇷",label:"KO",dir:"ltr"}, ru:{flag:"🇷🇺",label:"RU",dir:"ltr"} };
+const CT = {
+  en: {
+    back:"Home", title:"Browse Programs in Malaysia", desc:"Search all programs across 46 universities and language centres. Filter by level, field, and budget.",
+    progLbl:"Programs", insLbl:"Institutions", fieldLbl:"Fields of Study", feeLbl2:"Offer Letters",
+    searchPh:"Search by program name, field or university…",
+    allFields:"All Fields", allUnis:"All Institutions",
+    allLevels:"All Levels", lvlBach:"Bachelor", lvlMast:"Master", lvlPhd:"PhD", lvlDip:"Diploma", lvlFound:"Foundation", lvlCert:"Certificate",
+    maxFee:"Max fee:", anyFee:"Any", feeLabel:"RM {n}/yr",
+    showing:"Showing <strong>{n}</strong> of {total} programs",
+    noResults:"No programs match your filters.", noResultsSub:"Try adjusting your search or filters.",
+    sortFeeAsc:"Fee: Low → High", sortFeeDesc:"Fee: High → Low", sortDurAsc:"Duration: Shortest first", sortNameAz:"Name: A → Z",
+    duration:"Duration", fee:"Fee/year", ielts:"IELTS",
+    yr:"yr", yrs:"yrs",
+    apply:"Apply Now", showMore:"Show {n} more programs", showLess:"Show less",
+    noIelts:"Not required"
+  },
+  ar: {
+    back:"الرئيسية", title:"تصفّح التخصصات في ماليزيا", desc:"ابحث في جميع البرامج عبر 46 مؤسسة. فلتر حسب المستوى والتخصص والميزانية.",
+    progLbl:"برنامج", insLbl:"مؤسسة", fieldLbl:"مجال دراسي", feeLbl2:"خطابات قبول مجانية",
+    searchPh:"ابحث باسم البرنامج أو التخصص أو الجامعة…",
+    allFields:"كل التخصصات", allUnis:"كل المؤسسات",
+    allLevels:"كل المستويات", lvlBach:"بكالوريوس", lvlMast:"ماجستير", lvlPhd:"دكتوراه", lvlDip:"دبلوم", lvlFound:"تأسيسي", lvlCert:"شهادة",
+    maxFee:"الحد الأقصى للرسوم:", anyFee:"أي مبلغ", feeLabel:"RM {n}/سنة",
+    showing:"عرض <strong>{n}</strong> من {total} برنامج",
+    noResults:"لا توجد برامج تطابق فلترك.", noResultsSub:"حاول تعديل البحث أو الفلاتر.",
+    sortFeeAsc:"الرسوم: من الأقل", sortFeeDesc:"الرسوم: من الأعلى", sortDurAsc:"المدة: الأقصر أولاً", sortNameAz:"الاسم: أ → ي",
+    duration:"المدة", fee:"الرسوم/سنة", ielts:"IELTS",
+    yr:"سنة", yrs:"سنوات",
+    apply:"تقدم الآن", showMore:"عرض {n} برنامج آخر", showLess:"عرض أقل",
+    noIelts:"غير مطلوب"
+  },
+  ja: {
+    back:"ホーム", title:"マレーシアのプログラムを探す", desc:"46機関の全プログラムを検索。レベル、分野、予算でフィルター。",
+    progLbl:"プログラム", insLbl:"機関", fieldLbl:"専攻分野", feeLbl2:"無料オファーレター",
+    searchPh:"プログラム名・分野・大学で検索…",
+    allFields:"すべての分野", allUnis:"すべての機関",
+    allLevels:"すべてのレベル", lvlBach:"学士", lvlMast:"修士", lvlPhd:"博士", lvlDip:"準学士", lvlFound:"基礎課程", lvlCert:"資格",
+    maxFee:"最大学費:", anyFee:"制限なし", feeLabel:"RM {n}/年",
+    showing:"全{total}件中<strong>{n}</strong>件を表示",
+    noResults:"該当するプログラムがありません。", noResultsSub:"検索条件を変更してみてください。",
+    sortFeeAsc:"学費: 安い順", sortFeeDesc:"学費: 高い順", sortDurAsc:"期間: 短い順", sortNameAz:"名前: A → Z",
+    duration:"期間", fee:"学費/年", ielts:"IELTS",
+    yr:"年", yrs:"年",
+    apply:"今すぐ出願", showMore:"残り{n}件を表示", showLess:"折りたたむ",
+    noIelts:"不要"
+  },
+  ko: {
+    back:"홈", title:"말레이시아 프로그램 찾기", desc:"46개 기관의 전체 프로그램 검색. 수준, 분야, 예산으로 필터.",
+    progLbl:"프로그램", insLbl:"기관", fieldLbl:"전공 분야", feeLbl2:"무료 입학 허가서",
+    searchPh:"프로그램명, 분야, 대학으로 검색…",
+    allFields:"모든 분야", allUnis:"모든 기관",
+    allLevels:"모든 레벨", lvlBach:"학사", lvlMast:"석사", lvlPhd:"박사", lvlDip:"디플로마", lvlFound:"기초과정", lvlCert:"자격증",
+    maxFee:"최대 학비:", anyFee:"제한 없음", feeLabel:"RM {n}/년",
+    showing:"전체 {total}개 중 <strong>{n}</strong>개 표시",
+    noResults:"조건에 맞는 프로그램이 없습니다.", noResultsSub:"검색어나 필터를 바꿔보세요.",
+    sortFeeAsc:"학비: 낮은 순", sortFeeDesc:"학비: 높은 순", sortDurAsc:"기간: 짧은 순", sortNameAz:"이름: A → Z",
+    duration:"기간", fee:"학비/년", ielts:"IELTS",
+    yr:"년", yrs:"년",
+    apply:"지금 지원", showMore:"{n}개 더 보기", showLess:"접기",
+    noIelts:"불필요"
+  },
+  ru: {
+    back:"Главная", title:"Программы в Малайзии", desc:"Поиск по всем программам 46 учреждений. Фильтр по уровню, направлению и бюджету.",
+    progLbl:"Программ", insLbl:"Учреждений", fieldLbl:"Направлений", feeLbl2:"Бесплатных писем",
+    searchPh:"Поиск по программе, направлению или вузу…",
+    allFields:"Все направления", allUnis:"Все учреждения",
+    allLevels:"Все уровни", lvlBach:"Бакалавр", lvlMast:"Магистр", lvlPhd:"Доктор", lvlDip:"Диплом", lvlFound:"Довузовский", lvlCert:"Сертификат",
+    maxFee:"Макс. оплата:", anyFee:"Любая", feeLabel:"RM {n}/год",
+    showing:"Показано <strong>{n}</strong> из {total} программ",
+    noResults:"Нет программ по вашим фильтрам.", noResultsSub:"Попробуйте изменить критерии поиска.",
+    sortFeeAsc:"Цена: сначала дешевле", sortFeeDesc:"Цена: сначала дороже", sortDurAsc:"Длительность: короче сначала", sortNameAz:"Имя: А → Я",
+    duration:"Длительность", fee:"Стоимость/год", ielts:"IELTS",
+    yr:"год", yrs:"лет",
+    apply:"Подать заявку", showMore:"Показать ещё {n}", showLess:"Скрыть",
+    noIelts:"Не требуется"
+  }
+};
+
+let cLang = localStorage.getItem("lang") || "en";
+function ct(k) { return (CT[cLang] && CT[cLang][k]) || CT.en[k] || k; }
+
+function applyLang() {
+  const m = CLANG_META[cLang];
+  document.documentElement.lang = cLang;
+  document.documentElement.dir = m.dir;
+  // Update static labels
+  const backLbl = document.getElementById("backLabel"); if (backLbl) backLbl.textContent = ct("back");
+  document.getElementById("pgTitle").textContent = ct("title");
+  document.getElementById("pgDesc").textContent = ct("desc");
+  document.getElementById("statProgLbl").textContent = ct("progLbl");
+  document.getElementById("statInsLbl").textContent = ct("insLbl");
+  document.getElementById("statFieldLbl").textContent = ct("fieldLbl");
+  document.getElementById("statFeeLbl").textContent = ct("feeLbl2");
+  document.getElementById("progSearch").placeholder = ct("searchPh");
+  document.getElementById("feeLbl").textContent = ct("maxFee");
+  document.getElementById("lvlAll").textContent = ct("allLevels");
+  document.getElementById("lvlBachelor").textContent = ct("lvlBach");
+  document.getElementById("lvlMaster").textContent = ct("lvlMast");
+  document.getElementById("lvlPhd").textContent = ct("lvlPhd");
+  document.getElementById("lvlDiploma").textContent = ct("lvlDip");
+  document.getElementById("lvlFoundation").textContent = ct("lvlFound");
+  document.getElementById("lvlCert").textContent = ct("lvlCert");
+  document.getElementById("sortFeeAsc").textContent = ct("sortFeeAsc");
+  document.getElementById("sortFeeDesc").textContent = ct("sortFeeDesc");
+  document.getElementById("sortDurAsc").textContent = ct("sortDurAsc");
+  document.getElementById("sortNameAz").textContent = ct("sortNameAz");
+  // Rebuild field/uni dropdowns with translated "All" option
+  document.querySelector('#fieldFilter option[value=""]').textContent = ct("allFields");
+  document.querySelector('#uniFilter option[value=""]').textContent = ct("allUnis");
+  renderPrograms();
+}
+
+/* setLang — called by shared.js when user picks a language */
+function setLang(l) {
+  cLang = l;
+  localStorage.setItem("lang", l);
+  document.documentElement.lang = l;
+  document.documentElement.dir = (CLANG_META[l] || CLANG_META.en).dir;
+  applyLang();
+}
+
+/* ── BUILD FLAT PROGRAM LIST ── */
+let ALL_PROGS = [];
+UNIVERSITIES.forEach(u => {
+  u.programs.forEach(p => {
+    ALL_PROGS.push({
+      ...p,
+      uniId: u.id,
+      uniName: u.name,
+      uniType: u.type,
+      uniCity: u.city,
+      uniState: u.state,
+      uniWebsite: u.website || "",
+      uniIcon: u.icon,
+      uniIelts: u.ielts || "Not specified",
+      uniOfferFee: u.offerLetterFee || "Free"
+    });
+  });
+});
+
+/* populate field dropdown */
+const allFields = [...new Set(ALL_PROGS.map(p => p.field))].sort();
+const fieldSel = document.getElementById("fieldFilter");
+allFields.forEach(f => {
+  const o = document.createElement("option");
+  o.value = f; o.textContent = f;
+  fieldSel.appendChild(o);
+});
+/* populate uni dropdown */
+const allUniNames = [...new Set(ALL_PROGS.map(p => p.uniId))].map(id => {
+  const u = UNIVERSITIES.find(x => x.id === id);
+  return { id, name: u.name };
+}).sort((a,b) => a.name.localeCompare(b.name));
+const uniSel = document.getElementById("uniFilter");
+allUniNames.forEach(({id, name}) => {
+  const o = document.createElement("option");
+  o.value = id; o.textContent = name;
+  uniSel.appendChild(o);
+});
+
+document.getElementById("statPrograms").textContent = ALL_PROGS.length;
+document.getElementById("statFields").textContent = allFields.length;
+
+/* ── INJECT ADMIN-MANAGED COURSES (ep_courses) ── */
+(function injectAdminCourses() {
+  try {
+    const adminCourses = JSON.parse(localStorage.getItem('ep_courses') || '[]');
+    if (!adminCourses.length) return;
+    const grid = document.getElementById('programsGrid');
+    if (!grid) return;
+    const cards = adminCourses
+      .filter(c => c.active !== false)
+      .map(c => {
+        const videoLink = c.video
+          ? `<a href="${c.video}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#0a5c8a;font-weight:600;text-decoration:none;">🎬 Watch Video</a>`
+          : '';
+        const imgHtml = c.image
+          ? `<img src="${c.image}" style="width:100%;height:100%;object-fit:cover" alt=""/>`
+          : `<span style="font-size:36px">${c.emoji||'📚'}</span>`;
+        return `<div class="prog-card admin-course-card" style="border-top:3px solid #0a5c8a;cursor:default">
+          <div style="height:90px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;border-radius:10px 10px 0 0;overflow:hidden;margin:-0px">${imgHtml}</div>
+          <div class="prog-card-top" style="margin-top:10px">
+            <div class="prog-info">
+              <div class="prog-name">${c.emoji||'📚'} ${c.name}</div>
+              <div class="uni-name-sm">🏛️ ${c.university||'—'}</div>
+            </div>
+          </div>
+          <div class="prog-badges">
+            <span class="badge badge-${c.level==='Bachelor'?'bachelor':c.level==='Master'?'master':c.level==='PhD'?'phd':c.level==='Diploma'?'diploma':'foundation'}">${c.level||'—'}</span>
+            <span class="badge badge-field">${c.field||'—'}</span>
+          </div>
+          <div class="prog-meta">
+            <div class="meta-item"><span class="meta-lbl">Fee</span><span class="meta-val">${c.tuition||'—'}</span></div>
+            <div class="meta-item"><span class="meta-lbl">Duration</span><span class="meta-val">${c.duration||'—'}</span></div>
+            <div class="meta-item"><span class="meta-lbl">Language</span><span class="meta-val">${c.lang||'English'}</span></div>
+          </div>
+          <div class="prog-footer">
+            ${videoLink}
+            <button class="apply-btn" onclick="(function(){var msg=encodeURIComponent('Hello EduPath, I am interested in:\\nProgram: ${c.name.replace(/'/g,"\\'")}\\nUniversity: ${(c.university||'').replace(/'/g,"\\'")}');window.open('https://wa.me/60123456789?text='+msg,'_blank')})()">Apply Now</button>
+          </div>
+        </div>`;
+      }).join('');
+    if (cards) {
+      grid.insertAdjacentHTML('afterbegin', cards);
+    }
+  } catch(e) { console.warn('Admin courses error', e); }
+})()
+
+/* ── LOGO HELPER ── */
+function progLogo(p) {
+  if (!p.uniWebsite) return `<span style="font-size:20px">${p.uniIcon}</span>`;
+  try {
+    const domain = new URL(p.uniWebsite).hostname.replace(/^www\./,'');
+    const fb = `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${domain}&size=128`;
+    return `<img src="https://logo.clearbit.com/${domain}" width="44" height="44" style="object-fit:contain;border-radius:8px" onerror="this.onerror=null;this.src='${fb}'" alt="">`;
+  } catch { return `<span style="font-size:20px">${p.uniIcon}</span>`; }
+}
+
+/* ── STATE ── */
+let activeLevel = "";
+let maxFee = 40000;
+let showCount = 18;
+
+function setLevel(l, btn) {
+  activeLevel = l;
+  document.querySelectorAll(".level-btn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+  showCount = 18;
+  renderPrograms();
+}
+
+function updateFee(v) {
+  maxFee = parseInt(v);
+  const feeEl = document.getElementById("feeVal");
+  feeEl.textContent = maxFee >= 40000 ? ct("anyFee") : ct("feeLabel").replace("{n}", maxFee.toLocaleString());
+}
+
+function loadMore() {
+  showCount += 18;
+  renderPrograms();
+}
+
+function levelBadgeClass(lvl) {
+  const m = { Bachelor:"badge-bachelor", Master:"badge-master", PhD:"badge-phd", Diploma:"badge-diploma", Foundation:"badge-foundation", Certificate:"badge-certificate" };
+  return m[lvl] || "badge-language";
+}
+
+function renderPrograms() {
+  const q = (document.getElementById("progSearch").value || "").toLowerCase().trim();
+  const field = document.getElementById("fieldFilter").value;
+  const uniId = document.getElementById("uniFilter").value;
+  const sort = document.getElementById("sortSelect").value;
+
+  let list = ALL_PROGS.filter(p => {
+    if (activeLevel && p.level !== activeLevel) return false;
+    if (field && p.field !== field) return false;
+    if (uniId && p.uniId !== uniId) return false;
+    if (maxFee < 40000 && p.fee > maxFee) return false;
+    if (q) {
+      const hay = (p.name + " " + p.field + " " + p.uniName + " " + p.uniCity).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort
+  if (sort === "fee-asc")  list.sort((a,b) => a.fee - b.fee);
+  else if (sort === "fee-desc") list.sort((a,b) => b.fee - a.fee);
+  else if (sort === "dur-asc")  list.sort((a,b) => a.duration - b.duration);
+  else if (sort === "name-az")  list.sort((a,b) => a.name.localeCompare(b.name));
+
+  // Update count
+  document.getElementById("resultsCount").innerHTML =
+    list.length === 0 ? ct("noResults") :
+    ct("showing").replace("{n}", Math.min(showCount, list.length)).replace("{total}", list.length);
+
+  const grid = document.getElementById("programsGrid");
+  const moreWrap = document.getElementById("showMoreWrap");
+  const moreBtn = document.getElementById("showMoreBtn");
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><h3>${ct("noResults")}</h3><p>${ct("noResultsSub")}</p></div>`;
+    moreWrap.style.display = "none";
+    return;
+  }
+
+  const visible = list.slice(0, showCount);
+
+  grid.innerHTML = visible.map(p => {
+    const durText = p.duration === 1 ? `1 ${ct("yr")}` :
+      p.duration < 1 ? `${p.duration * 12} mo` :
+      `${p.duration} ${ct("yrs")}`;
+    const feeText = `RM ${p.fee.toLocaleString()}`;
+    const ieltsText = (p.uniIelts && p.uniIelts !== "No IELTS required") ? p.uniIelts : ct("noIelts");
+    return `
+    <div class="prog-card" onclick="goToUni('${p.uniId}')">
+      <div class="prog-card-top">
+        <div class="uni-logo-sm">${progLogo(p)}</div>
+        <div class="prog-info">
+          <div class="prog-name">${p.name}</div>
+          <div class="uni-name-sm">📍 ${p.uniName}</div>
+        </div>
+      </div>
+      <div class="prog-badges">
+        <span class="badge ${levelBadgeClass(p.level)}">${p.level}</span>
+        <span class="badge badge-field">${p.field}</span>
+      </div>
+      <div class="prog-meta">
+        <div class="meta-item">
+          <span class="meta-lbl">${ct("fee")}</span>
+          <span class="meta-val">${feeText}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">${ct("duration")}</span>
+          <span class="meta-val">${durText}</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-lbl">${ct("ielts")}</span>
+          <span class="meta-val ${ieltsText === ct("noIelts") ? "green" : ""}">${ieltsText}</span>
+        </div>
+      </div>
+      <div class="prog-footer">
+        <span class="ielts-chip">📍 ${p.uniCity}, ${p.campus}</span>
+        <button class="apply-btn" onclick="event.stopPropagation();applyProg('${p.uniId}','${p.name.replace(/'/g,"\\'")}')">
+          ${ct("apply")}
+        </button>
+      </div>
+    </div>`;
+  }).join("");
+
+  if (list.length > showCount) {
+    moreWrap.style.display = "flex";
+    moreBtn.textContent = ct("showMore").replace("{n}", list.length - showCount);
+  } else {
+    moreWrap.style.display = "none";
+  }
+}
+
+function goToUni(id) {
+  localStorage.setItem("uniId", id);
+  window.location.href = "university.html";
+}
+
+function applyProg(uniId, progName) {
+  const u = UNIVERSITIES.find(x => x.id === uniId);
+  const msg = encodeURIComponent(`Hello EduPath, I'm interested in applying for:\n\nProgram: ${progName}\nUniversity: ${u ? u.name : uniId}\n\nPlease guide me through the process.`);
+  window.open(`https://wa.me/60123456789?text=${msg}`, "_blank");
+}
+
+// Init
+applyLang();
+</script>
+<script src="shared.js"></script>
+</body>
+</html>

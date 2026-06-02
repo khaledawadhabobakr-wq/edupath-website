@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Language Institutes in Malaysia | EduPath</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --primary:#0a5c8a;--primary-dark:#074166;--primary-light:#e8f4fb;
+      --accent:#f59e0b;--accent-light:#fef3c7;
+      --text:#1e293b;--text-muted:#64748b;--border:#e2e8f0;
+      --white:#ffffff;--bg:#f8fafc;
+      --radius:12px;--shadow:0 4px 24px rgba(10,92,138,.10);--shadow-lg:0 12px 40px rgba(10,92,138,.15);
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+    html[dir="rtl"] body{font-family:'Noto Kufi Arabic','Inter',sans-serif}
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+
+    /* ── HERO ── */
+    .hero{background:linear-gradient(135deg,var(--primary-dark) 0%,var(--primary) 60%,#1a7eb5 100%);color:white;padding:64px 24px 52px;position:relative;overflow:hidden;text-align:center}
+    .hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+    .hero-inner{max-width:800px;margin:0 auto;position:relative}
+    .hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:30px;padding:6px 16px;font-size:12.5px;font-weight:700;letter-spacing:.04em;margin-bottom:20px}
+    .hero h1{font-size:clamp(26px,4vw,48px);font-weight:800;line-height:1.15;margin-bottom:14px}
+    .hero h1 span{color:var(--accent)}
+    .hero-desc{font-size:16px;color:rgba(255,255,255,.85);max-width:600px;margin:0 auto 32px;line-height:1.7}
+    .hero-stats{display:flex;justify-content:center;gap:32px;flex-wrap:wrap}
+    .hero-stat{text-align:center}
+    .hero-stat strong{display:block;font-size:26px;font-weight:800}
+    .hero-stat span{font-size:12px;color:rgba(255,255,255,.7)}
+
+    /* ── FILTERS ── */
+    .filter-bar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:70px;z-index:90}
+    .filter-inner{max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .filter-btn{background:var(--bg);border:1.5px solid var(--border);color:var(--text-muted);font-size:13px;font-weight:600;padding:7px 16px;border-radius:30px;cursor:pointer;transition:.2s;font-family:inherit}
+    .filter-btn:hover,.filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .filter-search{flex:1;min-width:200px;border:1.5px solid var(--border);border-radius:10px;padding:9px 14px;font-size:13.5px;outline:none;font-family:inherit;transition:.2s;background:var(--bg)}
+    .filter-search:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px var(--primary-light)}
+
+    /* ── MAIN ── */
+    .main{max-width:1200px;margin:0 auto;padding:32px 24px}
+    .results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+    .results-count{font-size:13px;color:var(--text-muted)}
+
+    /* ── INSTITUTE CARDS ── */
+    .inst-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+    .inst-card{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:.25s;cursor:pointer}
+    .inst-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-3px);border-color:var(--primary)}
+    .inst-card-top{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:20px 22px;display:flex;align-items:center;gap:14px}
+    .inst-icon{width:52px;height:52px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;border:1.5px solid rgba(255,255,255,.3)}
+    .inst-name{font-size:16px;font-weight:800;margin-bottom:3px}
+    .inst-loc{font-size:12px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:4px}
+    .inst-body{padding:18px 20px}
+    .inst-about{font-size:13.5px;color:var(--text-muted);line-height:1.65;margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .inst-programs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+    .prog-tag{background:var(--primary-light);color:var(--primary);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:20px}
+    .inst-meta{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+    .inst-meta-item{font-size:12.5px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+    .inst-meta-item strong{color:var(--text);font-weight:700}
+    .inst-footer{display:flex;gap:8px;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
+    .btn-apply{background:var(--primary);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+    .btn-apply:hover{background:var(--primary-dark)}
+    .btn-details{background:var(--primary-light);color:var(--primary);border:1.5px solid var(--primary);border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:5px}
+    .btn-details:hover{background:var(--primary);color:#fff}
+    .btn-website{background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12.5px;font-weight:600;text-decoration:none;transition:.2s;display:inline-flex;align-items:center;gap:5px}
+    .btn-website:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+
+    /* ── EMPTY ── */
+    .empty-state{text-align:center;padding:80px 20px;grid-column:1/-1}
+    .empty-state .empty-icon{font-size:52px;margin-bottom:14px}
+    .empty-state h3{font-size:20px;font-weight:800;margin-bottom:8px}
+    .empty-state p{font-size:14px;color:var(--text-muted)}
+
+    /* ── CTA ── */
+    .cta-section{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:64px 24px;text-align:center;margin-top:48px}
+    .cta-inner{max-width:680px;margin:0 auto}
+    .cta-inner h2{font-size:clamp(22px,3vw,36px);font-weight:800;margin-bottom:14px}
+    .cta-inner p{font-size:15px;color:rgba(255,255,255,.85);margin-bottom:28px;line-height:1.7}
+    .cta-btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#000;font-weight:800;font-size:15px;padding:14px 28px;border-radius:10px;text-decoration:none;transition:.2s}
+    .cta-btn:hover{background:#d97706;color:#fff}
+
+    /* ══ INSTITUTE DETAIL MODAL ══ */
+    .inst-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .25s}
+    .inst-modal-overlay.open{opacity:1;pointer-events:all}
+    .inst-modal{background:#fff;border-radius:18px;max-width:780px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative;transform:translateY(24px);transition:transform .25s}
+    .inst-modal-overlay.open .inst-modal{transform:translateY(0)}
+    .im-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:#f1f5f9;border:none;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:10;transition:.2s}
+    html[dir="rtl"] .im-close{right:auto;left:16px}
+    .im-close:hover{background:#e2e8f0}
+    .im-hero{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:28px 32px 22px;border-radius:18px 18px 0 0;display:flex;align-items:center;gap:20px}
+    .im-icon{width:68px;height:68px;background:rgba(255,255,255,.18);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:34px;flex-shrink:0;border:2px solid rgba(255,255,255,.3)}
+    .im-title{font-size:22px;font-weight:800;margin-bottom:4px}
+    .im-loc{font-size:13px;color:rgba(255,255,255,.8);display:flex;align-items:center;gap:5px}
+    .im-body{padding:24px 32px}
+    .im-section{margin-bottom:22px}
+    .im-section-title{font-size:11.5px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+    .im-about{font-size:14.5px;color:var(--text);line-height:1.75}
+    .im-programs{display:flex;flex-wrap:wrap;gap:8px}
+    .im-prog-tag{background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:700;padding:6px 14px;border-radius:20px}
+    .im-video{position:relative;padding-top:52%;background:#000;border-radius:12px;overflow:hidden}
+    .im-video iframe{position:absolute;top:0;left:0;width:100%;height:100%}
+    .im-video video{position:absolute;top:0;left:0;width:100%;height:100%}
+    .im-meta-row{display:flex;gap:24px;flex-wrap:wrap;background:#f8fafc;border-radius:10px;padding:14px 18px;margin-bottom:22px}
+    .im-meta-item{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+    .im-meta-item strong{color:var(--text);font-weight:700}
+    .im-actions{display:flex;gap:10px;flex-wrap:wrap;padding-top:6px}
+    .im-btn-enq{background:var(--primary);color:#fff;border:none;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.2s;display:inline-flex;align-items:center;gap:7px}
+    .im-btn-enq:hover{background:var(--primary-dark)}
+    .im-btn-web{background:var(--bg);color:var(--text);border:2px solid var(--border);border-radius:10px;padding:11px 18px;font-size:14px;font-weight:600;text-decoration:none;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+    .im-btn-web:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+
+    @media(max-width:600px){
+      .inst-grid{grid-template-columns:1fr}
+      .hero-stats{gap:20px}
+      .filter-inner{gap:6px}
+      .im-body{padding:18px 20px}
+      .im-hero{padding:22px 20px 16px}
+      .im-meta-row{gap:14px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV placeholder (replaced by shared.js) -->
+<nav class="s-nav" id="sNavEl">
+  <div class="s-nav-in">
+    <a href="index.html" class="s-logo">
+      <div class="s-logo-ico"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span>EduPath</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge" id="heroBadge">🏫 Language Institutes in Malaysia</div>
+    <h1 id="heroTitle">Language Institutes in <span id="heroTitleSpan">Malaysia</span></h1>
+    <p class="hero-desc" id="heroDesc">Discover the best language institutes in Malaysia — English, IELTS, Arabic and more. Start your academic journey with strong language foundations.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong id="heroInstCount">0</strong><span id="heroStatInst">Institutes</span></div>
+      <div class="hero-stat"><strong id="heroProgramCount">0</strong><span id="heroStatProg">Programs</span></div>
+      <div class="hero-stat"><strong>KL &amp; Selangor</strong><span id="heroStatLoc">Main Locations</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FILTER BAR ══ -->
+<div class="filter-bar">
+  <div class="filter-inner" id="filterInner">
+    <!-- re-rendered on lang change -->
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+  <div class="results-header">
+    <div class="results-count" id="resultsCount"></div>
+  </div>
+  <div class="inst-grid" id="instGrid"></div>
+</main>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section" id="ctaSection">
+  <div class="cta-inner">
+    <h2 id="ctaTitle">Need Help Choosing an Institute?</h2>
+    <p id="ctaDesc">Our education advisors will match you with the best language programme based on your current level, goals, and budget — completely free.</p>
+    <a id="ctaBtn" href="https://wa.me/60123456789" class="cta-btn" target="_blank">💬 Get Free Advice on WhatsApp</a>
+  </div>
+</section>
+
+<!-- Footer placeholder (replaced by shared.js) -->
+<footer id="sFooterEl"></footer>
+
+<!-- ══ INSTITUTE DETAIL MODAL ══ -->
+<div class="inst-modal-overlay" id="instModalOverlay" onclick="closeInstModal(event)">
+  <div class="inst-modal" id="instModalBox">
+    <button class="im-close" onclick="closeInstModal(null)" title="Close">✕</button>
+    <div id="instModalContent"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+/* ══════════════════════════════════════
+   INSTITUTES PAGE — Full multilingual
+══════════════════════════════════════ */
+
+/* ── i18n ── */
+const IL = {
+  en: {
+    badge:       '🏫 Language Institutes in Malaysia',
+    heroTitle:   'Language Institutes in',
+    heroSpan:    'Malaysia',
+    heroDesc:    'Discover the best language institutes in Malaysia — English, IELTS, Arabic and more. Start your academic journey with strong language foundations.',
+    statInst:    'Institutes',
+    statProg:    'Programs',
+    statLoc:     'Main Locations',
+    filterAll:   'All Programs',
+    searchPh:    '🔍 Search institutes or programs...',
+    showing:     n => `Showing ${n} institute${n!==1?'s':''}`,
+    noTitle:     'No institutes found',
+    noDesc:      'Try changing your search or filters.',
+    enquire:     '💬 Enquire Now',
+    website:     '🌐 Website',
+    details:     '📋 Details',
+    ctaTitle:    'Need Help Choosing an Institute?',
+    ctaDesc:     'Our education advisors will match you with the best language programme based on your current level, goals, and budget — completely free.',
+    ctaBtn:      '💬 Get Free Advice on WhatsApp',
+    modalProg:   'Programs Offered',
+    modalAbout:  'About',
+    modalTuition:'Tuition',
+    modalCity:   'Location',
+    modalEnq:    '💬 Enquire on WhatsApp',
+    modalWeb:    '🌐 Visit Website',
+    waMsg:       (name,city,ref) => `🔖 Ref: ${ref}\n\nHello EduPath, I'm interested in:\n\n🏫 Institute: ${name}\n📍 City: ${city||''}\n\nPlease guide me on programmes, fees, and enrollment.`,
+  },
+  ar: {
+    badge:       '🏫 معاهد اللغة في ماليزيا',
+    heroTitle:   'معاهد اللغة في',
+    heroSpan:    'ماليزيا',
+    heroDesc:    'اكتشف أفضل معاهد تعليم اللغة في ماليزيا — الإنجليزية، الآيلتس، العربية، والمزيد. ابدأ مسيرتك الدراسية بأسس لغوية قوية.',
+    statInst:    'معهد',
+    statProg:    'برامج',
+    statLoc:     'مواقع رئيسية',
+    filterAll:   'جميع البرامج',
+    searchPh:    '🔍 ابحث عن معهد أو برنامج...',
+    showing:     n => `عرض ${n} معهد`,
+    noTitle:     'لم يتم العثور على معاهد',
+    noDesc:      'جرب تغيير البحث أو الفلاتر.',
+    enquire:     '💬 استفسر الآن',
+    website:     '🌐 الموقع الرسمي',
+    details:     '📋 التفاصيل',
+    ctaTitle:    'تحتاج مساعدة في اختيار المعهد؟',
+    ctaDesc:     'مستشارو التعليم لدينا سيجدون لك أفضل برنامج لغوي يناسب مستواك وأهدافك وميزانيتك — مجاناً تماماً.',
+    ctaBtn:      '💬 احصل على نصيحة مجانية عبر واتساب',
+    modalProg:   'البرامج المتاحة',
+    modalAbout:  'نبذة عن المعهد',
+    modalTuition:'الرسوم الدراسية',
+    modalCity:   'الموقع',
+    modalEnq:    '💬 استفسر عبر واتساب',
+    modalWeb:    '🌐 زيارة الموقع الرسمي',
+    waMsg:       (name,city,ref) => `🔖 رقم الاستفسار: ${ref}\n\nمرحباً EduPath، أنا مهتم بـ:\n\n🏫 المعهد: ${name}\n📍 المدينة: ${city||''}\n\nأرجو التوجيه بخصوص البرامج والرسوم والتسجيل.`,
+  },
+  ja: {
+    badge:       '🏫 マレーシアの語学院',
+    heroTitle:   '語学院 in',
+    heroSpan:    'マレーシア',
+    heroDesc:    'マレーシアの最高の語学院を見つけましょう — 英語、IELTS、アラビア語など。強固な言語力で学業をスタートしましょう。',
+    statInst:    '語学院',
+    statProg:    'プログラム',
+    statLoc:     '主要エリア',
+    filterAll:   '全プログラム',
+    searchPh:    '🔍 語学院やプログラムを検索...',
+    showing:     n => `${n}件の語学院を表示`,
+    noTitle:     '語学院が見つかりません',
+    noDesc:      '検索条件を変えてみてください。',
+    enquire:     '💬 お問い合わせ',
+    website:     '🌐 ウェブサイト',
+    details:     '📋 詳細',
+    ctaTitle:    '語学院選びにお困りですか？',
+    ctaDesc:     '教育アドバイザーがあなたのレベル・目標・予算に合った最適な語学プログラムをご提案します — 完全無料。',
+    ctaBtn:      '💬 WhatsAppで無料相談',
+    modalProg:   '提供プログラム',
+    modalAbout:  '語学院について',
+    modalTuition:'学費',
+    modalCity:   '所在地',
+    modalEnq:    '💬 WhatsAppで問い合わせ',
+    modalWeb:    '🌐 ウェブサイトを見る',
+    waMsg:       (name,city,ref) => `🔖 Ref: ${ref}\n\nこんにちはEduPath、以下に興味があります：\n\n🏫 語学院: ${name}\n📍 都市: ${city||''}\n\nプログラム・費用・入学についてご案内をお願いします。`,
+  },
+  ko: {
+    badge:       '🏫 말레이시아 어학원',
+    heroTitle:   '어학원 in',
+    heroSpan:    '말레이시아',
+    heroDesc:    '말레이시아 최고의 어학원을 찾아보세요 — 영어, IELTS, 아랍어 등. 탄탄한 언어 실력으로 학업을 시작하세요.',
+    statInst:    '어학원',
+    statProg:    '프로그램',
+    statLoc:     '주요 위치',
+    filterAll:   '전체 프로그램',
+    searchPh:    '🔍 어학원 또는 프로그램 검색...',
+    showing:     n => `${n}개 어학원 표시`,
+    noTitle:     '어학원을 찾을 수 없습니다',
+    noDesc:      '검색어 또는 필터를 변경해 보세요.',
+    enquire:     '💬 지금 문의',
+    website:     '🌐 웹사이트',
+    details:     '📋 상세보기',
+    ctaTitle:    '어학원 선택에 도움이 필요하신가요?',
+    ctaDesc:     '교육 어드바이저가 현재 수준, 목표, 예산에 맞는 최적의 어학 프로그램을 무료로 찾아드립니다.',
+    ctaBtn:      '💬 WhatsApp 무료 상담',
+    modalProg:   '제공 프로그램',
+    modalAbout:  '어학원 소개',
+    modalTuition:'학비',
+    modalCity:   '위치',
+    modalEnq:    '💬 WhatsApp으로 문의',
+    modalWeb:    '🌐 웹사이트 방문',
+    waMsg:       (name,city,ref) => `🔖 Ref: ${ref}\n\n안녕하세요 EduPath, 다음에 관심이 있습니다:\n\n🏫 어학원: ${name}\n📍 도시: ${city||''}\n\n프로그램, 학비, 등록에 대해 안내 부탁드립니다.`,
+  },
+  ru: {
+    badge:       '🏫 Языковые центры Малайзии',
+    heroTitle:   'Языковые центры в',
+    heroSpan:    'Малайзии',
+    heroDesc:    'Найдите лучшие языковые центры в Малайзии — английский, IELTS, арабский и многое другое. Начните учёбу с прочной языковой базой.',
+    statInst:    'центров',
+    statProg:    'Программ',
+    statLoc:     'Основные районы',
+    filterAll:   'Все программы',
+    searchPh:    '🔍 Поиск центров или программ...',
+    showing:     n => `Показано ${n} центр${n===1?'':n<5?'а':'ов'}`,
+    noTitle:     'Центры не найдены',
+    noDesc:      'Попробуйте изменить запрос или фильтры.',
+    enquire:     '💬 Оставить заявку',
+    website:     '🌐 Сайт',
+    details:     '📋 Подробнее',
+    ctaTitle:    'Нужна помощь с выбором центра?',
+    ctaDesc:     'Наши образовательные консультанты бесплатно подберут программу под ваш уровень, цели и бюджет.',
+    ctaBtn:      '💬 Получить бесплатную консультацию в WhatsApp',
+    modalProg:   'Доступные программы',
+    modalAbout:  'О центре',
+    modalTuition:'Стоимость обучения',
+    modalCity:   'Расположение',
+    modalEnq:    '💬 Написать в WhatsApp',
+    modalWeb:    '🌐 Перейти на сайт',
+    waMsg:       (name,city,ref) => `🔖 Ref: ${ref}\n\nЗдравствуйте EduPath, меня интересует:\n\n🏫 Центр: ${name}\n📍 Город: ${city||''}\n\nПожалуйста, проконсультируйте по программам, стоимости и зачислению.`,
+  },
+};
+
+/* ── Reference number generator ── */
+function genRef() {
+  const d   = new Date();
+  const yy  = String(d.getFullYear()).slice(-2);
+  const mm  = String(d.getMonth() + 1).padStart(2, '0');
+  const rnd = Math.floor(1000 + Math.random() * 9000);
+  return 'EP-' + yy + mm + '-' + rnd;
+}
+
+function toYoutubeEmbed(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  return null;
+}
+
+/* ── State ── */
+let _lang    = localStorage.getItem('lang') || 'en';
+let _allInsts = [];
+let _progFilter = '';
+
+function t(k, ...args) {
+  const tr = IL[_lang] || IL.en;
+  const v  = tr[k];
+  return typeof v === 'function' ? v(...args) : (v || (IL.en[k] || k));
+}
+
+/* ── Load all institutes ── */
+function loadAllInstitutes() {
+  let insts = [];
+  try { insts = JSON.parse(localStorage.getItem('ep_institutes') || '[]'); } catch(e) {}
+
+  if (typeof UNIVERSITIES !== 'undefined') {
+    const hidden   = JSON.parse(localStorage.getItem('ep_hidden_unis') || '[]');
+    const extraUnis= JSON.parse(localStorage.getItem('ep_extra_unis')  || '[]');
+    const edits    = JSON.parse(localStorage.getItem('ep_uni_edits')   || '{}');
+    const logos    = JSON.parse(localStorage.getItem('ep_uni_logos')   || '{}');
+    const uniVids  = JSON.parse(localStorage.getItem('ep_uni_videos')  || '{}');
+
+    const allUnis = [...UNIVERSITIES];
+    extraUnis.forEach(u => { if (!allUnis.find(x=>x.id===u.id)) allUnis.push(u); });
+
+    allUnis.forEach(u => {
+      const e   = edits[u.id] || {};
+      const uni = { ...u, ...e, _logo: logos[u.id]||u._logo||'', videoUrl: uniVids[u.id]||u.videoUrl||'' };
+      if (uni.type === 'language' && !hidden.includes(uni.id)) {
+        insts.push({
+          id: uni.id, name: uni.name, city: uni.city, state: uni.state,
+          icon: uni._logo ? null : (uni.icon || '🏫'), _logo: uni._logo,
+          programs: uni.fields || [], tuition: uni.tuition || '',
+          website: uni.website || '', about: uni.about || '',
+          videoUrl: uni.videoUrl || '', active: true, _fromUni: true,
+        });
+      }
+    });
+  }
+
+  return insts.filter(i => i.active !== false);
+}
+
+/* ── Filters ── */
+function setProgramFilter(prog, btn) {
+  _progFilter = prog;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderInstitutes();
+}
+
+/* ── Render filter bar ── */
+function renderFilters() {
+  const programs = ['IELTS','English','Arabic','Business English','TOEFL'];
+  const search   = document.getElementById('instSearch') ? document.getElementById('instSearch').value : '';
+  const html = `
+    <input class="filter-search" id="instSearch" placeholder="${t('searchPh')}" oninput="renderInstitutes()" value="${search.replace(/"/g,'&quot;')}"/>
+    <button class="filter-btn${_progFilter===''?' active':''}" onclick="setProgramFilter('',this)">${t('filterAll')}</button>
+    ${programs.map(p=>`<button class="filter-btn${_progFilter===p?' active':''}" onclick="setProgramFilter('${p}',this)">${p}</button>`).join('')}
+  `;
+  document.getElementById('filterInner').innerHTML = html;
+}
+
+/* ── Render hero text ── */
+function renderHero() {
+  const el = k => document.getElementById(k);
+  if (el('heroBadge'))      el('heroBadge').textContent      = t('badge');
+  if (el('heroTitle'))      el('heroTitle').innerHTML        = `${t('heroTitle')} <span id="heroTitleSpan">${t('heroSpan')}</span>`;
+  if (el('heroDesc'))       el('heroDesc').textContent       = t('heroDesc');
+  if (el('heroStatInst'))   el('heroStatInst').textContent   = t('statInst');
+  if (el('heroStatProg'))   el('heroStatProg').textContent   = t('statProg');
+  if (el('heroStatLoc'))    el('heroStatLoc').textContent    = t('statLoc');
+  if (el('heroInstCount'))  el('heroInstCount').textContent  = _allInsts.length;
+  const totalProgs = [...new Set(_allInsts.flatMap(i => i.programs||[]))].length;
+  if (el('heroProgramCount')) el('heroProgramCount').textContent = totalProgs;
+}
+
+/* ── Render CTA ── */
+function renderCTA() {
+  const wa = (() => { try { return JSON.parse(localStorage.getItem('ep_settings')||'{}').whatsapp || '60123456789'; } catch(e) { return '60123456789'; } })();
+  const el = k => document.getElementById(k);
+  if (el('ctaTitle')) el('ctaTitle').textContent = t('ctaTitle');
+  if (el('ctaDesc'))  el('ctaDesc').textContent  = t('ctaDesc');
+  if (el('ctaBtn')) {
+    el('ctaBtn').href        = `https://wa.me/${wa}`;
+    el('ctaBtn').textContent = t('ctaBtn');
+  }
+}
+
+/* ── Render cards ── */
+function renderInstitutes() {
+  const searchEl = document.getElementById('instSearch');
+  const q = ((searchEl ? searchEl.value : '') || '').toLowerCase().trim();
+  let list = _allInsts;
+
+  if (_progFilter) {
+    list = list.filter(i => (i.programs||[]).some(p => p.toLowerCase().includes(_progFilter.toLowerCase())));
+  }
+  if (q) {
+    list = list.filter(i => {
+      const hay = (i.name+' '+i.city+' '+(i.programs||[]).join(' ')+' '+(i.about||'')).toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  const rc = document.getElementById('resultsCount');
+  if (rc) rc.textContent = t('showing', list.length);
+
+  const grid = document.getElementById('instGrid');
+  if (!grid) return;
+
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🏫</div><h3>${t('noTitle')}</h3><p>${t('noDesc')}</p></div>`;
+    return;
+  }
+
+  const wa = (() => { try { return JSON.parse(localStorage.getItem('ep_settings')||'{}').whatsapp||'60123456789'; } catch(e) { return '60123456789'; } })();
+
+  grid.innerHTML = list.map((inst, idx) => {
+    /* find real index in _allInsts for the detail lookup */
+    const realIdx = _allInsts.indexOf(inst);
+    const iconHtml = inst._logo
+      ? `<img src="${inst._logo}" style="width:100%;height:100%;object-fit:contain;border-radius:10px" alt=""/>`
+      : (inst.icon || '🏫');
+    const programsHtml = (inst.programs||[]).slice(0,5).map(p =>
+      `<span class="prog-tag">${p}</span>`).join('');
+
+    return `<div class="inst-card" data-idx="${realIdx}" onclick="showInstDetail(${realIdx})">
+      <div class="inst-card-top">
+        <div class="inst-icon" style="${inst._logo?'background:rgba(255,255,255,.95);padding:4px':''}">${iconHtml}</div>
+        <div>
+          <div class="inst-name">${inst.name}</div>
+          <div class="inst-loc">📍 ${inst.city||''}${inst.state?', '+inst.state:''}</div>
+        </div>
+      </div>
+      <div class="inst-body">
+        ${inst.about ? `<p class="inst-about">${inst.about}</p>` : ''}
+        <div class="inst-programs">${programsHtml}</div>
+        <div class="inst-meta">
+          ${inst.tuition ? `<div class="inst-meta-item">💰 <strong>${inst.tuition}</strong></div>` : ''}
+        </div>
+        <div class="inst-footer" onclick="event.stopPropagation()">
+          <button class="btn-details" onclick="showInstDetail(${realIdx})">${t('details')}</button>
+          <button class="btn-apply" onclick="enquireInst(${realIdx})">${t('enquire')}</button>
+          ${inst.website ? `<a href="${inst.website}" target="_blank" class="btn-website" onclick="event.stopPropagation()">${t('website')}</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── WhatsApp enquiry helper ── */
+function enquireInst(idx) {
+  const inst = _allInsts[idx];
+  if (!inst) return;
+  const wa  = (() => { try { return JSON.parse(localStorage.getItem('ep_settings')||'{}').whatsapp||'60123456789'; } catch(e) { return '60123456789'; } })();
+  const ref = genRef();
+  const msg = t('waMsg', inst.name, inst.city||'', ref);
+  /* Flash the ref number briefly on screen so user can note it */
+  showRefToast(ref);
+  window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ── Show reference number toast ── */
+function showRefToast(ref) {
+  let toast = document.getElementById('refToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'refToast';
+    toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#0a5c8a;color:#fff;padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.25);transition:opacity .4s;pointer-events:none';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = '🔖 ' + ref;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 4000);
+}
+
+/* ── Institute Detail Modal ── */
+let _modalIdx = -1; /* track open modal so enquire button can call enquireInst() */
+
+function showInstDetail(idx) {
+  const inst = _allInsts[idx];
+  if (!inst) return;
+  _modalIdx = idx;
+
+  const iconHtml = inst._logo
+    ? `<img src="${inst._logo}" style="width:100%;height:100%;object-fit:contain;border-radius:14px" alt=""/>`
+    : (inst.icon || '🏫');
+
+  const programsHtml = (inst.programs||[]).map(p =>
+    `<span class="im-prog-tag">${p}</span>`).join('');
+
+  const embedUrl = toYoutubeEmbed(inst.videoUrl);
+  const videoHtml = embedUrl
+    ? `<div class="im-section">
+         <div class="im-section-title">🎬 Video</div>
+         <div class="im-video"><iframe src="${embedUrl}" frameborder="0" allowfullscreen></iframe></div>
+       </div>`
+    : inst.videoUrl
+      ? `<div class="im-section">
+           <div class="im-section-title">🎬 Video</div>
+           <div class="im-video"><video controls><source src="${inst.videoUrl}"/></video></div>
+         </div>`
+      : '';
+
+  const html = `
+    <div class="im-hero">
+      <div class="im-icon" style="${inst._logo?'background:rgba(255,255,255,.95);padding:6px':''}">${iconHtml}</div>
+      <div>
+        <div class="im-title">${inst.name}</div>
+        <div class="im-loc">📍 ${inst.city||''}${inst.state?', '+inst.state:''}</div>
+      </div>
+    </div>
+    <div class="im-body">
+      <div class="im-meta-row">
+        ${inst.tuition ? `<div class="im-meta-item">💰 <strong>${inst.tuition}</strong>&nbsp;${t('modalTuition')}</div>` : ''}
+        ${inst.city    ? `<div class="im-meta-item">📍 <strong>${inst.city}${inst.state?', '+inst.state:''}</strong>&nbsp;${t('modalCity')}</div>` : ''}
+        ${(inst.programs||[]).length ? `<div class="im-meta-item">📚 <strong>${inst.programs.length}</strong>&nbsp;${t('modalProg')}</div>` : ''}
+      </div>
+
+      ${inst.about ? `
+      <div class="im-section">
+        <div class="im-section-title">${t('modalAbout')}</div>
+        <p class="im-about">${inst.about}</p>
+      </div>` : ''}
+
+      ${(inst.programs||[]).length ? `
+      <div class="im-section">
+        <div class="im-section-title">${t('modalProg')}</div>
+        <div class="im-programs">${programsHtml}</div>
+      </div>` : ''}
+
+      ${videoHtml}
+
+      <div class="im-actions">
+        <button class="im-btn-enq" onclick="enquireInst(${idx});closeInstModal(null)">${t('modalEnq')}</button>
+        ${inst.website ? `<a href="${inst.website}" target="_blank" class="im-btn-web">${t('modalWeb')}</a>` : ''}
+      </div>
+      <p style="margin-top:14px;font-size:11.5px;color:var(--text-muted)">🔖 ${_lang==='ar'?'سيتم إنشاء رقم استفسار تلقائياً عند الضغط على الزر أعلاه':'A unique reference number will be generated when you enquire'}</p>
+    </div>`;
+
+  document.getElementById('instModalContent').innerHTML = html;
+  document.getElementById('instModalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeInstModal(event) {
+  if (event && event.target !== document.getElementById('instModalOverlay')) return;
+  document.getElementById('instModalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* keyboard ESC */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { document.getElementById('instModalOverlay').classList.remove('open'); document.body.style.overflow=''; }
+});
+
+/* ── Build full page ── */
+function buildPage() {
+  _lang = localStorage.getItem('lang') || 'en';
+  renderHero();
+  renderFilters();
+  renderCTA();
+  renderInstitutes();
+  // re-translate modal if it's open
+  if (document.getElementById('instModalOverlay').classList.contains('open')) {
+    // close and let user re-open so it re-renders
+    document.getElementById('instModalOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+}
+
+/* ── setLang: called by shared.js on language switch ── */
+function setLang(lang) {
+  _lang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang;
+  document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+  buildPage();
+}
+
+/* ── Init ── */
+(function init() {
+  // Apply admin theme immediately
+  try {
+    const s = JSON.parse(localStorage.getItem('ep_settings') || '{}');
+    const r = document.documentElement;
+    if (s.primaryColor)     r.style.setProperty('--primary',      s.primaryColor);
+    if (s.primaryDarkColor) r.style.setProperty('--primary-dark', s.primaryDarkColor);
+    if (s.accentColor)      r.style.setProperty('--accent',       s.accentColor);
+  } catch(e) {}
+
+  _allInsts = loadAllInstitutes();
+  buildPage();
+})();
+</script>
+<script src="shared.js"></script>
+</body>
+</html>

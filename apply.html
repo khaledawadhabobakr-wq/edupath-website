@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Student Portal – EduPath</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#0a5c8a;--pd:#074166;--pl:#e8f4fb;
+  --acc:#f59e0b;--green:#059669;--red:#dc2626;--purple:#7c3aed;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f8fafc;--white:#fff;
+  --r:12px;--sh:0 4px 24px rgba(10,92,138,.10);--sh-lg:0 12px 40px rgba(10,92,138,.15)
+}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Kufi Arabic','Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+html[lang="en"] body,html[lang="ja"] body,html[lang="ko"] body,html[lang="ru"] body{font-family:'Inter','Noto Kufi Arabic',sans-serif}
+a{text-decoration:none;color:inherit}
+input,select,textarea,button{font-family:inherit}
+img{max-width:100%;display:block}
+
+/* ── TOP BAR ── */
+.topbar{background:linear-gradient(90deg,var(--pd),var(--p));color:white;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.tb-logo{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+.tb-logo-icon{background:rgba(255,255,255,.15);border-radius:9px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+.tb-home{background:rgba(255,255,255,.15);color:white}.tb-home:hover{background:rgba(255,255,255,.25)}
+.tb-logout{background:var(--red);color:white;display:none}.tb-logout:hover{background:#b91c1c}
+
+/* ── LANGUAGE SWITCHER ── */
+.lang-sw{position:relative;display:inline-flex;align-items:center}
+.lang-toggle{background:rgba(255,255,255,.15);color:white;border:none;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.2s;font-family:inherit}
+.lang-toggle:hover{background:rgba(255,255,255,.28)}
+.lang-toggle .arrow{font-size:10px;opacity:.8;transition:transform .2s}
+.lang-sw.open .lang-toggle .arrow{transform:rotate(180deg)}
+.lang-drop{display:none;position:absolute;top:calc(100% + 6px);right:0;background:white;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,.18);min-width:150px;overflow:hidden;z-index:300}
+html[dir="rtl"] .lang-drop{right:auto;left:0}
+.lang-sw.open .lang-drop{display:block}
+.lang-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;font-size:13px;font-weight:600;color:#1e293b;transition:.15s}
+.lang-opt:hover{background:#f0f7ff;color:#0a5c8a}
+.lang-opt.active{background:#e8f4fb;color:#0a5c8a;font-weight:700}
+.lang-opt .flag{font-size:16px;line-height:1}
+
+/* ── MAIN CONTAINER ── */
+.container{max-width:860px;margin:0 auto;padding:40px 20px 80px}
+
+/* ── AUTH SCREEN ── */
+#authScreen{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 64px);padding:20px}
+.auth-card{background:white;border-radius:20px;padding:40px;width:100%;max-width:440px;box-shadow:var(--sh-lg)}
+.auth-logo{text-align:center;margin-bottom:24px}
+.auth-logo .ico{width:60px;height:60px;background:var(--p);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:26px}
+.auth-logo h2{font-size:22px;font-weight:800}
+.auth-logo p{font-size:13px;color:var(--muted);margin-top:4px}
+.auth-tabs{display:flex;border-radius:10px;background:var(--bg);padding:4px;margin-bottom:24px;gap:4px}
+.auth-tab{flex:1;text-align:center;padding:10px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);transition:.2s}
+.auth-tab.active{background:white;color:var(--p);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.auth-form{display:none}.auth-form.active{display:block}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fg label{font-size:12px;font-weight:700;color:var(--muted)}
+.fg input,.fg select{border:1.5px solid var(--border);border-radius:8px;padding:11px 14px;font-size:13.5px;outline:none;transition:.2s;background:var(--bg);color:var(--text);width:100%}
+.fg input:focus,.fg select:focus{border-color:var(--p);background:white;box-shadow:0 0 0 3px var(--pl)}
+.fg.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auth-btn{width:100%;background:var(--p);color:white;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:4px}
+.auth-btn:hover{background:var(--pd)}
+.auth-err{color:var(--red);font-size:12px;margin-top:8px;display:none;text-align:center}
+
+/* ── DASHBOARD ── */
+#dashboard{display:none}
+.hero-welcome{background:linear-gradient(135deg,var(--pd) 0%,var(--p) 60%,#1a7eb5 100%);color:white;border-radius:20px;padding:32px 28px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero-welcome::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hw-title{font-size:22px;font-weight:800;margin-bottom:6px;position:relative}
+.hw-sub{font-size:14px;color:rgba(255,255,255,.8);position:relative}
+.hw-id{font-size:12px;background:rgba(255,255,255,.15);border-radius:6px;padding:3px 10px;display:inline-block;margin-top:10px;position:relative}
+
+/* ── APP STATUS CARD ── */
+.app-card{background:white;border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid var(--border);box-shadow:var(--sh)}
+.app-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.app-id{font-size:13px;font-weight:700;color:var(--muted)}
+.status-badge{font-size:13px;font-weight:700;padding:6px 16px;border-radius:20px}
+.status-new{background:#e0f2fe;color:#0369a1}
+.status-review{background:#fef3c7;color:#92400e}
+.status-docs{background:#fee2e2;color:#991b1b}
+.status-accepted{background:#d1fae5;color:#065f46}
+.status-visa{background:#f3e8ff;color:#6b21a8}
+.status-enrolled{background:#d1fae5;color:#065f46}
+.status-rejected{background:#fee2e2;color:#991b1b}
+
+/* ── PROGRESS STEPS ── */
+.progress-steps{display:flex;justify-content:space-between;position:relative;margin:24px 0 28px}
+.progress-steps::before{content:'';position:absolute;top:18px;right:0;left:0;height:2px;background:var(--border);z-index:0}
+.ps-track{position:absolute;top:18px;right:0;height:2px;background:var(--p);z-index:1;transition:width .5s ease}
+.ps-item{display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:2;flex:1}
+.ps-dot{width:36px;height:36px;border-radius:50%;border:3px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;transition:.3s}
+.ps-dot.done{background:var(--green);border-color:var(--green);color:white}
+.ps-dot.active{background:var(--p);border-color:var(--p);color:white;box-shadow:0 0 0 4px var(--pl)}
+.ps-dot.pending{color:var(--muted)}
+.ps-label{font-size:10.5px;font-weight:600;color:var(--muted);text-align:center;max-width:60px;line-height:1.3}
+.ps-label.done,.ps-label.active{color:var(--text)}
+
+/* ── ADMIN NOTE ── */
+.admin-note{background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:14px 16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start}
+.admin-note-icon{font-size:18px;flex-shrink:0}
+.admin-note-text{font-size:13px;line-height:1.6}
+.admin-note-text strong{display:block;font-size:12px;color:#92400e;margin-bottom:2px}
+
+/* ── DOCUMENTS CHECKLIST ── */
+.doc-checklist{border-radius:12px;border:1px solid var(--border);overflow:hidden}
+.doc-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);background:white;transition:.15s}
+.doc-item:last-child{border-bottom:none}
+.doc-item:hover{background:var(--bg)}
+.doc-icon{font-size:20px;flex-shrink:0;width:36px;text-align:center}
+.doc-info{flex:1;min-width:0}
+.doc-info strong{font-size:13.5px;display:block;margin-bottom:2px}
+.doc-info small{font-size:11.5px;color:var(--muted)}
+.doc-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;flex-shrink:0}
+.ds-ok{background:#d1fae5;color:#065f46}
+.ds-approved{background:#d1fae5;color:#065f46}
+.ds-pending{background:#fef3c7;color:#92400e}
+.ds-missing{background:#f1f5f9;color:var(--muted)}
+.doc-upload-btn{background:var(--p);color:white;border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:.2s;flex-shrink:0}
+.doc-upload-btn:hover{background:var(--pd)}
+
+/* ── NO APP STATE ── */
+.no-app{text-align:center;padding:48px 20px;background:white;border-radius:16px;border:2px dashed var(--border);margin-bottom:24px}
+.no-app .icon{font-size:56px;margin-bottom:16px}
+.no-app h3{font-size:20px;font-weight:800;margin-bottom:8px}
+.no-app p{font-size:14px;color:var(--muted);max-width:380px;margin:0 auto 24px;line-height:1.6}
+.start-btn{background:var(--p);color:white;border:none;border-radius:12px;padding:15px 32px;font-size:16px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit;display:inline-flex;align-items:center;gap:8px}
+.start-btn:hover{background:var(--pd);transform:translateY(-2px);box-shadow:0 8px 24px rgba(10,92,138,.3)}
+
+/* ── APPLICATION FORM ── */
+#appForm{display:block;background:white;border-radius:16px;padding:0;border:1px solid var(--border);box-shadow:var(--sh);overflow:hidden}
+.form-header{background:linear-gradient(135deg,var(--pd),var(--p));color:white;padding:24px 28px}
+.form-header h2{font-size:18px;font-weight:800;margin-bottom:4px}
+.form-header p{font-size:13px;color:rgba(255,255,255,.75)}
+.step-indicator{display:flex;gap:6px;margin-top:16px}
+.si-dot{width:28px;height:6px;border-radius:3px;background:rgba(255,255,255,.3);transition:.3s}
+.si-dot.active{background:white}
+.si-dot.done{background:rgba(255,255,255,.6)}
+.form-body{padding:28px}
+.form-title{font-size:17px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fg-full{grid-column:1/-1}
+.form-fg{display:flex;flex-direction:column;gap:5px}
+.form-fg label{font-size:12px;font-weight:700;color:var(--muted)}
+.form-fg input,.form-fg select,.form-fg textarea{border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13.5px;outline:none;transition:.2s;background:var(--bg);color:var(--text);width:100%}
+.form-fg input:focus,.form-fg select:focus,.form-fg textarea:focus{border-color:var(--p);background:white;box-shadow:0 0 0 3px var(--pl)}
+.form-fg textarea{resize:vertical;min-height:80px;line-height:1.6}
+.form-fg .req{color:var(--red)}
+.form-nav{display:flex;justify-content:space-between;align-items:center;padding:18px 28px;border-top:1px solid var(--border);background:var(--bg)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:11px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:.2s;font-family:inherit}
+.btn-p{background:var(--p);color:white}.btn-p:hover{background:var(--pd)}
+.btn-g{background:var(--green);color:white}.btn-g:hover{background:#047857}
+.btn-ghost{background:white;color:var(--text);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--p);color:var(--p)}
+.step-num{font-size:13px;color:var(--muted)}
+
+/* ── FILE UPLOAD ── */
+.file-zone{border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:.2s;background:var(--bg);position:relative}
+.file-zone:hover,.file-zone.drag{border-color:var(--p);background:var(--pl)}
+.file-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.file-zone .fz-icon{font-size:28px;margin-bottom:6px}
+.file-zone p{font-size:12.5px;color:var(--muted);margin-top:4px}
+.file-zone strong{font-size:13px;color:var(--p)}
+.file-preview{margin-top:8px;font-size:12px;font-weight:600;color:var(--green);display:none}
+.file-preview.show{display:block}
+
+/* ── REVIEW STEP ── */
+.review-section{margin-bottom:20px;padding:16px;background:var(--bg);border-radius:12px}
+.review-section h4{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rv{display:flex;flex-direction:column;gap:2px}
+.rv .rl{font-size:11px;color:var(--muted);font-weight:600}
+.rv .rval{font-size:13px;font-weight:600}
+.doc-review{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.doc-chip{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.doc-chip.ok{background:#d1fae5;color:#065f46}
+.doc-chip.no{background:#fee2e2;color:#991b1b}
+
+/* ── SUCCESS ── */
+#successScreen{display:none;text-align:center;padding:60px 20px;background:white;border-radius:20px;border:1px solid var(--border);box-shadow:var(--sh)}
+.success-icon{font-size:72px;margin-bottom:20px}
+#successScreen h2{font-size:24px;font-weight:800;margin-bottom:10px}
+#successScreen p{font-size:14px;color:var(--muted);max-width:400px;margin:0 auto 24px;line-height:1.65}
+.app-ref-box{background:var(--pl);border:2px solid var(--p);border-radius:12px;padding:16px 24px;display:inline-block;margin-bottom:24px}
+.app-ref-box .rl{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px}
+.app-ref-box .rv{font-size:22px;font-weight:800;color:var(--p);letter-spacing:2px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .fg-full{grid-column:1}
+  .progress-steps{gap:2px}
+  .ps-label{font-size:9px;max-width:50px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-logo">
+    <span class="tb-logo-icon">🎓</span>
+    <span data-i18n="portalTitle">EduPath — Student Portal</span>
+  </div>
+  <div class="tb-right">
+    <!-- Language Switcher -->
+    <div class="lang-sw" id="langSw">
+      <button class="lang-toggle" onclick="toggleLangDrop(event)" id="langToggleBtn">
+        <span id="langCurrent">🌐</span>
+        <span class="arrow">▾</span>
+      </button>
+      <div class="lang-drop" id="langDrop">
+        <div class="lang-opt" data-l="ar" onclick="switchLang('ar')"><span class="flag">🇸🇦</span> العربية</div>
+        <div class="lang-opt" data-l="en" onclick="switchLang('en')"><span class="flag">🇬🇧</span> English</div>
+        <div class="lang-opt" data-l="ja" onclick="switchLang('ja')"><span class="flag">🇯🇵</span> 日本語</div>
+        <div class="lang-opt" data-l="ko" onclick="switchLang('ko')"><span class="flag">🇰🇷</span> 한국어</div>
+        <div class="lang-opt" data-l="ru" onclick="switchLang('ru')"><span class="flag">🇷🇺</span> Русский</div>
+      </div>
+    </div>
+    <a href="index.html" class="tb-btn tb-home" data-i18n="backHome">← Main Website</a>
+    <button class="tb-btn tb-logout" id="logoutBtn" onclick="doLogout()" data-i18n="logout">Logout</button>
+  </div>
+</div>
+
+<!-- ══ AUTH SCREEN ══ -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="ico">🎓</div>
+      <h2 data-i18n="authTitle">Application Portal</h2>
+      <p data-i18n="authSub">Sign in to track your application or create a new account</p>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuth('login',this)" data-i18n="tabLogin">Login</div>
+      <div class="auth-tab" onclick="switchAuth('register',this)" data-i18n="tabRegister">New Account</div>
+    </div>
+
+    <!-- LOGIN -->
+    <div class="auth-form active" id="loginForm">
+      <div class="fg"><label data-i18n="labelEmail">Email Address</label><input type="email" id="l_email" placeholder="name@email.com" dir="ltr"/></div>
+      <div class="fg"><label data-i18n="labelPassword">Password</label><input type="password" id="l_pw" data-i18n-ph="placeholderPw"/></div>
+      <button class="auth-btn" onclick="doLogin()" data-i18n="btnLogin">Sign In →</button>
+      <div class="auth-err" id="loginErr" data-i18n="errLogin">❌ Incorrect email or password</div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="auth-form" id="registerForm">
+      <div class="fg"><label data-i18n="labelName">Full Name</label> <span style="color:var(--red);font-size:11px">*</span><input type="text" id="r_name" data-i18n-ph="fNamePh"/></div>
+      <div class="fg row2">
+        <div class="fg" style="margin:0"><label data-i18n="labelEmail">Email</label> <span style="color:var(--red);font-size:11px">*</span><input type="email" id="r_email" placeholder="name@email.com" dir="ltr"/></div>
+        <div class="fg" style="margin:0"><label data-i18n="labelPhone">WhatsApp / Phone</label> <span style="color:var(--red);font-size:11px">*</span><input type="tel" id="r_phone" placeholder="+966..." dir="ltr"/></div>
+      </div>
+      <div class="fg"><label data-i18n="labelNat">Nationality</label>
+        <select id="r_nat">
+          <option value="" data-i18n="placeholderNat">Select your nationality</option>
+          <option>Saudi Arabia - السعودية</option><option>UAE - الإمارات</option><option>Kuwait - الكويت</option>
+          <option>Qatar - قطر</option><option>Bahrain - البحرين</option><option>Oman - عُمان</option>
+          <option>Jordan - الأردن</option><option>Egypt - مصر</option><option>Libya - ليبيا</option>
+          <option>Yemen - اليمن</option><option>Sudan - السودان</option><option>Morocco - المغرب</option>
+          <option>Algeria - الجزائر</option><option>Tunisia - تونس</option><option>Somalia - الصومال</option>
+          <option>Iraq - العراق</option><option>Syria - سوريا</option><option>Palestine - فلسطين</option>
+          <option>Lebanon - لبنان</option><option>Pakistan - باكستان</option><option>Indonesia - إندونيسيا</option>
+          <option>Malaysia - ماليزيا</option><option>Japan - اليابان</option><option>South Korea - كوريا الجنوبية</option>
+          <option>Russia - روسيا</option><option>China - الصين</option><option>India - الهند</option>
+          <option>Nigeria - نيجيريا</option><option>Other - أخرى</option>
+        </select>
+      </div>
+      <div class="fg"><label data-i18n="labelPassword">Password</label> <span style="color:var(--red);font-size:11px">*</span><input type="password" id="r_pw" data-i18n-ph="placeholderPw"/></div>
+      <button class="auth-btn" onclick="doRegister()" data-i18n="btnRegister">Create Account →</button>
+      <div class="auth-err" id="registerErr" data-i18n="errRegister">❌ An error occurred, check your details</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="dashboard" style="display:none">
+<div class="container">
+
+  <div class="hero-welcome">
+    <div class="hw-title" id="welcomeTitle">👋</div>
+    <div class="hw-sub" id="welcomeSub"></div>
+    <div class="hw-id" id="welcomeId"></div>
+  </div>
+
+  <!-- No application yet -->
+  <div class="no-app" id="noAppSection" style="display:none">
+    <div class="icon">📋</div>
+    <h3 id="noAppTitle"></h3>
+    <p id="noAppDesc"></p>
+    <button class="start-btn" onclick="startApplication()" id="btnStartApp">🎓</button>
+  </div>
+
+  <!-- Application status -->
+  <div class="app-card" id="appStatusSection" style="display:none">
+    <div class="app-card-header">
+      <div>
+        <div style="font-size:17px;font-weight:800;margin-bottom:4px" id="appStatusTitle"></div>
+        <div class="app-id" id="appIdLabel">—</div>
+      </div>
+      <div class="status-badge" id="appStatusBadge">—</div>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="progress-steps" id="progressSteps">
+      <div class="ps-track" id="psTrack" style="width:0%"></div>
+    </div>
+
+    <!-- Admin note -->
+    <div class="admin-note" id="adminNoteBox" style="display:none">
+      <span class="admin-note-icon">🗒️</span>
+      <div class="admin-note-text">
+        <strong id="adminNoteLabel"></strong>
+        <span id="adminNoteText"></span>
+      </div>
+    </div>
+
+    <!-- Documents -->
+    <div style="font-size:14px;font-weight:800;margin-bottom:12px" id="docsTitle">📎</div>
+    <div class="doc-checklist" id="docChecklist"></div>
+
+    <!-- Buttons -->
+    <div style="margin-top:20px;display:flex;gap:10px;flex-wrap:wrap">
+      <a href="https://wa.me/60123456789" class="btn btn-g" id="contactWA" target="_blank"></a>
+      <button class="btn btn-ghost" onclick="startApplication()" id="btnUpdateApp"></button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══ APPLICATION FORM ══ -->
+<div id="appFormWrap" style="display:none">
+<div class="container">
+<div id="appForm">
+  <div class="form-header">
+    <h2 id="formTitle">🎓</h2>
+    <p id="formSub"></p>
+    <div class="step-indicator">
+      <div class="si-dot active" id="si0"></div>
+      <div class="si-dot" id="si1"></div>
+      <div class="si-dot" id="si2"></div>
+      <div class="si-dot" id="si3"></div>
+    </div>
+  </div>
+  <div class="form-body">
+
+    <!-- ── STEP 1: Personal Info ── -->
+    <div class="form-step" id="step0">
+      <div class="form-title" id="step1Title">👤</div>
+      <div class="form-grid">
+        <div class="form-fg fg-full"><label id="lbl_name"></label><input type="text" id="f_name"/></div>
+        <div class="form-fg"><label id="lbl_dob"></label><input type="date" id="f_dob"/></div>
+        <div class="form-fg"><label id="lbl_nat"></label>
+          <select id="f_nat">
+            <option value="" id="opt_natPh"></option>
+            <option>Saudi Arabia - السعودية</option><option>UAE - الإمارات</option><option>Kuwait - الكويت</option>
+            <option>Qatar - قطر</option><option>Bahrain - البحرين</option><option>Oman - عُمان</option>
+            <option>Jordan - الأردن</option><option>Egypt - مصر</option><option>Libya - ليبيا</option>
+            <option>Yemen - اليمن</option><option>Sudan - السودان</option><option>Morocco - المغرب</option>
+            <option>Algeria - الجزائر</option><option>Tunisia - تونس</option><option>Somalia - الصومال</option>
+            <option>Iraq - العراق</option><option>Syria - سوريا</option><option>Palestine - فلسطين</option>
+            <option>Lebanon - لبنان</option><option>Pakistan - باكستان</option><option>Indonesia - إندونيسيا</option>
+            <option>Malaysia - ماليزيا</option><option>Japan - اليابان</option><option>South Korea - كوريا الجنوبية</option>
+            <option>Russia - روسيا</option><option>China - الصين</option><option>India - الهند</option>
+            <option>Nigeria - نيجيريا</option><option>Other - أخرى</option>
+          </select>
+        </div>
+        <div class="form-fg"><label id="lbl_passport"></label><input type="text" id="f_passport" placeholder="AA123456" dir="ltr"/></div>
+        <div class="form-fg"><label id="lbl_phone"></label><input type="tel" id="f_phone" placeholder="+966..." dir="ltr"/></div>
+        <div class="form-fg"><label id="lbl_email"></label><input type="email" id="f_email" placeholder="name@email.com" dir="ltr"/></div>
+        <div class="form-fg fg-full"><label id="lbl_address"></label><input type="text" id="f_address"/></div>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Academic ── -->
+    <div class="form-step" id="step1" style="display:none">
+      <div class="form-title" id="step2Title">🎓</div>
+      <div class="form-grid">
+        <div class="form-fg"><label id="lbl_level"></label>
+          <select id="f_level">
+            <option value="" id="opt_levelPh"></option>
+            <option value="highschool" id="opt_hs"></option>
+            <option value="diploma" id="opt_diploma"></option>
+            <option value="bachelor" id="opt_bachelor"></option>
+            <option value="master" id="opt_master"></option>
+          </select>
+        </div>
+        <div class="form-fg"><label id="lbl_school"></label><input type="text" id="f_lastschool"/></div>
+        <div class="form-fg"><label id="lbl_gpa"></label><input type="text" id="f_gpa" placeholder="e.g. 90% or 3.5/4.0" dir="ltr"/></div>
+        <div class="form-fg"><label id="lbl_english"></label>
+          <select id="f_english">
+            <option value="" id="opt_engPh"></option>
+            <option value="no_cert" id="opt_engNoCert"></option>
+            <option value="school" id="opt_engSchool"></option>
+            <option value="ielts_5">IELTS 5.0–5.5</option>
+            <option value="ielts_6">IELTS 6.0–6.5</option>
+            <option value="ielts_7">IELTS 7.0+</option>
+            <option value="toefl">TOEFL</option>
+          </select>
+        </div>
+        <div class="form-fg"><label id="lbl_program"></label>
+          <select id="f_program">
+            <option value="" id="opt_programPh"></option>
+            <option>English Language Diploma</option>
+            <option>Bachelor of Business Administration</option>
+            <option>Bachelor of Accounting</option>
+            <option>Bachelor of Information Technology</option>
+            <option>Bachelor of Medicine &amp; Surgery (MBBS)</option>
+            <option>Bachelor of Dentistry</option>
+            <option>Bachelor of Pharmacy</option>
+            <option>Bachelor of Engineering</option>
+            <option>Bachelor of Graphic Design</option>
+            <option>Bachelor of Media &amp; Communication</option>
+            <option>Bachelor of Law (LLB)</option>
+            <option>Master of Business Administration (MBA)</option>
+            <option>Master of Information Technology</option>
+            <option>PhD / Doctorate</option>
+            <option id="opt_programOther"></option>
+          </select>
+        </div>
+        <div class="form-fg"><label id="lbl_uni"></label>
+          <select id="f_uni">
+            <option value="" id="opt_uniAny"></option>
+            <option>University of Malaya (UM)</option>
+            <option>Universiti Kebangsaan Malaysia (UKM)</option>
+            <option>Universiti Putra Malaysia (UPM)</option>
+            <option>Universiti Teknologi Malaysia (UTM)</option>
+            <option>Universiti Sains Malaysia (USM)</option>
+            <option>Taylor's University</option>
+            <option>Sunway University</option>
+            <option>Asia Pacific University (APU)</option>
+            <option>HELP University</option>
+            <option>Monash University Malaysia</option>
+            <option>University of Nottingham Malaysia</option>
+            <option id="opt_uniOther"></option>
+          </select>
+        </div>
+        <div class="form-fg"><label id="lbl_start"></label>
+          <select id="f_start">
+            <option value="" id="opt_startAny"></option>
+            <option value="feb2026">February 2026</option>
+            <option value="apr2026">April 2026</option>
+            <option value="jul2026">July 2026</option>
+            <option value="sep2026">September 2026</option>
+            <option value="jan2027">January 2027</option>
+          </select>
+        </div>
+        <div class="form-fg fg-full"><label id="lbl_notes"></label><textarea id="f_notes"></textarea></div>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Documents ── -->
+    <div class="form-step" id="step2" style="display:none">
+      <div class="form-title" id="step3Title">📎</div>
+      <p id="docNote" style="font-size:13px;color:var(--muted);margin-bottom:20px"></p>
+      <div style="display:flex;flex-direction:column;gap:16px" id="docUploadZones"></div>
+    </div>
+
+    <!-- ── STEP 4: Review ── -->
+    <div class="form-step" id="step3" style="display:none">
+      <div class="form-title" id="step4Title">✅</div>
+      <div id="reviewContent"></div>
+      <div id="confirmNote" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px 16px;margin-top:16px;font-size:13px;color:#065f46"></div>
+    </div>
+
+  </div>
+  <div class="form-nav">
+    <button class="btn btn-ghost" id="prevBtn" onclick="prevStep()" style="display:none" data-i18n="btnPrev">← Previous</button>
+    <span class="step-num" id="stepNumLabel"></span>
+    <button class="btn btn-p" id="nextBtn" onclick="nextStep()" data-i18n="btnNext">Next →</button>
+    <button class="btn btn-g" id="submitBtn" onclick="submitApp()" style="display:none" data-i18n="btnSubmit">🚀 Submit</button>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ══ SUCCESS ══ -->
+<div id="successScreen" style="display:none">
+<div class="container">
+  <div class="success-icon">🎉</div>
+  <h2 data-i18n="successTitle">Application Submitted Successfully!</h2>
+  <p data-i18n="successDesc">The EduPath team will contact you within 24–48 hours.</p>
+  <div class="app-ref-box">
+    <div class="rl" data-i18n="successRefLabel">Reference Number</div>
+    <div class="rv" id="successAppId">—</div>
+  </div>
+  <br/>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn btn-p" onclick="showDashboard()" data-i18n="btnTrackApp">📊 Track Application</button>
+    <a href="https://wa.me/60123456789" class="btn btn-g" id="successWA" target="_blank" data-i18n="btnContactSuccess">💬 Contact Us</a>
+  </div>
+</div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════
+   TRANSLATIONS
+════════════════════════════════════════════ */
+const APPLY_I18N = {
+  en:{
+    dir:'ltr', title:'Student Application Portal – EduPath',
+    portalTitle:'EduPath — Student Portal', backHome:'← Main Website', logout:'Logout',
+    authTitle:'Application Portal', authSub:'Sign in to track your application or create a new account',
+    tabLogin:'Login', tabRegister:'New Account',
+    labelEmail:'Email Address', labelPassword:'Password', labelName:'Full Name',
+    labelPhone:'WhatsApp / Phone', labelNat:'Nationality',
+    placeholderNat:'Select your nationality', placeholderPw:'At least 8 characters',
+    btnLogin:'Sign In →', errLogin:'❌ Incorrect email or password',
+    btnRegister:'Create Account →', errRegister:'❌ An error occurred, check your details',
+    welcomeSub:'Track your application and upload documents here',
+    noAppTitle:'No Application Yet',
+    noAppDesc:'Submit your Malaysia university application now — Full service $699',
+    btnStartApp:'🎓 Submit New Application',
+    appStatusTitle:'Your Application Status', adminNoteLabel:'Note from the Team',
+    docsTitle:'📎 Required Documents', btnContactWA:'💬 Contact Us', btnUpdateApp:'✏️ Update Application',
+    formTitle:'🎓 Malaysia University Application',
+    formSub:'Complete all steps to submit your application',
+    step1Title:'👤 Personal Information', step2Title:'🎓 Academic Background & Program',
+    step3Title:'📎 Document Upload', step4Title:'✅ Review & Confirm',
+    stepLabel:'Step {n} of 4',
+    lbl_name:'Full Name', fNamePh:'Name as in passport',
+    lbl_dob:'Date of Birth', lbl_nat:'Nationality', fNatPh:'Select...',
+    lbl_passport:'Passport Number', lbl_phone:'Phone / WhatsApp',
+    lbl_email:'Email Address', lbl_address:'Current Address', fAddressPh:'City, Country',
+    lbl_level:'Current Education Level', fLevelPh:'Select...',
+    lbl_school:'Last School / University', fSchoolPh:'Institution name',
+    lbl_gpa:'GPA / Grade', lbl_english:'English Level', fEngPh:'Select...',
+    lbl_program:'Desired Program', fProgramPh:'Select...', programOther:'Other',
+    lbl_uni:'Target University', uniAny:'Any suitable university', uniOther:'Other',
+    lbl_start:'Preferred Start Date', startAny:'Any date',
+    lbl_notes:'Additional Notes', fNotesPh:'Any details or questions...',
+    opt_hs:'High School', opt_diploma:'Diploma', opt_bachelor:"Bachelor's", opt_master:"Master's",
+    opt_engNoCert:'No Certificate', opt_engSchool:'School-level English only',
+    docNote:'You can upload files now or later from your dashboard. Accepted: PDF, JPG, PNG (max 5MB each)',
+    confirmNote:'✅ By submitting this application, you confirm all information is accurate and agree to share your data with EduPath for university application purposes.',
+    btnPrev:'← Previous', btnNext:'Next →', btnSubmit:'🚀 Submit Application',
+    successTitle:'Application Submitted Successfully!',
+    successDesc:'The EduPath team will contact you within 24–48 hours. You can track your application status from the dashboard at any time.',
+    successRefLabel:'Reference Number', btnTrackApp:'📊 Track My Application', btnContactSuccess:'💬 Contact Us',
+    docPassport:'Passport Copy', docPassportNote:'Personal data page, clearly visible',
+    docPhoto:'Recent Passport Photo', docPhotoNote:'White background, suitable for applications',
+    docTranscript:'Graduation Certificate / Transcript', docTranscriptNote:'Certified by relevant authority',
+    docEnglish:'English Certificate', docEnglishNote:'IELTS / TOEFL — optional',
+    docBank:'Bank Statement', docBankNote:'Last 3 months — for visa',
+    docExtra:'Additional Document', docExtraNote:'Any other document you wish to attach',
+    statusNew:'Application Received 🆕', statusReview:'Under Review 👀', statusDocs:'Missing Documents 📎',
+    statusAccepted:'Accepted ✅', statusVisa:'Visa Processing 🛂', statusEnrolled:'Enrolled 🎓', statusRejected:'Rejected ❌',
+    psReceived:'Received', psReview:'Review', psAccepted:'Accepted', psVisa:'Visa', psEnrolled:'Enrolled',
+    reviewPersonal:'Personal Information', reviewAcademic:'Academic Information', reviewDocs:'Uploaded Documents',
+    rvName:'Full Name', rvDob:'Date of Birth', rvNat:'Nationality', rvPassport:'Passport',
+    rvPhone:'Phone', rvEmail:'Email', rvLevel:'Level', rvProgram:'Program',
+    rvUni:'University', rvEnglish:'English', rvStart:'Start Date', rvGpa:'GPA',
+    valRequired:'❌ Please fill in all required fields',
+    valLevelProgram:'❌ Please select your level and program',
+    valRegEmail:'❌ This email is already registered',
+    valRegFields:'❌ Please fill in all required fields',
+    valPwLen:'❌ Password must be at least 6 characters',
+    valLoginFail:'❌ Incorrect email or password',
+    uploadRequired:'Required', uploadOptional:'Optional', uploadBtnLabel:'📎 Upload',
+    docSubmitted:'Uploaded', docApproved:'✅ Approved', docPending:'⏳ Under Review',
+    docMissing:'❌ Required', docOptional:'— Optional',
+  },
+  ar:{
+    dir:'rtl', title:'بوابة التقديم للطلاب – EduPath',
+    portalTitle:'EduPath — بوابة الطلاب', backHome:'← الموقع الرئيسي', logout:'تسجيل الخروج',
+    authTitle:'بوابة تقديم الطلبات', authSub:'سجّل دخولك لتتابع طلبك أو أنشئ حساباً جديداً',
+    tabLogin:'تسجيل الدخول', tabRegister:'حساب جديد',
+    labelEmail:'البريد الإلكتروني', labelPassword:'كلمة المرور', labelName:'الاسم الكامل',
+    labelPhone:'واتساب / جوال', labelNat:'الجنسية',
+    placeholderNat:'اختر جنسيتك', placeholderPw:'8 أحرف على الأقل',
+    btnLogin:'دخول →', errLogin:'❌ البريد الإلكتروني أو كلمة المرور غير صحيحة',
+    btnRegister:'إنشاء الحساب →', errRegister:'❌ حدث خطأ، تحقق من البيانات',
+    welcomeSub:'تابع طلبك وارفع مستنداتك من هنا',
+    noAppTitle:'لم تقدّم طلبك بعد',
+    noAppDesc:'قدّم طلب القبول في جامعات ماليزيا الآن — خدمة كاملة بـ 699$',
+    btnStartApp:'🎓 تقديم طلب جديد',
+    appStatusTitle:'حالة طلبك', adminNoteLabel:'ملاحظة من الفريق',
+    docsTitle:'📎 المستندات المطلوبة', btnContactWA:'💬 تواصل معنا', btnUpdateApp:'✏️ تحديث الطلب',
+    formTitle:'🎓 طلب القبول في ماليزيا',
+    formSub:'أكمل جميع الخطوات لتقديم طلبك بنجاح',
+    step1Title:'👤 المعلومات الشخصية', step2Title:'🎓 المؤهل الدراسي والبرنامج المطلوب',
+    step3Title:'📎 رفع المستندات', step4Title:'✅ مراجعة وتأكيد الطلب',
+    stepLabel:'الخطوة {n} من 4',
+    lbl_name:'الاسم الكامل', fNamePh:'الاسم كما في جواز السفر',
+    lbl_dob:'تاريخ الميلاد', lbl_nat:'الجنسية', fNatPh:'اختر...',
+    lbl_passport:'رقم الجواز', lbl_phone:'الجوال / واتساب',
+    lbl_email:'البريد الإلكتروني', lbl_address:'العنوان الحالي', fAddressPh:'المدينة، الدولة',
+    lbl_level:'المستوى الحالي', fLevelPh:'اختر...',
+    lbl_school:'آخر مؤسسة تعليمية', fSchoolPh:'اسم المدرسة / الجامعة',
+    lbl_gpa:'المعدل التراكمي / الدرجة', lbl_english:'مستوى اللغة الإنجليزية', fEngPh:'اختر...',
+    lbl_program:'البرنامج / التخصص المطلوب', fProgramPh:'اختر...', programOther:'أخرى',
+    lbl_uni:'الجامعة المستهدفة', uniAny:'أي جامعة مناسبة', uniOther:'أخرى',
+    lbl_start:'موعد البدء المفضّل', startAny:'أي موعد',
+    lbl_notes:'ملاحظات إضافية', fNotesPh:'أي تفاصيل أو أسئلة إضافية...',
+    opt_hs:'ثانوية عامة', opt_diploma:'دبلوم', opt_bachelor:'بكالوريوس', opt_master:'ماجستير',
+    opt_engNoCert:'بدون شهادة', opt_engSchool:'دراسة إنجليزية فقط',
+    docNote:'يمكنك رفع الملفات الآن أو لاحقاً. الملفات المقبولة: PDF, JPG, PNG (حد أقصى 5MB)',
+    confirmNote:'✅ بتقديم هذا الطلب، تؤكد أن جميع المعلومات صحيحة وتوافق على مشاركة بياناتك مع EduPath لأغراض التقديم الجامعي.',
+    btnPrev:'→ السابق', btnNext:'التالي ←', btnSubmit:'🚀 تقديم الطلب',
+    successTitle:'تم تقديم طلبك بنجاح!',
+    successDesc:'سيتواصل معك فريق EduPath خلال 24-48 ساعة. يمكنك متابعة حالة طلبك من لوحة التحكم في أي وقت.',
+    successRefLabel:'رقم الطلب المرجعي', btnTrackApp:'📊 متابعة طلبي', btnContactSuccess:'💬 تواصل معنا',
+    docPassport:'صورة جواز السفر', docPassportNote:'صفحة البيانات الشخصية واضحة',
+    docPhoto:'صورة شخصية حديثة', docPhotoNote:'خلفية بيضاء، مناسبة للتقديم',
+    docTranscript:'شهادة التخرج / كشف الدرجات', docTranscriptNote:'مصدّقة من الجهة المختصة',
+    docEnglish:'شهادة اللغة الإنجليزية', docEnglishNote:'IELTS / TOEFL - اختياري',
+    docBank:'كشف الحساب البنكي', docBankNote:'آخر 3 أشهر - للتأشيرة',
+    docExtra:'مستند إضافي', docExtraNote:'أي وثيقة أخرى ترغب بإرفاقها',
+    statusNew:'تم استلام طلبك 🆕', statusReview:'قيد المراجعة 👀', statusDocs:'ملفات ناقصة 📎',
+    statusAccepted:'مقبول ✅', statusVisa:'تأشيرة 🛂', statusEnrolled:'مسجّل 🎓', statusRejected:'مرفوض ❌',
+    psReceived:'استلام\nالطلب', psReview:'مراجعة\nالملفات', psAccepted:'قبول\nالجامعة', psVisa:'التأشيرة', psEnrolled:'التسجيل',
+    reviewPersonal:'المعلومات الشخصية', reviewAcademic:'البيانات الأكاديمية', reviewDocs:'المستندات المرفوعة',
+    rvName:'الاسم الكامل', rvDob:'تاريخ الميلاد', rvNat:'الجنسية', rvPassport:'الجواز',
+    rvPhone:'الجوال', rvEmail:'الإيميل', rvLevel:'المستوى', rvProgram:'البرنامج',
+    rvUni:'الجامعة', rvEnglish:'الإنجليزية', rvStart:'موعد البدء', rvGpa:'المعدل',
+    valRequired:'❌ يرجى ملء جميع الحقول الإلزامية',
+    valLevelProgram:'❌ يرجى اختيار المستوى والبرنامج',
+    valRegEmail:'❌ هذا البريد الإلكتروني مسجّل مسبقاً',
+    valRegFields:'❌ يرجى ملء جميع الحقول الإلزامية',
+    valPwLen:'❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل',
+    valLoginFail:'❌ البريد الإلكتروني أو كلمة المرور غير صحيحة',
+    uploadRequired:'مطلوب', uploadOptional:'اختياري', uploadBtnLabel:'📎 رفع',
+    docSubmitted:'تم الرفع', docApproved:'✅ موافق عليه', docPending:'⏳ قيد المراجعة',
+    docMissing:'❌ مطلوب', docOptional:'— اختياري',
+  },
+  ja:{
+    dir:'ltr', title:'学生入学ポータル – EduPath',
+    portalTitle:'EduPath — 学生ポータル', backHome:'← メインサイト', logout:'ログアウト',
+    authTitle:'入学申請ポータル', authSub:'ログインして申請を追跡するか、新しいアカウントを作成してください',
+    tabLogin:'ログイン', tabRegister:'新規登録',
+    labelEmail:'メールアドレス', labelPassword:'パスワード', labelName:'氏名',
+    labelPhone:'WhatsApp / 電話番号', labelNat:'国籍',
+    placeholderNat:'国籍を選択', placeholderPw:'8文字以上',
+    btnLogin:'ログイン →', errLogin:'❌ メールアドレスまたはパスワードが間違っています',
+    btnRegister:'アカウント作成 →', errRegister:'❌ エラーが発生しました。入力内容をご確認ください',
+    welcomeSub:'こちらから申請を追跡し、書類をアップロードできます',
+    noAppTitle:'まだ申請がありません',
+    noAppDesc:'マレーシアの大学に今すぐ申請 — 完全サービス $699',
+    btnStartApp:'🎓 新規申請',
+    appStatusTitle:'申請ステータス', adminNoteLabel:'チームからのメモ',
+    docsTitle:'📎 必要書類', btnContactWA:'💬 お問い合わせ', btnUpdateApp:'✏️ 申請を更新',
+    formTitle:'🎓 マレーシア大学入学申請',
+    formSub:'すべての手順を完了して申請を提出してください',
+    step1Title:'👤 個人情報', step2Title:'🎓 学歴・希望プログラム',
+    step3Title:'📎 書類アップロード', step4Title:'✅ 確認・提出',
+    stepLabel:'ステップ {n} / 4',
+    lbl_name:'氏名', fNamePh:'パスポート記載の氏名',
+    lbl_dob:'生年月日', lbl_nat:'国籍', fNatPh:'選択...',
+    lbl_passport:'パスポート番号', lbl_phone:'電話 / WhatsApp',
+    lbl_email:'メールアドレス', lbl_address:'現住所', fAddressPh:'市区町村、国',
+    lbl_level:'現在の学歴', fLevelPh:'選択...',
+    lbl_school:'最終学歴', fSchoolPh:'学校・大学名',
+    lbl_gpa:'GPA / 成績', lbl_english:'英語力', fEngPh:'選択...',
+    lbl_program:'希望プログラム', fProgramPh:'選択...', programOther:'その他',
+    lbl_uni:'志望大学', uniAny:'条件に合う大学ならどこでも', uniOther:'その他',
+    lbl_start:'入学希望時期', startAny:'いつでも可',
+    lbl_notes:'追加メモ', fNotesPh:'詳細や質問があればこちらに...',
+    opt_hs:'高校', opt_diploma:'短大・専門', opt_bachelor:'学士', opt_master:'修士',
+    opt_engNoCert:'証明書なし', opt_engSchool:'学校英語のみ',
+    docNote:'今すぐまたは後でダッシュボードからアップロードできます。PDF, JPG, PNG (最大5MB)',
+    confirmNote:'✅ 申請することで、すべての情報が正確であることを確認し、大学申請目的でのデータ共有に同意します。',
+    btnPrev:'← 前へ', btnNext:'次へ →', btnSubmit:'🚀 申請を提出',
+    successTitle:'申請が完了しました！',
+    successDesc:'EduPathチームが24〜48時間以内にご連絡します。ダッシュボードからいつでも申請状況を確認できます。',
+    successRefLabel:'申請番号', btnTrackApp:'📊 申請を追跡', btnContactSuccess:'💬 お問い合わせ',
+    docPassport:'パスポートコピー', docPassportNote:'個人情報ページを明確に',
+    docPhoto:'最近の証明写真', docPhotoNote:'白背景、申請用',
+    docTranscript:'卒業証明書 / 成績証明書', docTranscriptNote:'公認機関による認証',
+    docEnglish:'英語資格証明書', docEnglishNote:'IELTS / TOEFL — 任意',
+    docBank:'銀行明細書', docBankNote:'直近3ヶ月分 — ビザ用',
+    docExtra:'追加書類', docExtraNote:'添付したいその他の書類',
+    statusNew:'申請受付 🆕', statusReview:'審査中 👀', statusDocs:'書類不足 📎',
+    statusAccepted:'合格 ✅', statusVisa:'ビザ処理中 🛂', statusEnrolled:'入学済 🎓', statusRejected:'不合格 ❌',
+    psReceived:'受付', psReview:'審査', psAccepted:'合格', psVisa:'ビザ', psEnrolled:'入学',
+    reviewPersonal:'個人情報', reviewAcademic:'学歴情報', reviewDocs:'アップロード済み書類',
+    rvName:'氏名', rvDob:'生年月日', rvNat:'国籍', rvPassport:'パスポート',
+    rvPhone:'電話', rvEmail:'メール', rvLevel:'学歴', rvProgram:'プログラム',
+    rvUni:'大学', rvEnglish:'英語力', rvStart:'入学時期', rvGpa:'GPA',
+    valRequired:'❌ すべての必須項目を入力してください',
+    valLevelProgram:'❌ 学歴とプログラムを選択してください',
+    valRegEmail:'❌ このメールアドレスはすでに登録されています',
+    valRegFields:'❌ すべての必須項目を入力してください',
+    valPwLen:'❌ パスワードは6文字以上必要です',
+    valLoginFail:'❌ メールアドレスまたはパスワードが間違っています',
+    uploadRequired:'必須', uploadOptional:'任意', uploadBtnLabel:'📎 アップロード',
+    docSubmitted:'アップロード済み', docApproved:'✅ 承認済み', docPending:'⏳ 審査中',
+    docMissing:'❌ 必須', docOptional:'— 任意',
+  },
+  ko:{
+    dir:'ltr', title:'학생 입학 포털 – EduPath',
+    portalTitle:'EduPath — 학생 포털', backHome:'← 메인 사이트', logout:'로그아웃',
+    authTitle:'입학 신청 포털', authSub:'로그인하여 신청을 추적하거나 새 계정을 만드세요',
+    tabLogin:'로그인', tabRegister:'새 계정',
+    labelEmail:'이메일 주소', labelPassword:'비밀번호', labelName:'성명',
+    labelPhone:'WhatsApp / 전화번호', labelNat:'국적',
+    placeholderNat:'국적 선택', placeholderPw:'8자 이상',
+    btnLogin:'로그인 →', errLogin:'❌ 이메일 또는 비밀번호가 올바르지 않습니다',
+    btnRegister:'계정 만들기 →', errRegister:'❌ 오류가 발생했습니다. 입력 내용을 확인하세요',
+    welcomeSub:'신청을 추적하고 서류를 업로드하세요',
+    noAppTitle:'아직 신청서가 없습니다',
+    noAppDesc:'지금 말레이시아 대학에 지원하세요 — 완전 서비스 $699',
+    btnStartApp:'🎓 새 신청서 제출',
+    appStatusTitle:'신청 현황', adminNoteLabel:'팀 메모',
+    docsTitle:'📎 필요 서류', btnContactWA:'💬 문의하기', btnUpdateApp:'✏️ 신청 업데이트',
+    formTitle:'🎓 말레이시아 대학 입학 신청',
+    formSub:'모든 단계를 완료하여 신청서를 제출하세요',
+    step1Title:'👤 개인 정보', step2Title:'🎓 학력 및 희망 프로그램',
+    step3Title:'📎 서류 업로드', step4Title:'✅ 검토 및 확인',
+    stepLabel:'{n} / 4 단계',
+    lbl_name:'성명', fNamePh:'여권에 기재된 이름',
+    lbl_dob:'생년월일', lbl_nat:'국적', fNatPh:'선택...',
+    lbl_passport:'여권 번호', lbl_phone:'전화 / WhatsApp',
+    lbl_email:'이메일 주소', lbl_address:'현재 주소', fAddressPh:'시, 국가',
+    lbl_level:'현재 학력', fLevelPh:'선택...',
+    lbl_school:'최종 학교', fSchoolPh:'학교·대학교 이름',
+    lbl_gpa:'GPA / 성적', lbl_english:'영어 수준', fEngPh:'선택...',
+    lbl_program:'희망 전공', fProgramPh:'선택...', programOther:'기타',
+    lbl_uni:'목표 대학교', uniAny:'적합한 대학교', uniOther:'기타',
+    lbl_start:'희망 입학 시기', startAny:'언제든지',
+    lbl_notes:'추가 메모', fNotesPh:'추가 사항이나 질문을 입력하세요...',
+    opt_hs:'고등학교', opt_diploma:'전문대', opt_bachelor:'학사', opt_master:'석사',
+    opt_engNoCert:'자격증 없음', opt_engSchool:'학교 영어만',
+    docNote:'지금 또는 나중에 대시보드에서 파일을 업로드할 수 있습니다. PDF, JPG, PNG (최대 5MB)',
+    confirmNote:'✅ 이 신청서를 제출함으로써 모든 정보가 정확하며 대학 신청 목적으로 EduPath와 데이터를 공유하는 데 동의합니다.',
+    btnPrev:'← 이전', btnNext:'다음 →', btnSubmit:'🚀 신청서 제출',
+    successTitle:'신청서가 성공적으로 제출되었습니다!',
+    successDesc:'EduPath 팀이 24~48시간 내에 연락드릴 것입니다. 언제든지 대시보드에서 신청 현황을 확인할 수 있습니다.',
+    successRefLabel:'참조 번호', btnTrackApp:'📊 신청 추적', btnContactSuccess:'💬 문의하기',
+    docPassport:'여권 사본', docPassportNote:'개인 정보 페이지가 명확히 보여야 함',
+    docPhoto:'최근 증명 사진', docPhotoNote:'흰 배경, 신청용',
+    docTranscript:'졸업 증명서 / 성적 증명서', docTranscriptNote:'해당 기관 인증 필요',
+    docEnglish:'영어 자격증', docEnglishNote:'IELTS / TOEFL — 선택',
+    docBank:'은행 거래 내역서', docBankNote:'최근 3개월 — 비자용',
+    docExtra:'추가 서류', docExtraNote:'첨부하고 싶은 다른 서류',
+    statusNew:'신청 접수 🆕', statusReview:'심사 중 👀', statusDocs:'서류 부족 📎',
+    statusAccepted:'합격 ✅', statusVisa:'비자 처리 중 🛂', statusEnrolled:'등록 완료 🎓', statusRejected:'불합격 ❌',
+    psReceived:'접수', psReview:'심사', psAccepted:'합격', psVisa:'비자', psEnrolled:'등록',
+    reviewPersonal:'개인 정보', reviewAcademic:'학력 정보', reviewDocs:'업로드된 서류',
+    rvName:'성명', rvDob:'생년월일', rvNat:'국적', rvPassport:'여권',
+    rvPhone:'전화', rvEmail:'이메일', rvLevel:'학력', rvProgram:'전공',
+    rvUni:'대학교', rvEnglish:'영어', rvStart:'입학 시기', rvGpa:'GPA',
+    valRequired:'❌ 모든 필수 항목을 입력해 주세요',
+    valLevelProgram:'❌ 학력과 프로그램을 선택해 주세요',
+    valRegEmail:'❌ 이미 등록된 이메일 주소입니다',
+    valRegFields:'❌ 모든 필수 항목을 입력해 주세요',
+    valPwLen:'❌ 비밀번호는 6자 이상이어야 합니다',
+    valLoginFail:'❌ 이메일 또는 비밀번호가 올바르지 않습니다',
+    uploadRequired:'필수', uploadOptional:'선택', uploadBtnLabel:'📎 업로드',
+    docSubmitted:'업로드됨', docApproved:'✅ 승인됨', docPending:'⏳ 심사 중',
+    docMissing:'❌ 필수', docOptional:'— 선택',
+  },
+  ru:{
+    dir:'ltr', title:'Студенческий портал — EduPath',
+    portalTitle:'EduPath — Студенческий портал', backHome:'← На главный сайт', logout:'Выйти',
+    authTitle:'Портал подачи заявок', authSub:'Войдите, чтобы отслеживать заявку, или создайте новый аккаунт',
+    tabLogin:'Войти', tabRegister:'Новый аккаунт',
+    labelEmail:'Электронная почта', labelPassword:'Пароль', labelName:'Полное имя',
+    labelPhone:'WhatsApp / Телефон', labelNat:'Гражданство',
+    placeholderNat:'Выберите гражданство', placeholderPw:'Не менее 8 символов',
+    btnLogin:'Войти →', errLogin:'❌ Неверный email или пароль',
+    btnRegister:'Создать аккаунт →', errRegister:'❌ Произошла ошибка, проверьте данные',
+    welcomeSub:'Отслеживайте заявку и загружайте документы здесь',
+    noAppTitle:'Заявка ещё не подана',
+    noAppDesc:'Подайте заявку в малайзийский университет — полный сервис $699',
+    btnStartApp:'🎓 Подать заявку',
+    appStatusTitle:'Статус заявки', adminNoteLabel:'Заметка от команды',
+    docsTitle:'📎 Необходимые документы', btnContactWA:'💬 Связаться с нами', btnUpdateApp:'✏️ Обновить заявку',
+    formTitle:'🎓 Заявка в университет Малайзии',
+    formSub:'Заполните все шаги для подачи заявки',
+    step1Title:'👤 Личная информация', step2Title:'🎓 Образование и программа',
+    step3Title:'📎 Загрузка документов', step4Title:'✅ Проверка и подтверждение',
+    stepLabel:'Шаг {n} из 4',
+    lbl_name:'Полное имя', fNamePh:'Имя как в паспорте',
+    lbl_dob:'Дата рождения', lbl_nat:'Гражданство', fNatPh:'Выбрать...',
+    lbl_passport:'Номер паспорта', lbl_phone:'Телефон / WhatsApp',
+    lbl_email:'Электронная почта', lbl_address:'Текущий адрес', fAddressPh:'Город, страна',
+    lbl_level:'Текущий уровень образования', fLevelPh:'Выбрать...',
+    lbl_school:'Последнее учебное заведение', fSchoolPh:'Название школы / университета',
+    lbl_gpa:'GPA / Оценки', lbl_english:'Уровень английского', fEngPh:'Выбрать...',
+    lbl_program:'Желаемая программа', fProgramPh:'Выбрать...', programOther:'Другое',
+    lbl_uni:'Целевой университет', uniAny:'Любой подходящий университет', uniOther:'Другое',
+    lbl_start:'Желаемая дата начала', startAny:'Любое время',
+    lbl_notes:'Дополнительные заметки', fNotesPh:'Любые детали или вопросы...',
+    opt_hs:'Средняя школа', opt_diploma:'Диплом', opt_bachelor:'Бакалавр', opt_master:'Магистр',
+    opt_engNoCert:'Без сертификата', opt_engSchool:'Только школьный английский',
+    docNote:'Файлы можно загрузить сейчас или позже из панели. PDF, JPG, PNG (макс. 5MB)',
+    confirmNote:'✅ Отправляя эту заявку, вы подтверждаете точность всех данных и соглашаетесь на передачу информации в EduPath.',
+    btnPrev:'← Назад', btnNext:'Далее →', btnSubmit:'🚀 Отправить заявку',
+    successTitle:'Заявка успешно отправлена!',
+    successDesc:'Команда EduPath свяжется с вами в течение 24–48 часов. Вы можете отслеживать статус заявки в панели управления.',
+    successRefLabel:'Номер заявки', btnTrackApp:'📊 Отследить заявку', btnContactSuccess:'💬 Связаться с нами',
+    docPassport:'Копия паспорта', docPassportNote:'Страница с личными данными',
+    docPhoto:'Недавнее фото', docPhotoNote:'Белый фон, для заявки',
+    docTranscript:'Диплом / Транскрипт оценок', docTranscriptNote:'Заверенный соответствующим органом',
+    docEnglish:'Сертификат по английскому', docEnglishNote:'IELTS / TOEFL — необязательно',
+    docBank:'Банковская выписка', docBankNote:'За последние 3 месяца — для визы',
+    docExtra:'Дополнительный документ', docExtraNote:'Любой другой документ',
+    statusNew:'Заявка получена 🆕', statusReview:'На рассмотрении 👀', statusDocs:'Недостаёт документов 📎',
+    statusAccepted:'Принят ✅', statusVisa:'Оформление визы 🛂', statusEnrolled:'Зачислен 🎓', statusRejected:'Отклонён ❌',
+    psReceived:'Получено', psReview:'Проверка', psAccepted:'Принят', psVisa:'Виза', psEnrolled:'Зачисл.',
+    reviewPersonal:'Личная информация', reviewAcademic:'Академическая информация', reviewDocs:'Загруженные документы',
+    rvName:'Полное имя', rvDob:'Дата рождения', rvNat:'Гражданство', rvPassport:'Паспорт',
+    rvPhone:'Телефон', rvEmail:'Почта', rvLevel:'Уровень', rvProgram:'Программа',
+    rvUni:'Университет', rvEnglish:'Английский', rvStart:'Дата начала', rvGpa:'GPA',
+    valRequired:'❌ Пожалуйста, заполните все обязательные поля',
+    valLevelProgram:'❌ Пожалуйста, выберите уровень и программу',
+    valRegEmail:'❌ Этот email уже зарегистрирован',
+    valRegFields:'❌ Пожалуйста, заполните все обязательные поля',
+    valPwLen:'❌ Пароль должен содержать не менее 6 символов',
+    valLoginFail:'❌ Неверный email или пароль',
+    uploadRequired:'Обяз.', uploadOptional:'Необяз.', uploadBtnLabel:'📎 Загрузить',
+    docSubmitted:'Загружено', docApproved:'✅ Одобрено', docPending:'⏳ На проверке',
+    docMissing:'❌ Обяз.', docOptional:'— Необяз.',
+  }
+};
+
+/* ════════════════════════════════════════════
+   LANGUAGE
+════════════════════════════════════════════ */
+let _lang = localStorage.getItem('lang') || 'ar';
+if(!APPLY_I18N[_lang]) _lang = 'ar';
+
+function t(k){ return (APPLY_I18N[_lang]||APPLY_I18N.ar)[k] || (APPLY_I18N.en[k]) || k; }
+
+/* ── Language switcher UI ── */
+const LANG_FLAGS = { ar:'🇸🇦', en:'🇬🇧', ja:'🇯🇵', ko:'🇰🇷', ru:'🇷🇺' };
+function updateLangUI(){
+  const btn = document.getElementById('langCurrent');
+  if(btn) btn.textContent = LANG_FLAGS[_lang] || '🌐';
+  document.querySelectorAll('.lang-opt').forEach(o=>{
+    o.classList.toggle('active', o.dataset.l === _lang);
+  });
+}
+function toggleLangDrop(e){
+  e.stopPropagation();
+  document.getElementById('langSw').classList.toggle('open');
+}
+function switchLang(l){
+  if(!APPLY_I18N[l]) return;
+  _lang = l;
+  localStorage.setItem('lang', l);
+  document.getElementById('langSw').classList.remove('open');
+  applyLang();
+  updateLangUI();
+  // Re-render dynamic content that uses t()
+  if(_session){ renderDashboard(); }
+}
+// Close dropdown when clicking outside
+document.addEventListener('click', ()=>{ const sw=document.getElementById('langSw'); if(sw) sw.classList.remove('open'); });
+
+function applyLang(){
+  const dir = t('dir');
+  document.documentElement.lang = _lang;
+  document.documentElement.dir  = dir;
+  document.title = t('title');
+
+  // data-i18n static elements
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    el.textContent = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{
+    el.placeholder = t(el.getAttribute('data-i18n-ph'));
+  });
+
+  // Labels (use id-based approach for form labels)
+  const lblIds = ['lbl_name','lbl_dob','lbl_nat','lbl_passport','lbl_phone','lbl_email','lbl_address',
+                  'lbl_level','lbl_school','lbl_gpa','lbl_english','lbl_program','lbl_uni','lbl_start','lbl_notes'];
+  lblIds.forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=t(id); });
+
+  // Select options
+  const optMap = {
+    opt_natPh:'placeholderNat', opt_levelPh:'fLevelPh', opt_hs:'opt_hs', opt_diploma:'opt_diploma',
+    opt_bachelor:'opt_bachelor', opt_master:'opt_master', opt_engPh:'fEngPh',
+    opt_engNoCert:'opt_engNoCert', opt_engSchool:'opt_engSchool', opt_programPh:'fProgramPh',
+    opt_programOther:'programOther', opt_uniAny:'uniAny', opt_uniOther:'uniOther', opt_startAny:'startAny'
+  };
+  Object.entries(optMap).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.textContent=t(key); });
+
+  // Placeholders for form inputs
+  const phMap = {f_name:'fNamePh', f_address:'fAddressPh', f_lastschool:'fSchoolPh', f_notes:'fNotesPh'};
+  Object.entries(phMap).forEach(([id,key])=>{ const el=document.getElementById(id); if(el) el.placeholder=t(key); });
+
+  // Form sections
+  ['formTitle','formSub','step1Title','step2Title','step3Title','step4Title','docNote','confirmNote'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent=t(id);
+  });
+
+  // Dashboard dynamic text elements
+  ['noAppTitle','noAppDesc','btnStartApp','appStatusTitle','docsTitle','adminNoteLabel',
+   'btnContactWA','btnUpdateApp'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.textContent=t(id);
+  });
+
+  // RTL tweaks for prev/next button directions in form nav
+  const p = document.getElementById('prevBtn');
+  const n = document.getElementById('nextBtn');
+  if(p) p.textContent = t('btnPrev');
+  if(n) n.textContent = t('btnNext');
+
+  // Update flag icon in switcher
+  updateLangUI();
+}
+
+/* ════════════════════════════════════════════
+   CONSTANTS & STATE
+════════════════════════════════════════════ */
+const SK = {
+  students:     'ep_students',
+  applications: 'ep_applications',
+  session:      'ep_student_session',
+  settings:     'ep_settings',
+};
+
+function getDOC_DEFS(){
+  return [
+    { key:'passport',   label:t('docPassport'),   icon:'🛂', required:true,  accept:'image/*,.pdf', note:t('docPassportNote') },
+    { key:'photo',      label:t('docPhoto'),       icon:'📸', required:true,  accept:'image/*',      note:t('docPhotoNote') },
+    { key:'transcript', label:t('docTranscript'),  icon:'📜', required:true,  accept:'.pdf,image/*', note:t('docTranscriptNote') },
+    { key:'english',    label:t('docEnglish'),     icon:'🏆', required:false, accept:'.pdf,image/*', note:t('docEnglishNote') },
+    { key:'bank',       label:t('docBank'),        icon:'🏦', required:false, accept:'.pdf',         note:t('docBankNote') },
+    { key:'extra',      label:t('docExtra'),       icon:'📁', required:false, accept:'*',            note:t('docExtraNote') },
+  ];
+}
+
+function getSTATUS_INFO(){
+  return {
+    new:      { label:t('statusNew'),      cls:'status-new',      steps:1 },
+    review:   { label:t('statusReview'),   cls:'status-review',   steps:2 },
+    docs:     { label:t('statusDocs'),     cls:'status-docs',     steps:2 },
+    accepted: { label:t('statusAccepted'), cls:'status-accepted', steps:4 },
+    visa:     { label:t('statusVisa'),     cls:'status-visa',     steps:5 },
+    enrolled: { label:t('statusEnrolled'), cls:'status-enrolled', steps:6 },
+    rejected: { label:t('statusRejected'), cls:'status-rejected', steps:1 },
+  };
+}
+
+function getSTEPS_DEF(){
+  return [
+    { label:t('psReceived'), icon:'📥' },
+    { label:t('psReview'),   icon:'👀' },
+    { label:t('psAccepted'), icon:'✅' },
+    { label:t('psVisa'),     icon:'🛂' },
+    { label:t('psEnrolled'), icon:'🎓' },
+  ];
+}
+
+let _session = null;
+let _formStep = 0;
+let _formDocs = {};
+
+/* ════════════════════════════════════════════
+   STORAGE HELPERS
+════════════════════════════════════════════ */
+function lsGet(k){ try { return JSON.parse(localStorage.getItem(k)||'[]'); } catch{ return []; } }
+function lsGetObj(k){ try { return JSON.parse(localStorage.getItem(k)||'{}'); } catch{ return {}; } }
+function lsSet(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+function genId(prefix){ return prefix+'-'+new Date().getFullYear().toString().slice(2)+(String(new Date().getMonth()+1).padStart(2,'0'))+'-'+Math.floor(1000+Math.random()*9000); }
+function hashPw(pw){ let h=0; for(const c of pw){h=((h<<5)-h)+c.charCodeAt(0);h|=0;} return h.toString(36); }
+
+/* ════════════════════════════════════════════
+   ADMIN SETTINGS (WhatsApp, theme)
+════════════════════════════════════════════ */
+(function applySettings(){
+  const cfg = lsGetObj(SK.settings);
+  const r = document.documentElement;
+  if(cfg.primaryColor)     r.style.setProperty('--p', cfg.primaryColor);
+  if(cfg.primaryDarkColor) r.style.setProperty('--pd', cfg.primaryDarkColor);
+  if(cfg.accentColor)      r.style.setProperty('--acc', cfg.accentColor);
+  const wa = cfg.whatsapp||'60123456789';
+  document.querySelectorAll('a[href*="wa.me"]').forEach(a=>{
+    a.href = a.href.replace(/wa\.me\/\d+/, 'wa.me/'+wa);
+  });
+  const waLink = `https://wa.me/${wa}`;
+  document.getElementById('contactWA').href = waLink;
+  document.getElementById('successWA').href = waLink;
+})();
+
+/* ════════════════════════════════════════════
+   AUTH
+════════════════════════════════════════════ */
+function switchAuth(mode, el){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(mode+'Form').classList.add('active');
+}
+
+function doLogin(){
+  const email = document.getElementById('l_email').value.trim().toLowerCase();
+  const pw    = document.getElementById('l_pw').value;
+  const err   = document.getElementById('loginErr');
+  err.style.display='none';
+  if(!email||!pw){ err.textContent=t('errLogin'); err.style.display='block'; return; }
+  const students = lsGet(SK.students);
+  const std = students.find(s=>s.email.toLowerCase()===email && s.pwHash===hashPw(pw));
+  if(!std){ err.textContent=t('errLogin'); err.style.display='block'; return; }
+  startSession(std);
+}
+
+function doRegister(){
+  const name  = document.getElementById('r_name').value.trim();
+  const email = document.getElementById('r_email').value.trim().toLowerCase();
+  const phone = document.getElementById('r_phone').value.trim();
+  const nat   = document.getElementById('r_nat').value;
+  const pw    = document.getElementById('r_pw').value;
+  const err   = document.getElementById('registerErr');
+  err.style.display='none';
+  if(!name||!email||!phone||!pw){ err.textContent=t('valRegFields'); err.style.display='block'; return; }
+  if(pw.length<6){ err.textContent=t('valPwLen'); err.style.display='block'; return; }
+  const students = lsGet(SK.students);
+  if(students.find(s=>s.email.toLowerCase()===email)){ err.textContent=t('valRegEmail'); err.style.display='block'; return; }
+  const std = { id:genId('STD'), name, email, phone, nationality:nat, pwHash:hashPw(pw), createdAt:new Date().toISOString() };
+  students.push(std);
+  lsSet(SK.students, students);
+  startSession(std);
+}
+
+function startSession(std){
+  _session = std;
+  localStorage.setItem(SK.session, std.id);
+  document.getElementById('logoutBtn').style.display='block';
+  document.getElementById('authScreen').style.display='none';
+  showDashboard();
+}
+
+function doLogout(){
+  localStorage.removeItem(SK.session);
+  _session=null;
+  location.reload();
+}
+
+/* ════════════════════════════════════════════
+   DASHBOARD
+════════════════════════════════════════════ */
+function showDashboard(){
+  document.getElementById('authScreen').style.display='none';
+  document.getElementById('appFormWrap').style.display='none';
+  document.getElementById('successScreen').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  renderDashboard();
+}
+
+function renderDashboard(){
+  if(!_session) return;
+  const cfg = lsGetObj(SK.settings);
+  const wa = cfg.whatsapp||'60123456789';
+  document.getElementById('contactWA').href = `https://wa.me/${wa}`;
+  document.getElementById('contactWA').textContent = t('btnContactWA');
+  document.getElementById('btnUpdateApp').textContent = t('btnUpdateApp');
+  document.getElementById('welcomeTitle').textContent = `${_session.name.split(' ')[0]} 👋`;
+  document.getElementById('welcomeSub').textContent = t('welcomeSub');
+
+  const apps = lsGet(SK.applications);
+  const myApp = apps.filter(a=>a.studentId===_session.id).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+
+  if(!myApp){
+    document.getElementById('welcomeId').textContent = t('noAppTitle');
+    document.getElementById('noAppSection').style.display='block';
+    document.getElementById('appStatusSection').style.display='none';
+    document.getElementById('noAppTitle').textContent = t('noAppTitle');
+    document.getElementById('noAppDesc').textContent = t('noAppDesc');
+    document.getElementById('btnStartApp').textContent = t('btnStartApp');
+  } else {
+    document.getElementById('welcomeId').textContent = myApp.id;
+    document.getElementById('noAppSection').style.display='none';
+    document.getElementById('appStatusSection').style.display='block';
+    document.getElementById('appStatusTitle').textContent = t('appStatusTitle');
+    document.getElementById('docsTitle').textContent = t('docsTitle');
+    document.getElementById('adminNoteLabel').textContent = t('adminNoteLabel');
+    renderAppStatus(myApp);
+  }
+}
+
+function renderAppStatus(app){
+  document.getElementById('appIdLabel').textContent = app.id;
+  const STATUS_INFO = getSTATUS_INFO();
+  const STEPS_DEF   = getSTEPS_DEF();
+  const info = STATUS_INFO[app.status]||STATUS_INFO.new;
+  const badge = document.getElementById('appStatusBadge');
+  badge.textContent = info.label;
+  badge.className = 'status-badge '+info.cls;
+
+  // Progress steps
+  const pSteps = document.getElementById('progressSteps');
+  const progressPct = Math.min(100, Math.round((info.steps-1)/(STEPS_DEF.length-1)*100));
+  pSteps.innerHTML = `<div class="ps-track" style="width:${progressPct}%"></div>` +
+    STEPS_DEF.map((s,i)=>{
+      const done = i < info.steps-1;
+      const active = i === info.steps-1;
+      const cls = done?'done':active?'active':'pending';
+      const lbl = done?'done':active?'active':'pending';
+      return `<div class="ps-item"><div class="ps-dot ${cls}">${done?'✓':i+1}</div><div class="ps-label ${lbl}">${s.label.replace('\n','<br/>')}</div></div>`;
+    }).join('');
+
+  // Admin note
+  if(app.adminNotes){
+    document.getElementById('adminNoteBox').style.display='flex';
+    document.getElementById('adminNoteText').textContent = app.adminNotes;
+  } else {
+    document.getElementById('adminNoteBox').style.display='none';
+  }
+
+  // Documents checklist
+  const docs = app.documents||{};
+  const DOC_DEFS = getDOC_DEFS();
+  const cfg = lsGetObj(SK.settings);
+  document.getElementById('docChecklist').innerHTML = DOC_DEFS.map(d=>{
+    const doc = docs[d.key]||{};
+    let statusHtml, action='';
+    if(doc.approved){
+      statusHtml=`<span class="doc-status ds-approved">${t('docApproved')}</span>`;
+    } else if(doc.submitted){
+      statusHtml=`<span class="doc-status ds-pending">${t('docPending')}</span>`;
+    } else if(d.required){
+      statusHtml=`<span class="doc-status ds-missing">${t('docMissing')}</span>`;
+      action=`<label class="doc-upload-btn">${t('uploadBtnLabel')}<input type="file" accept="${d.accept}" style="display:none" onchange="uploadDoc('${d.key}',this,'${app.id}')"/></label>`;
+    } else {
+      statusHtml=`<span class="doc-status ds-missing">${t('docOptional')}</span>`;
+      action=`<label class="doc-upload-btn" style="background:var(--muted)">${t('uploadBtnLabel')}<input type="file" accept="${d.accept}" style="display:none" onchange="uploadDoc('${d.key}',this,'${app.id}')"/></label>`;
+    }
+    return `<div class="doc-item"><span class="doc-icon">${d.icon}</span>
+      <div class="doc-info"><strong>${d.label}</strong><small>${doc.submitted?t('docSubmitted')+' · '+(doc.name||''):d.note}</small></div>
+      ${statusHtml}${action}</div>`;
+  }).join('');
+}
+
+function uploadDoc(docKey, input, appId){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ alert(t('valRequired').replace('❌','❌ Max 5MB')); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const apps = lsGet(SK.applications);
+    const a = apps.find(x=>x.id===appId);
+    if(!a) return;
+    if(!a.documents) a.documents={};
+    a.documents[docKey]={submitted:true, name:file.name, data:e.target.result, submittedAt:new Date().toISOString(), approved:false};
+    if(!a.timeline) a.timeline=[];
+    const d = getDOC_DEFS().find(x=>x.key===docKey);
+    a.timeline.push({status:a.status, date:new Date().toISOString(), event:`${t('docSubmitted')}: ${d?.label||docKey}`, by:'student'});
+    lsSet(SK.applications, apps);
+    renderDashboard();
+    showToast('✅ '+t('docSubmitted')+'!');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ════════════════════════════════════════════
+   APPLICATION FORM
+════════════════════════════════════════════ */
+function startApplication(){
+  if(!_session) return;
+  _formStep = 0;
+  _formDocs = {};
+  setTimeout(()=>{
+    if(document.getElementById('f_name')) document.getElementById('f_name').value = _session.name||'';
+    if(document.getElementById('f_email')) document.getElementById('f_email').value = _session.email||'';
+    if(document.getElementById('f_phone')) document.getElementById('f_phone').value = _session.phone||'';
+    if(_session.nationality && document.getElementById('f_nat')){
+      const sel = document.getElementById('f_nat');
+      for(const o of sel.options){ if(o.value===_session.nationality||o.text.includes(_session.nationality.split(' ')[0])){ sel.value=o.value; break; } }
+    }
+  }, 50);
+  buildDocZones();
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('appFormWrap').style.display='block';
+  document.getElementById('successScreen').style.display='none';
+  showFormStep(0);
+}
+
+function buildDocZones(){
+  const DOC_DEFS = getDOC_DEFS();
+  document.getElementById('docUploadZones').innerHTML = DOC_DEFS.map(d=>`
+    <div style="border:1px solid var(--border);border-radius:12px;padding:16px;background:white">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:24px">${d.icon}</span>
+          <div>
+            <div style="font-size:13.5px;font-weight:700">${d.label} ${d.required?`<span style="color:var(--red);font-size:11px">*${t('uploadRequired')}</span>`:`<span style="color:var(--muted);font-size:11px">${t('uploadOptional')}</span>`}</div>
+            <div style="font-size:11.5px;color:var(--muted)">${d.note}</div>
+          </div>
+        </div>
+        <label style="cursor:pointer">
+          <div class="file-zone" style="min-width:140px;padding:12px 16px" id="fz_${d.key}">
+            <input type="file" accept="${d.accept}" onchange="handleFormDoc('${d.key}',this)" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%"/>
+            <div class="fz-icon">📂</div>
+            <strong>${t('uploadBtnLabel').replace('📎 ','')}</strong>
+          </div>
+        </label>
+      </div>
+      <div class="file-preview" id="fp_${d.key}"></div>
+    </div>`).join('');
+}
+
+function handleFormDoc(key, input){
+  const file = input.files[0];
+  if(!file) return;
+  if(file.size > 5*1024*1024){ alert('❌ Max 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _formDocs[key] = {submitted:true, name:file.name, data:e.target.result, submittedAt:new Date().toISOString(), approved:false};
+    const fp = document.getElementById('fp_'+key);
+    fp.textContent = '✅ '+file.name;
+    fp.classList.add('show');
+    document.getElementById('fz_'+key).style.borderColor='var(--green)';
+  };
+  reader.readAsDataURL(file);
+}
+
+function showFormStep(n){
+  document.querySelectorAll('.form-step').forEach((s,i)=>s.style.display=i===n?'block':'none');
+  document.querySelectorAll('.si-dot').forEach((d,i)=>{
+    d.className='si-dot'+(i<n?' done':i===n?' active':'');
+  });
+  document.getElementById('stepNumLabel').textContent = t('stepLabel').replace('{n}', n+1);
+  document.getElementById('prevBtn').style.display = n>0?'inline-flex':'none';
+  document.getElementById('nextBtn').style.display = n<3?'inline-flex':'none';
+  document.getElementById('submitBtn').style.display = n===3?'inline-flex':'none';
+  if(n===3) buildReview();
+  _formStep=n;
+}
+
+function nextStep(){
+  if(!validateStep(_formStep)) return;
+  showFormStep(_formStep+1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function prevStep(){
+  showFormStep(_formStep-1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateStep(n){
+  if(n===0){
+    const req = ['f_name','f_dob','f_nat','f_passport','f_phone'];
+    for(const id of req){
+      const el=document.getElementById(id);
+      if(!el||!el.value.trim()){
+        el&&(el.style.borderColor='var(--red)');
+        alert(t('valRequired')); return false;
+      }
+      el.style.borderColor='';
+    }
+  }
+  if(n===1){
+    const req=['f_level','f_program'];
+    for(const id of req){
+      const el=document.getElementById(id);
+      if(!el||!el.value){ el&&(el.style.borderColor='var(--red)'); alert(t('valLevelProgram')); return false; }
+      el.style.borderColor='';
+    }
+  }
+  return true;
+}
+
+function buildReview(){
+  const g = id => (document.getElementById(id)||{}).value||'—';
+  const optTxt = id => { const el=document.getElementById(id); return el?.options[el.selectedIndex]?.text||'—'; };
+  const DOC_DEFS = getDOC_DEFS();
+  document.getElementById('reviewContent').innerHTML = `
+    <div class="review-section">
+      <h4>${t('reviewPersonal')}</h4>
+      <div class="review-grid">
+        ${[[t('rvName'),g('f_name')],[t('rvDob'),g('f_dob')],[t('rvNat'),optTxt('f_nat')],[t('rvPassport'),g('f_passport')],[t('rvPhone'),g('f_phone')],[t('rvEmail'),g('f_email')]].map(([l,v])=>`<div class="rv"><span class="rl">${l}</span><span class="rval">${v}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="review-section">
+      <h4>${t('reviewAcademic')}</h4>
+      <div class="review-grid">
+        ${[[t('rvLevel'),optTxt('f_level')],[t('rvProgram'),optTxt('f_program')],[t('rvUni'),optTxt('f_uni')],[t('rvEnglish'),optTxt('f_english')],[t('rvStart'),optTxt('f_start')],[t('rvGpa'),g('f_gpa')]].map(([l,v])=>`<div class="rv"><span class="rl">${l}</span><span class="rval">${v}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="review-section">
+      <h4>${t('reviewDocs')}</h4>
+      <div class="doc-review">
+        ${DOC_DEFS.map(d=>`<span class="doc-chip ${_formDocs[d.key]?'ok':'no'}">${d.icon} ${d.label} ${_formDocs[d.key]?'✓':'✗'}</span>`).join('')}
+      </div>
+    </div>
+  `;
+  document.getElementById('confirmNote').textContent = t('confirmNote');
+}
+
+function submitApp(){
+  if(!_session) return;
+  const g = id => (document.getElementById(id)||{}).value?.trim()||'';
+  const optTxt = id => { const el=document.getElementById(id); return el?.options[el.selectedIndex]?.text||''; };
+  const appId = genId('APP');
+  const app = {
+    id: appId,
+    studentId: _session.id,
+    name: g('f_name')||_session.name,
+    email: g('f_email')||_session.email,
+    phone: g('f_phone')||_session.phone,
+    nationality: optTxt('f_nat')||_session.nationality,
+    passportNo: g('f_passport'),
+    dob: g('f_dob'),
+    address: g('f_address'),
+    level: g('f_level'),
+    lastSchool: g('f_lastschool'),
+    gpa: g('f_gpa'),
+    englishLevel: optTxt('f_english'),
+    program: optTxt('f_program'),
+    targetUni: optTxt('f_uni'),
+    startDate: optTxt('f_start'),
+    notes: g('f_notes'),
+    status: 'new',
+    paymentStatus: 'none',
+    paymentAmount: 0,
+    adminNotes: '',
+    documents: {..._formDocs},
+    timeline: [{status:'new', date:new Date().toISOString(), event:'Application submitted', by:'student'}],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  const apps = lsGet(SK.applications);
+  apps.push(app);
+  lsSet(SK.applications, apps);
+
+  // Show success
+  document.getElementById('appFormWrap').style.display='none';
+  document.getElementById('successAppId').textContent = appId;
+  document.getElementById('successScreen').style.display='block';
+  const cfg = lsGetObj(SK.settings);
+  const wa = cfg.whatsapp||'60123456789';
+  const msg = encodeURIComponent(`🎓 *New Application — EduPath*\n\n🔖 ID: ${appId}\n👤 Name: ${app.name}\n🌍 Nationality: ${app.nationality}\n📚 Program: ${app.program}\n🏛️ University: ${app.targetUni}\n📞 Phone: ${app.phone}\n📧 Email: ${app.email}`);
+  document.getElementById('successWA').href = `https://wa.me/${wa}?text=${msg}`;
+}
+
+/* ════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════ */
+let _toastT;
+function showToast(msg){
+  let toast = document.getElementById('pToast');
+  if(!toast){ toast=document.createElement('div'); toast.id='pToast'; toast.style.cssText='position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--green);color:white;border-radius:10px;padding:11px 22px;font-size:14px;font-weight:700;z-index:9999;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(5,150,105,.4)'; document.body.appendChild(toast); }
+  toast.textContent=msg; clearTimeout(_toastT);
+  setTimeout(()=>{toast.style.opacity='1';toast.style.transform='translateX(-50%) translateY(0)'},10);
+  _toastT=setTimeout(()=>{toast.style.opacity='0';toast.style.transform='translateX(-50%) translateY(-16px)'},3500);
+}
+
+/* ════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════ */
+(function init(){
+  // Apply language FIRST
+  applyLang();
+
+  // Restore session
+  const sid = localStorage.getItem(SK.session);
+  if(sid){
+    const std = lsGet(SK.students).find(s=>s.id===sid);
+    if(std){
+      _session=std;
+      document.getElementById('logoutBtn').style.display='block';
+      document.getElementById('authScreen').style.display='none';
+      showDashboard();
+    }
+  }
+})();
+</script>
+</body>
+</html>

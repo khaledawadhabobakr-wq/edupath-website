@@ -1,0 +1,2849 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>لوحة تحكم EduPath</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#0a5c8a;--pd:#074166;--pl:#e8f4fb;
+  --acc:#f59e0b;--acc-l:#fef3c7;
+  --green:#059669;--red:#dc2626;--purple:#7c3aed;
+  --text:#1e293b;--muted:#64748b;--border:#e2e8f0;
+  --bg:#f1f5f9;--white:#fff;
+  --r:10px;--sh:0 2px 12px rgba(0,0,0,.07);--sh-lg:0 8px 32px rgba(0,0,0,.12);
+}
+body{font-family:'Noto Kufi Arabic',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+input,select,textarea,button{font-family:inherit}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0f172a,var(--pd),var(--p))}
+.lc{background:var(--white);border-radius:24px;padding:52px 44px;width:380px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.3)}
+.lc-logo{width:72px;height:72px;background:var(--p);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:32px;box-shadow:0 8px 24px rgba(10,92,138,.4)}
+.lc h2{font-size:24px;font-weight:800;margin-bottom:6px}
+.lc p{font-size:13px;color:var(--muted);margin-bottom:28px}
+.lc input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;font-size:15px;outline:none;transition:.2s;text-align:center;letter-spacing:5px;background:var(--bg)}
+.lc input:focus{border-color:var(--p);background:white;box-shadow:0 0 0 3px var(--pl)}
+.lc-btn{width:100%;margin-top:14px;background:var(--p);color:white;border:none;border-radius:10px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;transition:.2s}
+.lc-btn:hover{background:var(--pd);transform:translateY(-1px);box-shadow:0 4px 16px rgba(10,92,138,.4)}
+.lc-err{color:var(--red);font-size:13px;margin-top:10px;display:none}
+.lc-hint{font-size:12px;color:var(--muted);margin-top:18px;background:var(--bg);border-radius:8px;padding:10px}
+
+/* ── TOP BAR ── */
+.topbar{background:linear-gradient(90deg,var(--pd),var(--p));color:white;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.tb-logo{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+.tb-logo-icon{background:rgba(255,255,255,.15);border-radius:9px;width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+.tb-right{display:flex;align-items:center;gap:8px}
+.tb-btn{border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:.2s;font-family:inherit}
+.tb-preview{background:var(--acc);color:white}.tb-preview:hover{background:#d97706}
+.tb-save{background:var(--green);color:white}.tb-save:hover{background:#047857}
+.tb-logout{background:rgba(255,255,255,.15);color:white}.tb-logout:hover{background:rgba(255,255,255,.25)}
+
+/* ── LAYOUT ── */
+#adminShell{display:none}
+.layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 64px)}
+
+/* ── SIDEBAR ── */
+.sidebar{background:white;border-left:1px solid var(--border);padding:16px 0;overflow-y:auto;position:sticky;top:64px;height:calc(100vh - 64px)}
+.nav-sec{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:14px 18px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 18px;font-size:13.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:.15s;border-right:3px solid transparent;user-select:none}
+.nav-item:hover{background:var(--bg);color:var(--p)}
+.nav-item.active{background:var(--pl);color:var(--p);border-right-color:var(--p)}
+.nav-item .ni{font-size:17px;width:22px;text-align:center;flex-shrink:0}
+.nav-badge{margin-right:auto;background:var(--p);color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:20px;text-align:center}
+
+/* ── CONTENT ── */
+.content{padding:28px;overflow-y:auto}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* ── PAGE TITLE ── */
+.page-title{font-size:22px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+
+/* ── CARDS ── */
+.card{background:white;border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px;box-shadow:var(--sh)}
+.card-title{font-size:15px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-title-left{display:flex;align-items:center;gap:8px}
+
+/* ── DASHBOARD STATS ── */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.dash-stat{background:white;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:var(--sh);text-align:center;transition:.2s;cursor:pointer}
+.dash-stat:hover{box-shadow:var(--sh-lg);transform:translateY(-2px)}
+.dash-stat .ds-icon{font-size:32px;margin-bottom:8px}
+.dash-stat .ds-num{font-size:28px;font-weight:800;color:var(--p)}
+.dash-stat .ds-label{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+.dash-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px}
+.dash-action{background:white;border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;text-decoration:none;color:var(--text)}
+.dash-action:hover{border-color:var(--p);background:var(--pl);transform:translateY(-1px)}
+.dash-action .da-icon{font-size:24px;width:44px;height:44px;border-radius:10px;background:var(--pl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.dash-action strong{font-size:14px;display:block;margin-bottom:2px}
+.dash-action span{font-size:12px;color:var(--muted)}
+
+/* ── FORM ── */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.form-grid.cols2{grid-template-columns:1fr 1fr}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-grid.col1{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:5px}
+.fg label{font-size:12px;font-weight:700;color:var(--muted)}
+.fg.full{grid-column:1/-1}
+.fg input,.fg select,.fg textarea{border:1.5px solid var(--border);border-radius:8px;padding:10px 13px;font-size:13.5px;outline:none;transition:.2s;background:var(--bg);color:var(--text)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--p);background:white;box-shadow:0 0 0 3px var(--pl)}
+.fg textarea{resize:vertical;min-height:90px;line-height:1.6}
+.fg .hint{font-size:11px;color:var(--muted)}
+.fg .char-count{font-size:11px;color:var(--muted);text-align:left;margin-top:2px}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;border:none;transition:.2s;font-family:inherit;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn-p{background:var(--p);color:white}.btn-p:hover{background:var(--pd)}
+.btn-g{background:var(--green);color:white}.btn-g:hover{background:#047857}
+.btn-r{background:var(--red);color:white}.btn-r:hover{background:#b91c1c}
+.btn-acc{background:var(--acc);color:white}.btn-acc:hover{background:#d97706}
+.btn-ghost{background:var(--bg);color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{border-color:var(--p);color:var(--p)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-icon{width:34px;height:34px;padding:0;justify-content:center;border-radius:8px}
+.btn-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+
+/* ── TABLE ── */
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{background:var(--bg);padding:10px 14px;text-align:right;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.data-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table tr:hover td{background:var(--bg)}
+.table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border)}
+
+/* ── TOGGLE ── */
+.toggle{position:relative;width:44px;height:25px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-s{position:absolute;inset:0;background:#cbd5e1;border-radius:25px;cursor:pointer;transition:.3s}
+.toggle input:checked+.toggle-s{background:var(--green)}
+.toggle-s::before{content:'';position:absolute;width:19px;height:19px;background:white;border-radius:50%;top:3px;right:3px;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-s::before{transform:translateX(-19px)}
+
+/* ── BADGES ── */
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-amber{background:var(--acc-l);color:#92400e}
+.badge-gray{background:var(--bg);color:var(--muted)}
+.badge-purple{background:#f3e8ff;color:#6b21a8}
+.badge-yellow{background:#fef3c7;color:#92400e}
+.badge-muted{background:#f1f5f9;color:#64748b}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:.25s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:20px;width:100%;max-width:720px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.3);transform:scale(.95);transition:.25s}
+.modal-overlay.open .modal{transform:scale(1)}
+.modal-header{padding:22px 24px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:white;z-index:10}
+.modal-header h3{font-size:17px;font-weight:800}
+.modal-close{background:var(--bg);border:none;border-radius:8px;width:34px;height:34px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s}
+.modal-close:hover{background:var(--border)}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:white}
+
+/* ── UNIVERSITIES ── */
+.uni-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--white);transition:.15s;margin-bottom:8px}
+.uni-row:hover{border-color:var(--p);background:var(--pl)}
+.uni-logo-preview{width:44px;height:44px;border-radius:10px;background:var(--pl);display:flex;align-items:center;justify-content:center;font-size:22px;overflow:hidden;flex-shrink:0;border:1px solid var(--border)}
+.uni-logo-preview img{width:100%;height:100%;object-fit:contain}
+.uni-row-info{flex:1;min-width:0}
+.uni-row-info strong{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.uni-row-info small{font-size:11.5px;color:var(--muted)}
+.uni-row-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* ── BLOG ── */
+.blog-row{display:flex;gap:14px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;transition:.15s}
+.blog-row:hover{border-color:var(--p);background:var(--pl)}
+.blog-emoji{width:44px;height:44px;background:var(--pl);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.blog-row-info{flex:1;min-width:0}
+.blog-row-info strong{font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
+.blog-row-meta{font-size:11.5px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}
+
+/* ── SCHOLARSHIPS ── */
+.schol-row{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;transition:.15s}
+.schol-row:hover{border-color:var(--green);background:#f0fdf4}
+.schol-icon-preview{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+
+/* ── COLORS ── */
+.color-palette{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px;margin-bottom:18px}
+.color-swatch{border:2px solid transparent;border-radius:10px;padding:8px;cursor:pointer;text-align:center;transition:.2s}
+.color-swatch:hover{transform:scale(1.05);border-color:var(--p)}
+.color-swatch.sel{border-color:var(--p);box-shadow:0 0 0 3px var(--pl)}
+.swatch-dot{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;border:2px solid rgba(0,0,0,.08)}
+.swatch-lbl{font-size:10.5px;font-weight:600;color:var(--text)}
+
+/* ── MEDIA GRID ── */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.media-item{border:1.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s;position:relative}
+.media-item:hover{border-color:var(--p);box-shadow:var(--sh-lg)}
+.media-thumb{height:100px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:36px;overflow:hidden}
+.media-thumb img{width:100%;height:100%;object-fit:cover}
+.media-info{padding:8px 10px;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media-del{position:absolute;top:6px;left:6px;background:var(--red);color:white;border:none;border-radius:6px;width:24px;height:24px;font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center}
+.media-item:hover .media-del{display:flex}
+
+/* ── HOMEPAGE SECTIONS ── */
+.section-item{border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;background:var(--white);transition:.15s}
+.section-item:hover{border-color:var(--p)}
+.si-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.si-num{width:32px;height:32px;background:var(--pl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--p);font-size:14px;flex-shrink:0}
+
+/* ── FAQ ── */
+.faq-row{border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;background:var(--white);cursor:pointer;transition:.15s}
+.faq-row:hover{border-color:var(--p);background:var(--pl)}
+.faq-q{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.faq-a{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-zone{border:2px dashed var(--border);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:.2s;background:var(--bg)}
+.img-upload-zone:hover,.img-upload-zone.drag{border-color:var(--p);background:var(--pl)}
+.img-upload-zone p{font-size:13px;color:var(--muted);margin-top:8px}
+.img-preview-box{width:100%;height:120px;border-radius:10px;overflow:hidden;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:40px;margin-top:10px}
+.img-preview-box img{width:100%;height:100%;object-fit:contain}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-16px);background:var(--green);color:white;border-radius:10px;padding:11px 22px;font-size:13.5px;font-weight:700;z-index:9999;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(5,150,105,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--red);box-shadow:0 4px 20px rgba(220,38,38,.4)}
+
+/* ── DANGER ── */
+.danger-zone{background:#fff1f2;border:1.5px solid #fecdd3;border-radius:12px;padding:20px}
+.danger-zone h4{color:var(--red);font-weight:800;margin-bottom:8px}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state .es-icon{font-size:44px;margin-bottom:12px}
+.empty-state p{font-size:13px}
+
+/* ── APPLICATIONS ── */
+.app-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;transition:.15s;cursor:pointer}
+.app-row:hover{border-color:var(--p);background:var(--pl)}
+.app-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--p),var(--pd));color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.app-info{flex:1;min-width:0}
+.app-info strong{font-size:13.5px;display:block;font-weight:700}
+.app-info small{font-size:11.5px;color:var(--muted)}
+.app-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+.app-status-new{background:#e0f2fe;color:#0369a1}
+.app-status-review{background:#fef3c7;color:#92400e}
+.app-status-docs{background:#fee2e2;color:#991b1b}
+.app-status-accepted{background:#d1fae5;color:#065f46}
+.app-status-visa{background:#f3e8ff;color:#6b21a8}
+.app-status-enrolled{background:#d1fae5;color:#065f46}
+.app-status-rejected{background:#fee2e2;color:#991b1b}
+.pay-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.pay-none{background:#f1f5f9;color:var(--muted)}
+.pay-partial{background:#fef3c7;color:#92400e}
+.pay-full{background:#d1fae5;color:#065f46}
+.doc-bar{display:flex;gap:4px;margin-top:6px}
+.doc-dot{width:10px;height:10px;border-radius:50%}
+.doc-dot.ok{background:#10b981}
+.doc-dot.missing{background:#e2e8f0}
+.app-detail-section{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.app-detail-section:last-child{border-bottom:none}
+.app-detail-section h4{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.detail-row{display:flex;flex-direction:column;gap:2px}
+.detail-row .dl{font-size:11px;color:var(--muted);font-weight:600}
+.detail-row .dv{font-size:13.5px;font-weight:600;color:var(--text)}
+.timeline{list-style:none;padding:0;position:relative}
+.timeline::before{content:'';position:absolute;right:7px;top:4px;bottom:4px;width:2px;background:var(--border)}
+.timeline li{display:flex;gap:14px;padding-bottom:16px;position:relative}
+.tl-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px;border:3px solid white;box-shadow:0 0 0 2px var(--border);z-index:1}
+.tl-dot.done{background:var(--green);box-shadow:0 0 0 2px var(--green)}
+.tl-dot.active{background:var(--p);box-shadow:0 0 0 2px var(--p)}
+.tl-dot.pending{background:var(--border)}
+.tl-text .tl-title{font-size:13px;font-weight:700}
+.tl-text .tl-date{font-size:11px;color:var(--muted)}
+
+/* ── STUDENTS ── */
+.std-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;transition:.15s;cursor:pointer}
+.std-row:hover{border-color:var(--p);background:var(--pl)}
+.std-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.std-info{flex:1;min-width:0}
+.std-info strong{font-size:13.5px;display:block;font-weight:700}
+.std-info small{font-size:11.5px;color:var(--muted)}
+
+/* ── SEARCH ── */
+.search-bar{position:relative;margin-bottom:14px}
+.search-bar input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:10px 14px 10px 38px;font-size:13.5px;outline:none;transition:.2s;background:var(--bg)}
+.search-bar input:focus{border-color:var(--p);background:white}
+.search-bar .si{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--muted)}
+
+/* ── PROGRESS ── */
+.upload-progress{width:100%;height:6px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.upload-progress-bar{height:100%;background:var(--p);border-radius:3px;transition:width .3s;width:0}
+
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .form-grid.cols2,.form-grid.cols3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="lc">
+    <div class="lc-logo">🎓</div>
+    <h2>لوحة تحكم EduPath</h2>
+    <p>أدخل كلمة المرور للوصول</p>
+    <input type="password" id="pwInput" placeholder="••••••••" autocomplete="current-password"/>
+    <button class="lc-btn" onclick="doLogin()">دخول إلى اللوحة →</button>
+    <div class="lc-err" id="loginErr">❌ كلمة المرور غير صحيحة</div>
+    <div class="lc-hint">كلمة المرور الافتراضية: <strong>edupath2026</strong></div>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div id="adminShell">
+  <div class="topbar">
+    <div class="tb-logo"><span class="tb-logo-icon">🎓</span> EduPath Admin</div>
+    <div class="tb-right">
+      <button class="tb-btn tb-save" onclick="saveAll()">💾 حفظ الكل</button>
+      <button class="tb-btn tb-preview" onclick="window.open('index.html','_blank')">👁 معاينة</button>
+      <button class="tb-btn tb-logout" onclick="doLogout()">خروج</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="nav-sec">الرئيسية</div>
+      <div class="nav-item active" onclick="tab('dashboard',this)"><span class="ni">📊</span>لوحة المعلومات</div>
+      <div class="nav-sec">الطلبات والطلاب</div>
+      <div class="nav-item" onclick="tab('applications',this)"><span class="ni">📥</span>الطلبات<span class="nav-badge" id="nb_apps">0</span></div>
+      <div class="nav-item" onclick="tab('students',this)"><span class="ni">👥</span>الطلاب<span class="nav-badge" id="nb_students">0</span></div>
+      <div class="nav-item" onclick="tab('consultations',this)"><span class="ni">💬</span>الاستشارات<span class="nav-badge" id="nb_consults">0</span></div>
+      <div class="nav-sec">المحتوى</div>
+      <div class="nav-item" onclick="tab('unis',this)"><span class="ni">🏛️</span>الجامعات<span class="nav-badge" id="nb_unis">0</span></div>
+      <div class="nav-item" onclick="tab('blog',this)"><span class="ni">📝</span>المقالات<span class="nav-badge" id="nb_blog">0</span></div>
+      <div class="nav-item" onclick="tab('scholarships',this)"><span class="ni">🎁</span>المنح<span class="nav-badge" id="nb_schol">0</span></div>
+      <div class="nav-item" onclick="tab('courses',this)"><span class="ni">📚</span>الكورسات<span class="nav-badge" id="nb_courses">0</span></div>
+      <div class="nav-item" onclick="tab('institutes',this)"><span class="ni">🏫</span>معاهد اللغة<span class="nav-badge" id="nb_inst">0</span></div>
+      <div class="nav-item" onclick="tab('media',this)"><span class="ni">🖼️</span>مكتبة الصور</div>
+      <div class="nav-sec">تحرير الصفحات</div>
+      <div class="nav-item" onclick="tab('homepage',this)"><span class="ni">🏠</span>الصفحة الرئيسية</div>
+      <div class="nav-item" onclick="tab('faq',this)"><span class="ni">❓</span>الأسئلة الشائعة</div>
+      <div class="nav-sec">الإعدادات</div>
+      <div class="nav-item" onclick="tab('settings',this)"><span class="ni">⚙️</span>الإعدادات العامة</div>
+      <div class="nav-item" onclick="tab('theme',this)"><span class="ni">🎨</span>المظهر والألوان</div>
+      <div class="nav-item" onclick="tab('security',this)"><span class="ni">🔐</span>الأمان</div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="page-title">📊 لوحة المعلومات</div>
+        <div class="page-sub">مرحباً! إليك نظرة عامة على موقعك.</div>
+        <div class="dash-grid" id="dashStats"></div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">⚡ إجراءات سريعة</div></div>
+          <div class="dash-actions">
+            <div class="dash-action" onclick="tab('applications',document.querySelector('[onclick*=applications]'))" style="border-color:#0ea5e9;background:#f0f9ff"><div class="da-icon" style="background:#e0f2fe">📥</div><div><strong>الطلبات الواردة</strong><span>راجع طلبات الطلاب</span></div></div>
+            <div class="dash-action" onclick="tab('consultations',document.querySelector('[onclick*=consultations]'))" style="border-color:#f59e0b;background:#fffbeb"><div class="da-icon" style="background:#fef3c7">💬</div><div><strong>الاستشارات</strong><span>طلبات الاستشارة المجانية</span></div></div>
+            <div class="dash-action" onclick="tab('students',document.querySelector('[onclick*=students]'))"><div class="da-icon">👥</div><div><strong>إدارة الطلاب</strong><span>بيانات الطلاب المسجلين</span></div></div>
+            <div class="dash-action" onclick="window.open('apply.html','_blank')"><div class="da-icon">🎓</div><div><strong>بوابة الطلاب</strong><span>كما يراها الطالب</span></div></div>
+            <div class="dash-action" onclick="tab('unis',document.querySelector('[onclick*=unis]'))"><div class="da-icon">🏛️</div><div><strong>إضافة جامعة</strong><span>أضف مؤسسة جديدة</span></div></div>
+            <div class="dash-action" onclick="openBlogModal()"><div class="da-icon">📝</div><div><strong>كتابة مقال</strong><span>نشر محتوى جديد</span></div></div>
+            <div class="dash-action" onclick="tab('settings',document.querySelector('[onclick*=settings]'))"><div class="da-icon">📱</div><div><strong>تغيير الواتساب</strong><span>تحديث رقم التواصل</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ UNIVERSITIES ═══ -->
+      <div class="tab-panel" id="tab-unis">
+        <div class="page-title">🏛️ إدارة الجامعات</div>
+        <div class="page-sub">تحكم في الجامعات الظاهرة، عدّل بياناتها، أضف شعاراتها.</div>
+
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">قائمة الجامعات</div>
+            <button class="btn btn-p btn-sm" onclick="openUniModal(null)">+ إضافة جامعة</button>
+          </div>
+          <div class="search-bar"><span class="si">🔍</span><input placeholder="ابحث عن جامعة..." oninput="filterUnis(this.value)" id="uniSearchInput"/></div>
+          <div id="uniList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ APPLICATIONS ═══ -->
+      <div class="tab-panel" id="tab-applications">
+        <div class="page-title">📥 الطلبات الواردة</div>
+        <div class="page-sub">جميع طلبات التسجيل من الطلاب — راجع، وحدّث الحالة، وتابع المستندات.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">قائمة الطلبات <span id="appCountLabel" class="badge badge-blue">0</span></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select id="appFilterStatus" class="btn btn-ghost btn-sm" onchange="renderApplications()" style="padding:6px 10px;font-size:12px">
+                <option value="">كل الحالات</option>
+                <option value="new">جديد</option>
+                <option value="review">قيد المراجعة</option>
+                <option value="docs">ملفات ناقصة</option>
+                <option value="accepted">مقبول</option>
+                <option value="visa">تأشيرة</option>
+                <option value="enrolled">مسجّل</option>
+                <option value="rejected">مرفوض</option>
+              </select>
+              <select id="appFilterPay" class="btn btn-ghost btn-sm" onchange="renderApplications()" style="padding:6px 10px;font-size:12px">
+                <option value="">كل الدفعات</option>
+                <option value="none">لم يدفع</option>
+                <option value="partial">دفع جزئي</option>
+                <option value="full">مدفوع كامل</option>
+              </select>
+            </div>
+          </div>
+          <div class="search-bar"><span class="si">🔍</span><input placeholder="ابحث بالاسم أو الإيميل أو رقم الطلب..." oninput="renderApplications()" id="appSearch"/></div>
+          <div id="appList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ STUDENTS ═══ -->
+      <div class="tab-panel" id="tab-students">
+        <div class="page-title">👥 إدارة الطلاب</div>
+        <div class="page-sub">قائمة جميع الطلاب المسجّلين في بوابة التقديم.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">الطلاب <span id="stdCountLabel" class="badge badge-purple">0</span></div>
+          </div>
+          <div class="search-bar"><span class="si">🔍</span><input placeholder="ابحث بالاسم أو الإيميل..." oninput="renderStudents()" id="stdSearch"/></div>
+          <div id="studentList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ CONSULTATIONS ═══ -->
+      <div class="tab-panel" id="tab-consultations">
+        <div class="page-title">💬 طلبات الاستشارة</div>
+        <div class="page-sub">جميع طلبات "احجز استشارة مجانية" من الصفحة الرئيسية.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">الاستشارات <span id="consultCountLabel" class="badge badge-blue">0</span></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <select id="consultFilterStatus" class="btn btn-ghost btn-sm" onchange="renderConsultations()" style="padding:6px 10px;font-size:12px">
+                <option value="">كل الحالات</option>
+                <option value="new">جديد</option>
+                <option value="contacted">تم التواصل</option>
+                <option value="converted">تحوّل لطالب</option>
+                <option value="closed">مغلق</option>
+              </select>
+            </div>
+          </div>
+          <div class="search-bar"><span class="si">🔍</span><input placeholder="ابحث بالاسم أو الإيميل..." oninput="renderConsultations()" id="consultSearch"/></div>
+          <div id="consultList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ BLOG ═══ -->
+      <div class="tab-panel" id="tab-blog">
+        <div class="page-title">📝 إدارة المقالات</div>
+        <div class="page-sub">أضف وعدّل واحذف مقالات المدونة.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">المقالات <span id="blogCountLabel" class="badge badge-blue">0</span></div>
+            <button class="btn btn-p btn-sm" onclick="openBlogModal(null)">+ مقال جديد</button>
+          </div>
+          <div id="blogList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ SCHOLARSHIPS ═══ -->
+      <div class="tab-panel" id="tab-scholarships">
+        <div class="page-title">🎁 إدارة المنح الدراسية</div>
+        <div class="page-sub">أضف منحاً جديدة أو عدّل المنح الموجودة.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">المنح <span id="scholCountLabel" class="badge badge-green">0</span></div>
+            <button class="btn btn-g btn-sm" onclick="openScholModal(null)">+ منحة جديدة</button>
+          </div>
+          <div id="scholList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ COURSES ═══ -->
+      <div class="tab-panel" id="tab-courses">
+        <div class="page-title">📚 إدارة الكورسات</div>
+        <div class="page-sub">أضف وعدّل تخصصات وبرامج الدراسة.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">الكورسات <span id="courseCountLabel" class="badge badge-blue">0</span></div>
+            <button class="btn btn-p btn-sm" onclick="openCourseModal(null)">+ كورس جديد</button>
+          </div>
+          <div id="courseList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ INSTITUTES ═══ -->
+      <div class="tab-panel" id="tab-institutes">
+        <div class="page-title">🏫 إدارة معاهد اللغة</div>
+        <div class="page-sub">أضف وعدّل معاهد اللغة ومراكز التعليم.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">المعاهد <span id="instCountLabel" class="badge badge-blue">0</span></div>
+            <button class="btn btn-p btn-sm" onclick="openInstModal(null)">+ معهد جديد</button>
+          </div>
+          <div id="instList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ MEDIA ═══ -->
+      <div class="tab-panel" id="tab-media">
+        <div class="page-title">🖼️ مكتبة الصور</div>
+        <div class="page-sub">ارفع صور وشعارات واستخدمها في أي مكان بالموقع.</div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">رفع صورة جديدة</div></div>
+          <div class="form-grid cols2">
+            <div class="fg">
+              <label>رفع ملف صورة</label>
+              <div class="img-upload-zone" id="mediaDropZone" onclick="document.getElementById('mediaFileInput').click()" ondragover="ev.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')">
+                <div style="font-size:36px">📁</div>
+                <p>اضغط لاختيار صورة أو اسحب وأفلت هنا<br><small>PNG, JPG, GIF, SVG, WebP</small></p>
+                <div class="upload-progress" id="mediaProgress"><div class="upload-progress-bar" id="mediaProgressBar"></div></div>
+              </div>
+              <input type="file" id="mediaFileInput" accept="image/*" style="display:none" onchange="handleMediaUpload(this)"/>
+            </div>
+            <div class="fg">
+              <label>أو أدخل رابط صورة (URL)</label>
+              <input type="url" id="mediaUrlInput" placeholder="https://example.com/image.jpg" dir="ltr"/>
+              <div class="fg" style="margin-top:10px">
+                <label>اسم الصورة</label>
+                <input type="text" id="mediaNameInput" placeholder="مثل: شعار جامعة UM"/>
+              </div>
+              <button class="btn btn-p" style="margin-top:10px" onclick="addMediaByUrl()">إضافة الرابط</button>
+              <div class="img-preview-box" id="mediaUrlPreview">🖼️</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">الصور المحفوظة <span id="mediaCountLabel" class="badge badge-blue">0</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="clearMedia()">🗑️ مسح الكل</button>
+          </div>
+          <div class="media-grid" id="mediaGrid"></div>
+        </div>
+      </div>
+
+      <!-- ═══ HOMEPAGE ═══ -->
+      <div class="tab-panel" id="tab-homepage">
+        <div class="page-title">🏠 تحرير الصفحة الرئيسية</div>
+        <div class="page-sub">عدّل محتوى الأقسام المختلفة في الصفحة الرئيسية.</div>
+
+        <!-- Hero -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🦸 قسم الهيرو</div></div>
+          <div class="form-grid col1">
+            <div class="fg"><label>الشارة الصغيرة (Badge)</label><input type="text" id="hp_badge" placeholder="#1 Trusted Education Consultancy"/></div>
+            <div class="fg"><label>العنوان الرئيسي</label><input type="text" id="hp_title" placeholder='Expert Guidance For &lt;span&gt;International&lt;/span&gt; Students'/><span class="hint">يمكن استخدام &lt;span&gt; لتمييز كلمة باللون</span></div>
+            <div class="fg"><label>الوصف</label><textarea id="hp_desc" placeholder="We simplify your journey..."></textarea></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveHero()">💾 حفظ الهيرو</button></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">📊 الأرقام الإحصائية</div></div>
+          <div class="form-grid" style="grid-template-columns:repeat(4,1fr)">
+            <div class="fg"><label>🏛️ الجامعات</label><input type="number" id="hp_unis" placeholder="36"/></div>
+            <div class="fg"><label>📚 التخصصات</label><input type="number" id="hp_courses" placeholder="4146"/></div>
+            <div class="fg"><label>🗣️ مراكز اللغة</label><input type="number" id="hp_centers" placeholder="17"/></div>
+            <div class="fg"><label>🎓 الطلاب</label><input type="number" id="hp_students" placeholder="1500"/></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveStats()">💾 حفظ الأرقام</button></div>
+        </div>
+
+        <!-- Services -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🎯 بطاقات الخدمات</div></div>
+          <div id="servicesList"></div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveServices()">💾 حفظ الخدمات</button></div>
+        </div>
+
+        <!-- Steps -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🪜 خطوات العمل</div></div>
+          <div id="stepsList"></div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveSteps()">💾 حفظ الخطوات</button></div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">💬 شهادات الطلاب</div></div>
+          <div id="testimonialsList"></div>
+          <div class="btn-row">
+            <button class="btn btn-p" onclick="saveTestimonials()">💾 حفظ الشهادات</button>
+            <button class="btn btn-ghost btn-sm" onclick="addTestimonial()">+ إضافة شهادة</button>
+          </div>
+        </div>
+
+        <!-- WhatsApp CTA -->
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">📲 تفاصيل التواصل</div></div>
+          <div class="form-grid cols2">
+            <div class="fg"><label>رقم الواتساب</label><input type="text" id="hp_wa" dir="ltr" placeholder="60123456789"/><span class="hint">بدون + أو شرطات</span></div>
+            <div class="fg"><label>البريد الإلكتروني</label><input type="email" id="hp_email" dir="ltr" placeholder="info@edupath.com"/></div>
+            <div class="fg"><label>عنوان قسم "تواصل معنا"</label><input type="text" id="hp_ctaTitle" placeholder="Ready to Start Your Journey?"/></div>
+            <div class="fg"><label>وصف قسم التواصل</label><textarea id="hp_ctaDesc" placeholder="Book a free consultation..."></textarea></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveCTA()">💾 حفظ</button></div>
+        </div>
+      </div>
+
+      <!-- ═══ FAQ ═══ -->
+      <div class="tab-panel" id="tab-faq">
+        <div class="page-title">❓ الأسئلة الشائعة</div>
+        <div class="page-sub">أضف وعدّل أسئلة FAQ التي تظهر في الصفحة الرئيسية.</div>
+        <div class="card">
+          <div class="card-title">
+            <div class="card-title-left">الأسئلة <span id="faqCountLabel" class="badge badge-blue">0</span></div>
+            <button class="btn btn-p btn-sm" onclick="openFaqModal(null)">+ سؤال جديد</button>
+          </div>
+          <div id="faqList"></div>
+        </div>
+      </div>
+
+      <!-- ═══ SETTINGS ═══ -->
+      <div class="tab-panel" id="tab-settings">
+        <div class="page-title">⚙️ الإعدادات العامة</div>
+        <div class="page-sub">معلومات أساسية عن الموقع.</div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🏢 معلومات الشركة</div></div>
+          <div class="form-grid cols2">
+            <div class="fg"><label>اسم الشركة / الموقع</label><input type="text" id="s_name" placeholder="EduPath"/></div>
+            <div class="fg"><label>الشعار الفرعي (Tagline)</label><input type="text" id="s_tagline" placeholder="Your Gateway to Malaysia"/></div>
+            <div class="fg"><label>📱 رقم الواتساب</label><input type="text" id="s_wa" dir="ltr" placeholder="60123456789"/><span class="hint">الرقم بدون + — مثال: 60123456789</span></div>
+            <div class="fg"><label>📧 البريد الإلكتروني</label><input type="email" id="s_email" dir="ltr" placeholder="info@edupath.com"/></div>
+            <div class="fg"><label>🌐 رابط الموقع</label><input type="url" id="s_url" dir="ltr" placeholder="https://edupath.com"/></div>
+            <div class="fg"><label>🗓️ سنة التأسيس</label><input type="number" id="s_year" placeholder="2020"/></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-p" onclick="saveSettings()">💾 حفظ المعلومات</button>
+            <button class="btn btn-g btn-sm" onclick="testWa()">🟢 اختبار واتساب</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">📢 روابط التواصل الاجتماعي</div></div>
+          <div class="form-grid cols2">
+            <div class="fg"><label>فيسبوك</label><input type="url" id="s_fb" dir="ltr" placeholder="https://facebook.com/..."/></div>
+            <div class="fg"><label>انستقرام</label><input type="url" id="s_ig" dir="ltr" placeholder="https://instagram.com/..."/></div>
+            <div class="fg"><label>يوتيوب</label><input type="url" id="s_yt" dir="ltr" placeholder="https://youtube.com/..."/></div>
+            <div class="fg"><label>تيك توك</label><input type="url" id="s_tt" dir="ltr" placeholder="https://tiktok.com/..."/></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-p" onclick="saveSocials()">💾 حفظ</button></div>
+        </div>
+      </div>
+
+      <!-- ═══ THEME ═══ -->
+      <div class="tab-panel" id="tab-theme">
+        <div class="page-title">🎨 المظهر والألوان</div>
+        <div class="page-sub">خصّص ألوان موقعك بالكامل.</div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">ثيمات جاهزة</div></div>
+          <div class="color-palette" id="themePalette"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🎨 ألوان مخصصة</div></div>
+          <div class="form-grid" style="grid-template-columns:repeat(3,1fr)">
+            <div class="fg"><label>اللون الرئيسي</label><input type="color" id="t_primary" value="#0a5c8a"/></div>
+            <div class="fg"><label>اللون الداكن</label><input type="color" id="t_dark" value="#074166"/></div>
+            <div class="fg"><label>لون التمييز</label><input type="color" id="t_accent" value="#f59e0b"/></div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap" id="colorPreview">
+            <div id="cp1" style="padding:12px 20px;border-radius:8px;background:#0a5c8a;color:white;font-weight:700;font-size:13px">اللون الرئيسي</div>
+            <div id="cp2" style="padding:12px 20px;border-radius:8px;background:#074166;color:white;font-weight:700;font-size:13px">اللون الداكن</div>
+            <div id="cp3" style="padding:12px 20px;border-radius:8px;background:#f59e0b;color:white;font-weight:700;font-size:13px">لون التمييز</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-p" onclick="saveTheme()">💾 حفظ الألوان</button>
+            <button class="btn btn-ghost" onclick="resetTheme()">↩ إعادة الافتراضي</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SECURITY ═══ -->
+      <div class="tab-panel" id="tab-security">
+        <div class="page-title">🔐 الأمان</div>
+        <div class="page-sub">إدارة كلمة المرور وحذف البيانات.</div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">🔑 تغيير كلمة المرور</div></div>
+          <div class="form-grid cols2">
+            <div class="fg"><label>كلمة المرور الحالية</label><input type="password" id="pw_cur"/></div>
+            <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" id="pw_new"/></div>
+            <div class="fg"><label>تأكيد كلمة المرور</label><input type="password" id="pw_conf"/></div>
+          </div>
+          <div class="btn-row"><button class="btn btn-p" onclick="changePw()">🔒 تغيير كلمة المرور</button></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><div class="card-title-left">⚠️ منطقة الخطر</div></div>
+          <div class="danger-zone">
+            <h4>🗑️ حذف جميع بيانات الأدمن</h4>
+            <p style="font-size:13px;color:var(--muted);margin-bottom:14px">سيتم حذف كل الإعدادات، المقالات، المنح، والتخصيصات. لا يمكن التراجع.</p>
+            <button class="btn btn-r btn-sm" onclick="nukeAll()">🗑️ حذف كل شيء</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end content -->
+  </div><!-- end layout -->
+</div><!-- end adminShell -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- University Modal -->
+<div class="modal-overlay" id="uniModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="uniModalTitle">🏛️ إضافة جامعة</h3>
+      <button class="modal-close" onclick="closeModal('uniModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="um_id"/>
+      <div style="margin-bottom:20px">
+        <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:8px">شعار الجامعة</label>
+        <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+          <div class="img-preview-box" id="um_logoPreview" style="width:100px;height:100px">🏫</div>
+          <div style="flex:1;min-width:200px">
+            <div class="fg" style="margin-bottom:10px">
+              <label>رابط الشعار (URL)</label>
+              <input type="url" id="um_logoUrl" placeholder="https://..." dir="ltr" oninput="previewUniLogo()"/>
+            </div>
+            <div class="fg">
+              <label>أو ارفع ملف شعار</label>
+              <input type="file" id="um_logoFile" accept="image/*" onchange="handleUniLogoFile(this)"/>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-grid cols2">
+        <div class="fg"><label>اسم الجامعة *</label><input type="text" id="um_name" placeholder="University of Malaysia"/></div>
+        <div class="fg"><label>النوع</label>
+          <select id="um_type">
+            <option value="public">🏛️ حكومية</option>
+            <option value="private">🏢 خاصة</option>
+            <option value="branch">🌐 فرع عالمي</option>
+            <option value="language">🗣️ معهد لغة</option>
+          </select>
+        </div>
+        <div class="fg"><label>المدينة</label><input type="text" id="um_city" placeholder="Kuala Lumpur"/></div>
+        <div class="fg"><label>الولاية</label><input type="text" id="um_state" placeholder="WP Kuala Lumpur"/></div>
+        <div class="fg"><label>الرسوم السنوية</label><input type="text" id="um_tuition" placeholder="RM 15,000–25,000/yr"/></div>
+        <div class="fg"><label>تصنيف QS</label><input type="number" id="um_qs" placeholder="اتركه فارغاً إن لم يكن مصنفاً"/></div>
+        <div class="fg"><label>سنة التأسيس</label><input type="number" id="um_est" placeholder="1995"/></div>
+        <div class="fg"><label>الموقع الإلكتروني</label><input type="url" id="um_website" placeholder="https://..." dir="ltr"/></div>
+        <div class="fg full"><label>التخصصات (افصل بفواصل)</label><input type="text" id="um_fields" placeholder="Engineering, IT, Business, Medicine"/></div>
+        <div class="fg full"><label>نبذة عن الجامعة</label><textarea id="um_about" placeholder="وصف مختصر..."></textarea></div>
+        <div class="fg full">
+          <label>🎬 فيديو تعريفي بالجامعة (YouTube)</label>
+          <input type="url" id="um_videoUrl" placeholder="https://youtube.com/watch?v=..." dir="ltr" oninput="previewUniVideo(this.value)"/>
+          <div id="um_videoPreview" style="margin-top:8px;display:none;border-radius:10px;overflow:hidden;position:relative;padding-top:40%;background:#000">
+            <iframe id="um_videoFrame" src="" frameborder="0" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+          </div>
+        </div>
+        <div class="fg"><label>مواعيد القبول</label><input type="text" id="um_intakes" placeholder="January, May, September"/></div>
+        <div class="fg"><label>رسوم خطاب القبول</label><input type="text" id="um_offerfee" placeholder="RM 500"/></div>
+        <div class="fg"><label>إيقونة (Emoji)</label><input type="text" id="um_icon" placeholder="🏫" maxlength="4"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('uniModal')">إلغاء</button>
+      <button class="btn btn-p" onclick="saveUni()">💾 حفظ الجامعة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Blog Modal -->
+<div class="modal-overlay" id="blogModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="blogModalTitle">📝 مقال جديد</h3>
+      <button class="modal-close" onclick="closeModal('blogModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="bm_id"/>
+      <div class="form-grid cols2">
+        <div class="fg"><label>عنوان المقال *</label><input type="text" id="bm_title" placeholder="عنوان المقال..."/></div>
+        <div class="fg"><label>الفئة</label>
+          <select id="bm_cat">
+            <option value="Finance">💰 Finance</option>
+            <option value="Work & Study">💼 Work & Study</option>
+            <option value="Rankings">🏆 Rankings</option>
+            <option value="Visa">🛂 Visa</option>
+            <option value="Student Life">🎓 Student Life</option>
+            <option value="Scholarships">🎁 Scholarships</option>
+            <option value="Health">🏥 Health</option>
+          </select>
+        </div>
+        <div class="fg"><label>إيموجي المقال</label><input type="text" id="bm_emoji" placeholder="💰" maxlength="4"/></div>
+        <div class="fg"><label>وقت القراءة</label><input type="text" id="bm_time" placeholder="5 min"/></div>
+        <div class="fg"><label>المؤلف</label><input type="text" id="bm_author" placeholder="EduPath Team"/></div>
+        <div class="fg"><label>التاريخ</label><input type="text" id="bm_date" placeholder="June 1, 2026"/></div>
+        <div class="fg full">
+          <label>🖼️ صورة الغلاف (URL أو رفع ملف)</label>
+          <div style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap">
+            <input type="text" id="bm_coverImg" placeholder="https://example.com/image.jpg" style="flex:1" oninput="previewBlogCover(this.value)"/>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+              📁 رفع صورة
+              <input type="file" accept="image/*" style="display:none" onchange="handleBlogCoverFile(this)"/>
+            </label>
+          </div>
+          <div id="bm_coverPreview" style="margin-top:8px;display:none;border-radius:10px;overflow:hidden;height:140px;background:#f1f5f9">
+            <img id="bm_coverImg_el" src="" alt="" style="width:100%;height:140px;object-fit:cover"/>
+          </div>
+        </div>
+        <div class="fg full">
+          <label>🎬 فيديو المقال (YouTube أو رابط مباشر)</label>
+          <input type="url" id="bm_videoUrl" placeholder="https://youtube.com/watch?v=..." dir="ltr" oninput="previewBlogVideo(this.value)"/>
+          <div id="bm_videoPreview" style="margin-top:8px;display:none;border-radius:10px;overflow:hidden;position:relative;padding-top:56.25%;background:#000">
+            <iframe id="bm_videoFrame" src="" frameborder="0" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+          </div>
+        </div>
+        <div class="fg full"><label>ملخص قصير (يظهر في البطاقة)</label><textarea id="bm_excerpt" style="min-height:60px" placeholder="وصف مختصر يظهر في قائمة المقالات..."></textarea></div>
+        <div class="fg full">
+          <label>محتوى المقال الكامل</label>
+          <div style="display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="insertTag('bm_content','<h3>','</h3>')">H3</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="insertTag('bm_content','<strong>','</strong>')"><b>B</b></button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="insertTag('bm_content','<ul>\n  <li>','</li>\n</ul>')">قائمة</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="insertTag('bm_content','<p>','</p>')">فقرة</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="insertInfoBox()">💡 معلومة</button>
+          </div>
+          <textarea id="bm_content" style="min-height:240px;font-family:monospace;font-size:12px" placeholder="محتوى المقال بصيغة HTML أو نص عادي...&#10;&#10;مثال:&#10;&lt;p&gt;مقدمة المقال هنا...&lt;/p&gt;&#10;&lt;h3&gt;عنوان فرعي&lt;/h3&gt;&#10;&lt;ul&gt;&lt;li&gt;نقطة أولى&lt;/li&gt;&lt;/ul&gt;"></textarea>
+        </div>
+        <div class="fg"><label>حالة النشر</label>
+          <select id="bm_published"><option value="1">✅ منشور</option><option value="0">📝 مسودة</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('blogModal')">إلغاء</button>
+      <button class="btn btn-p" onclick="saveBlogPost()">💾 حفظ المقال</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scholarship Modal -->
+<div class="modal-overlay" id="scholModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="scholModalTitle">🎁 منحة جديدة</h3>
+      <button class="modal-close" onclick="closeModal('scholModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="sm_id"/>
+      <div class="form-grid cols2">
+        <div class="fg"><label>اسم المنحة *</label><input type="text" id="sm_name" placeholder="MyBrainSc Scholarship"/></div>
+        <div class="fg"><label>المانح</label><input type="text" id="sm_provider" placeholder="Ministry of Education"/></div>
+        <div class="fg"><label>النوع</label>
+          <select id="sm_type">
+            <option value="government">🏛️ حكومية</option>
+            <option value="corporate">🏢 شركات</option>
+            <option value="university">🎓 جامعية</option>
+            <option value="international">🌍 دولية</option>
+          </select>
+        </div>
+        <div class="fg"><label>إيموجي</label><input type="text" id="sm_icon" placeholder="🏛️" maxlength="4"/></div>
+        <div class="fg"><label>التغطية</label><input type="text" id="sm_coverage" placeholder="Full Tuition + RM 2,000/mo"/></div>
+        <div class="fg"><label>الراتب الشهري</label><input type="text" id="sm_stipend" placeholder="RM 2,000/mo"/></div>
+        <div class="fg"><label>المدة</label><input type="text" id="sm_duration" placeholder="2–4 years"/></div>
+        <div class="fg"><label>الحد الأدنى CGPA</label><input type="text" id="sm_cgpa" placeholder="Min 3.5"/></div>
+        <div class="fg"><label>آخر موعد</label><input type="text" id="sm_deadline" placeholder="Aug 2026"/></div>
+        <div class="fg"><label>ممول بالكامل؟</label>
+          <select id="sm_full"><option value="1">✅ نعم</option><option value="0">❌ جزئي</option></select>
+        </div>
+        <div class="fg full"><label>رابط التقديم المباشر (URL)</label><input type="url" id="sm_applyUrl" placeholder="https://biasiswa.mohe.gov.my/..." dir="ltr"/></div>
+        <div class="fg full"><label>الوصف</label><textarea id="sm_desc" placeholder="وصف تفصيلي عن المنحة..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('scholModal')">إلغاء</button>
+      <button class="btn btn-g" onclick="saveSchol()">💾 حفظ المنحة</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ Modal -->
+<div class="modal-overlay" id="faqModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3 id="faqModalTitle">❓ سؤال جديد</h3>
+      <button class="modal-close" onclick="closeModal('faqModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="fm_id"/>
+      <div class="form-grid col1">
+        <div class="fg"><label>السؤال *</label><input type="text" id="fm_q" placeholder="ما هي متطلبات القبول؟"/></div>
+        <div class="fg"><label>الجواب *</label><textarea id="fm_a" style="min-height:120px" placeholder="اكتب الإجابة هنا..."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('faqModal')">إلغاء</button>
+      <button class="btn btn-p" onclick="saveFaq()">💾 حفظ السؤال</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Picker Modal -->
+<div class="modal-overlay" id="imgPickerModal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-header">
+      <h3>🖼️ اختر صورة من المكتبة</h3>
+      <button class="modal-close" onclick="closeModal('imgPickerModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="media-grid" id="imgPickerGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Course Modal -->
+<div class="modal-overlay" id="courseModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="courseModalTitle">📚 كورس جديد</h3>
+      <button class="modal-close" onclick="closeModal('courseModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="cm_id"/>
+      <div class="form-grid cols2">
+        <div class="fg"><label>اسم البرنامج *</label><input type="text" id="cm_name" placeholder="Computer Science"/></div>
+        <div class="fg"><label>الجامعة</label><input type="text" id="cm_university" placeholder="UTM, UM, Taylor's..."/></div>
+        <div class="fg"><label>المجال</label>
+          <select id="cm_field">
+            <option value="Engineering">Engineering</option>
+            <option value="IT">IT &amp; Computing</option>
+            <option value="Business">Business</option>
+            <option value="Medicine">Medicine</option>
+            <option value="Science">Science</option>
+            <option value="Law">Law</option>
+            <option value="Design">Design &amp; Arts</option>
+            <option value="Education">Education</option>
+            <option value="Hospitality">Hospitality</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="fg"><label>المستوى</label>
+          <select id="cm_level">
+            <option value="Foundation">Foundation</option>
+            <option value="Diploma">Diploma</option>
+            <option value="Bachelor">Bachelor's</option>
+            <option value="Master">Master's</option>
+            <option value="PhD">PhD</option>
+          </select>
+        </div>
+        <div class="fg"><label>المدة</label><input type="text" id="cm_duration" placeholder="3–4 years"/></div>
+        <div class="fg"><label>الرسوم السنوية</label><input type="text" id="cm_tuition" placeholder="RM 15,000/yr"/></div>
+        <div class="fg"><label>لغة التدريس</label><input type="text" id="cm_lang" placeholder="English"/></div>
+        <div class="fg"><label>مواعيد القبول</label><input type="text" id="cm_intake" placeholder="Jan, May, Sep"/></div>
+        <div class="fg full"><label>🖼️ صورة البرنامج (URL أو رفع)</label>
+          <div style="display:flex;gap:8px;align-items:stretch;flex-wrap:wrap">
+            <input type="url" id="cm_image" placeholder="https://..." style="flex:1" oninput="previewCourseImg(this.value)"/>
+            <label class="btn btn-ghost btn-sm" style="cursor:pointer;display:inline-flex;align-items:center;gap:4px">
+              📁 رفع
+              <input type="file" accept="image/*" style="display:none" onchange="handleCourseImgFile(this)"/>
+            </label>
+          </div>
+          <div id="cm_imgPreview" style="margin-top:8px;display:none;border-radius:10px;overflow:hidden;height:100px;background:#f1f5f9">
+            <img id="cm_imgEl" src="" style="width:100%;height:100%;object-fit:cover"/>
+          </div>
+        </div>
+        <div class="fg full"><label>🎬 فيديو الكورس (YouTube)</label><input type="url" id="cm_video" placeholder="https://youtube.com/watch?v=..." dir="ltr"/></div>
+        <div class="fg full"><label>الوصف</label><textarea id="cm_desc" placeholder="وصف البرنامج..."></textarea></div>
+        <div class="fg"><label>متاح للتسجيل؟</label>
+          <select id="cm_active"><option value="1">✅ نعم</option><option value="0">❌ لا</option></select>
+        </div>
+        <div class="fg"><label>إيموجي</label><input type="text" id="cm_emoji" placeholder="💻" maxlength="4"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('courseModal')">إلغاء</button>
+      <button class="btn btn-p" onclick="saveCourse()">💾 حفظ الكورس</button>
+    </div>
+  </div>
+</div>
+
+<!-- Institute Modal -->
+<div class="modal-overlay" id="instModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="instModalTitle">🏫 معهد جديد</h3>
+      <button class="modal-close" onclick="closeModal('instModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="im_id"/>
+      <div class="form-grid cols2">
+        <div class="fg"><label>اسم المعهد *</label><input type="text" id="im_name" placeholder="ELS Language Centres"/></div>
+        <div class="fg"><label>المدينة</label><input type="text" id="im_city" placeholder="Kuala Lumpur"/></div>
+        <div class="fg"><label>الولاية</label><input type="text" id="im_state" placeholder="WP Kuala Lumpur"/></div>
+        <div class="fg"><label>إيقونة (Emoji)</label><input type="text" id="im_icon" placeholder="🏫" maxlength="4"/></div>
+        <div class="fg full"><label>البرامج (افصل بفواصل)</label><input type="text" id="im_programs" placeholder="IELTS, English, Business English, Arabic"/></div>
+        <div class="fg"><label>الرسوم الشهرية</label><input type="text" id="im_tuition" placeholder="RM 1,500–3,500/mo"/></div>
+        <div class="fg"><label>الموقع الإلكتروني</label><input type="url" id="im_website" placeholder="https://..." dir="ltr"/></div>
+        <div class="fg"><label>مواعيد القبول</label><input type="text" id="im_intake" placeholder="Rolling / Monthly"/></div>
+        <div class="fg full"><label>نبذة عن المعهد</label><textarea id="im_about" placeholder="وصف مختصر..."></textarea></div>
+        <div class="fg full">
+          <label>🎬 فيديو تعريفي (YouTube)</label>
+          <input type="url" id="im_videoUrl" placeholder="https://youtube.com/watch?v=..." dir="ltr" oninput="previewInstVideo(this.value)"/>
+          <div id="im_videoPreview" style="margin-top:8px;display:none;border-radius:10px;overflow:hidden;position:relative;padding-top:40%;background:#000">
+            <iframe id="im_videoFrame" src="" frameborder="0" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+          </div>
+        </div>
+        <div class="fg"><label>متاح؟</label>
+          <select id="im_active"><option value="1">✅ نعم</option><option value="0">❌ لا</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('instModal')">إلغاء</button>
+      <button class="btn btn-p" onclick="saveInst()">💾 حفظ المعهد</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPLICATION DETAIL MODAL ══ -->
+<div class="modal-overlay" id="appModal">
+  <div class="modal" style="max-width:820px">
+    <div class="modal-header">
+      <h3 id="appModalTitle">📋 تفاصيل الطلب</h3>
+      <button class="modal-close" onclick="closeModal('appModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="am_id"/>
+
+      <!-- Status + Payment row -->
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding:16px;background:var(--bg);border-radius:12px">
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">حالة الطلب</div>
+          <select id="am_status" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;background:white;font-family:inherit" onchange="updateStatusColor()">
+            <option value="new">🆕 جديد - قيد الاستلام</option>
+            <option value="review">👀 قيد المراجعة</option>
+            <option value="docs">📎 ملفات ناقصة</option>
+            <option value="accepted">✅ مقبول من الجامعة</option>
+            <option value="visa">🛂 معالجة التأشيرة</option>
+            <option value="enrolled">🎓 تم التسجيل</option>
+            <option value="rejected">❌ مرفوض</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">حالة الدفع</div>
+          <select id="am_payment" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;background:white;font-family:inherit">
+            <option value="none">💸 لم يدفع</option>
+            <option value="partial">💛 دفع جزئي</option>
+            <option value="full">💚 مدفوع كامل</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:180px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">المبلغ المدفوع (RM)</div>
+          <input type="number" id="am_payamt" placeholder="0" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;background:white;font-family:inherit"/>
+        </div>
+      </div>
+
+      <!-- Applicant info -->
+      <div class="app-detail-section">
+        <h4>📋 بيانات المتقدم</h4>
+        <div class="detail-grid" id="am_info"></div>
+      </div>
+
+      <!-- Academic info -->
+      <div class="app-detail-section">
+        <h4>🎓 البيانات الأكاديمية</h4>
+        <div class="detail-grid" id="am_academic"></div>
+      </div>
+
+      <!-- Documents -->
+      <div class="app-detail-section">
+        <h4>📎 المستندات</h4>
+        <div id="am_docs"></div>
+      </div>
+
+      <!-- Admin notes -->
+      <div class="app-detail-section">
+        <h4>🗒️ ملاحظات الأدمن (مرئية للطالب)</h4>
+        <textarea id="am_notes" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;background:var(--bg)" placeholder="اكتب ملاحظاتك للطالب هنا..."></textarea>
+      </div>
+
+      <!-- Timeline -->
+      <div class="app-detail-section">
+        <h4>📅 سجل التحديثات</h4>
+        <ul class="timeline" id="am_timeline"></ul>
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-r btn-sm" onclick="deleteApplication()">🗑️ حذف الطلب</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeModal('appModal')">إغلاق</button>
+        <button class="btn btn-p" onclick="saveApplication()">💾 حفظ التعديلات</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STUDENT DETAIL MODAL ══ -->
+<div class="modal-overlay" id="stdModal">
+  <div class="modal" style="max-width:540px">
+    <div class="modal-header">
+      <h3>👤 بيانات الطالب</h3>
+      <button class="modal-close" onclick="closeModal('stdModal')">✕</button>
+    </div>
+    <div class="modal-body" id="stdModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('stdModal')">إغلاق</button>
+      <button class="btn btn-p" onclick="viewStudentApplications()">📋 عرض طلباته</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONSULTATION DETAIL MODAL ══ -->
+<div class="modal-overlay" id="consultModal">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header">
+      <h3>💬 تفاصيل الاستشارة</h3>
+      <button class="modal-close" onclick="closeModal('consultModal')">✕</button>
+    </div>
+    <div class="modal-body" id="consultModalBody"></div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn btn-r btn-sm" onclick="deleteConsultation()">🗑️ حذف</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="closeModal('consultModal')">إغلاق</button>
+        <button class="btn btn-p" onclick="saveConsultation()">💾 حفظ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+/* ══════════════════════════════════════
+   KEYS & DEFAULTS
+══════════════════════════════════════ */
+const K = {
+  pw:        'ep_pw',
+  session:   'ep_session',
+  settings:  'ep_settings',
+  hiddenUni: 'ep_hidden_unis',
+  extraUni:  'ep_extra_unis',
+  uniLogos:  'ep_uni_logos',
+  uniEdits:  'ep_uni_edits',
+  uniVideos: 'ep_uni_videos',
+  blog:      'ep_blog_posts',
+  schol:     'ep_scholarships',
+  media:     'ep_media',
+  services:  'ep_services',
+  steps:     'ep_steps',
+  tests:     'ep_testimonials',
+  faq:       'ep_faq',
+  courses:      'ep_courses',
+  institutes:   'ep_institutes',
+  applications:  'ep_applications',
+  students:      'ep_students',
+  consultations: 'ep_consultations',
+};
+
+const DEF_SERVICES = [
+  {num:'01',icon:'🎯',title:'Course & University Selection',desc:'Our expert advisors analyze your background, budget, and goals to recommend the best-fit universities and programs for you.'},
+  {num:'02',icon:'📋',title:'Admission & Visa Support',desc:'We prepare and submit your application, coordinate with institutions, and guide you through the visa documentation process.'},
+  {num:'03',icon:'🏠',title:'Accommodation Arrangement',desc:'We help secure campus housing or vetted private accommodation near your university before you even land.'},
+  {num:'04',icon:'✈️',title:'Airport Pickup & Orientation',desc:'Arrive stress-free with our airport pickup service and on-ground orientation to help you settle in quickly.'},
+];
+const DEF_STEPS = [
+  {title:'Book Free Consultation',desc:'Speak with an advisor about your goals, budget, and preferred field of study.'},
+  {title:'Get Matched',desc:'We recommend universities and courses that fit your profile and ambitions.'},
+  {title:'Apply & Get Accepted',desc:'We handle the paperwork, application, and follow-up on your behalf.'},
+  {title:'Fly & Start Studying',desc:'With visa in hand and accommodation ready, you\'re set for your new chapter.'},
+];
+const DEF_TESTIMONIALS = [
+  {quote:'EduPath made the entire process so easy. I was accepted into my dream program in just two weeks. The advisors were incredibly responsive and supportive.',name:'Ahmed Al-Rashid',info:'Saudi Arabia · Computer Science at UTM',avatar:'🇸🇦'},
+  {quote:"I didn't know where to start, but the team helped me compare universities, get my visa, and even arranged my accommodation. Stress-free experience!",name:'Fatima Al-Hassan',info:'Kuwait · Business Administration at UM',avatar:'🇰🇼'},
+  {quote:'The airport pickup and orientation on arrival made me feel so welcomed. I recommend EduPath to every international student.',name:'Omar Khalid',info:'Jordan · Engineering at UPM',avatar:'🇯🇴'},
+];
+
+/* ══════════════════════════════════════
+   VIDEO HELPERS
+══════════════════════════════════════ */
+function toYoutubeEmbed(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+  if (m) return 'https://www.youtube.com/embed/' + m[1];
+  return null;
+}
+
+function previewBlogVideo(url) {
+  const prev  = document.getElementById('bm_videoPreview');
+  const frame = document.getElementById('bm_videoFrame');
+  const embed = toYoutubeEmbed(url);
+  if (embed) {
+    frame.src = embed;
+    prev.style.display = 'block';
+  } else {
+    frame.src = '';
+    prev.style.display = 'none';
+  }
+}
+
+function previewUniVideo(url) {
+  const prev  = document.getElementById('um_videoPreview');
+  const frame = document.getElementById('um_videoFrame');
+  const embed = toYoutubeEmbed(url);
+  if (embed) {
+    frame.src = embed;
+    prev.style.display = 'block';
+  } else {
+    frame.src = '';
+    prev.style.display = 'none';
+  }
+}
+
+function previewInstVideo(url) {
+  const prev  = document.getElementById('im_videoPreview');
+  const frame = document.getElementById('im_videoFrame');
+  const embed = toYoutubeEmbed(url);
+  if (embed) {
+    frame.src = embed;
+    prev.style.display = 'block';
+  } else {
+    frame.src = '';
+    prev.style.display = 'none';
+  }
+}
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function ls_get(k, def=[]) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } }
+function ls_set(k,v) { localStorage.setItem(k, JSON.stringify(v)); }
+function ls_obj(k) { return ls_get(k, {}); }
+function gv(id)  { const e=document.getElementById(id); return e ? e.value.trim() : ''; }
+function sv(id,v){ const e=document.getElementById(id); if(e) e.value = v ?? ''; }
+function uid()   { return '_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); }
+function toast(msg, err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(err?' err':'');
+  t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════════
+   AUTH
+══════════════════════════════════════ */
+function getPw() { return localStorage.getItem(K.pw) || 'edupath2026'; }
+function doLogin() {
+  if(document.getElementById('pwInput').value === getPw()) {
+    sessionStorage.setItem(K.session,'1');
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminShell').style.display='block';
+    initAdmin();
+  } else {
+    document.getElementById('loginErr').style.display='block';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+function doLogout() { sessionStorage.removeItem(K.session); location.reload(); }
+document.getElementById('pwInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+
+/* ══════════════════════════════════════
+   TABS
+══════════════════════════════════════ */
+function tab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  // Lazy render
+  if(id==='unis')         renderUniList();
+  if(id==='blog')         renderBlogList();
+  if(id==='scholarships') renderScholList();
+  if(id==='courses')      renderCourseList();
+  if(id==='institutes')   renderInstList();
+  if(id==='media')        renderMediaGrid();
+  if(id==='homepage')     loadHomepageFields();
+  if(id==='faq')          renderFaqList();
+  if(id==='settings')     loadSettingsFields();
+  if(id==='theme')        initTheme();
+  if(id==='applications')  renderApplications();
+  if(id==='students')      renderStudents();
+  if(id==='consultations') renderConsultations();
+}
+
+/* ══════════════════════════════════════
+   DEFAULT DATA (seed on first run)
+══════════════════════════════════════ */
+const DEFAULT_SCHOLARSHIPS = [
+  {id:'def_s1', name:'MyBrainSc Scholarship', provider:'Ministry of Higher Education Malaysia', type:'government', icon:'🇲🇾', coverage:'Tuition + Living', stipend:'RM 2,000–3,900/mo', duration:'2–4 years', cgpa:'3.5', deadline:'Aug 2026', full:true, applyUrl:'https://biasiswa.mohe.gov.my/INTER/', desc:'Full scholarship for Master\'s or PhD in STEM at recognized Malaysian public universities. One of the most prestigious in the region.'},
+  {id:'def_s2', name:'MARA Scholarship', provider:'Majlis Amanah Rakyat (MARA)', type:'government', icon:'🏛️', coverage:'Full Tuition + RM 1,500/mo', stipend:'RM 1,500/mo', duration:'3–5 years', cgpa:'3.0', deadline:'Jul 2026', full:true, applyUrl:'https://biasiswa.mara.gov.my/', desc:'One of Malaysia\'s largest scholarship providers — funds undergraduate and postgraduate studies at leading local and overseas universities.'},
+  {id:'def_s3', name:'JPA Public Service Scholarship', provider:'Jabatan Perkhidmatan Awam (JPA)', type:'government', icon:'📚', coverage:'Tuition + Airfare', stipend:'RM 3,000/mo', duration:'4–5 years', cgpa:'', deadline:'Jun 2026', full:false, applyUrl:'https://biasiswa.spa.gov.my/', desc:'Malaysia\'s Public Service Department scholarship for top students, targeting both overseas and local studies with a government bond.'},
+  {id:'def_s4', name:'TNB Scholarship', provider:'Tenaga Nasional Berhad', type:'corporate', icon:'⚡', coverage:'Full Tuition', stipend:'RM 1,800/mo', duration:'4 years', cgpa:'3.5', deadline:'Sep 2026', full:true, applyUrl:'https://tnbscholarship.tnb.com.my/', desc:'Malaysia\'s national energy company funds engineering and technical students at UTM, UM, UPM. Recipients are often offered employment on graduation.'},
+  {id:'def_s5', name:'PETRONAS Education Scholarship', provider:'PETRONAS', type:'corporate', icon:'🛢️', coverage:'Full + Travel', stipend:'RM 2,500/mo', duration:'4 years', cgpa:'', deadline:'Oct 2026', full:true, applyUrl:'https://www.petronas.com/careers/fresh-graduates-internships/scholarships-education', desc:'Malaysia\'s national oil company offers prestigious scholarships for engineering, geoscience, and business students. Highly competitive.'},
+  {id:'def_s6', name:'Khazanah Global Scholarship', provider:'Khazanah Nasional Berhad', type:'corporate', icon:'💎', coverage:'Full + All Expenses', stipend:'', duration:'3–5 years', cgpa:'', deadline:'May 2026', full:true, applyUrl:'https://www.khazanah.com.my/scholarship/', desc:'The most prestigious corporate scholarship in Malaysia by the national sovereign wealth fund. For world-leading universities.'},
+  {id:'def_s7', name:'UM Merit Award', provider:'University of Malaya (QS #65)', type:'university', icon:'🏫', coverage:'25–100% Tuition', stipend:'', duration:'', cgpa:'3.2', deadline:'Rolling', full:false, applyUrl:'https://admissions.um.edu.my/international/scholarship', desc:'Malaysia\'s top-ranked university offers merit scholarships for outstanding international students covering 25–100% of tuition fees.'},
+  {id:'def_s8', name:'UPM International Scholarship', provider:'Universiti Putra Malaysia', type:'university', icon:'🎓', coverage:'50–100% Tuition', stipend:'', duration:'', cgpa:'3.5', deadline:'Rolling', full:false, applyUrl:'https://gss.upm.edu.my/', desc:'UPM\'s scholarship for international students — generous tuition waivers for agricultural sciences, engineering, and natural sciences.'},
+  {id:'def_s9', name:'UTM Global Excellence Award', provider:'Universiti Teknologi Malaysia', type:'university', icon:'🌿', coverage:'Full Tuition', stipend:'RM 1,200/mo', duration:'Up to 4 years', cgpa:'3.0', deadline:'Jun 2026', full:false, applyUrl:'https://graduate.utm.my/scholarship/', desc:'UTM rewards outstanding international students in engineering and technology with tuition discounts and monthly research allowance.'},
+  {id:'def_s10', name:'Commonwealth Scholarship', provider:'Commonwealth Scholarship Commission', type:'international', icon:'🌍', coverage:'Tuition + Return Airfare', stipend:'£1,236/mo', duration:'', cgpa:'', deadline:'Dec 2026', full:true, applyUrl:'https://cscuk.fcdo.gov.uk/scholarships/', desc:'Fully-funded scholarships for citizens of Commonwealth countries to study at Malaysian universities through the CSC program.'},
+  {id:'def_s11', name:'OIC Scholarship Programme', provider:'Organisation of Islamic Cooperation', type:'international', icon:'🤝', coverage:'Tuition + Living', stipend:'', duration:'3–4 years', cgpa:'', deadline:'Oct 2026', full:false, applyUrl:'https://www.oic-oci.org/page/?p_id=52&p_ref=27&lan=en', desc:'The OIC funds students from member states to study in Malaysia under a bilateral scholarship scheme across all disciplines.'},
+  {id:'def_s12', name:'Malaysia International Scholarship (MIS)', provider:'Ministry of Higher Education Malaysia', type:'international', icon:'🇲🇾', coverage:'Tuition + Return Airfare', stipend:'RM 1,700/mo', duration:'2–4 years', cgpa:'3.5', deadline:'Mar 2026', full:true, applyUrl:'https://biasiswa.mohe.gov.my/INTER/', desc:'Malaysia\'s flagship scholarship for international students to pursue postgraduate studies at top Malaysian public universities.'},
+];
+
+const DEFAULT_BLOG_POSTS = [
+  {id:'def_b1', title:'Cost of Living in Malaysia 2026 — Full Breakdown', cat:'Finance', emoji:'💰', time:'8 min read', author:'EduPath Team', date:'March 15, 2026', coverImg:'', excerpt:'Rent, food, transport, utilities — a complete monthly budget guide for international students living in Malaysia.', content:'<p>Malaysia offers some of the lowest living costs in Asia. Here\'s a realistic monthly budget breakdown to help you plan your finances.</p><h3>🏠 Accommodation (per month)</h3><ul><li>Campus hostel: <strong>RM 300–600</strong></li><li>Shared apartment (off-campus): <strong>RM 500–900</strong></li><li>Private studio in KL: <strong>RM 1,000–1,800</strong></li></ul><h3>🍜 Food & Groceries</h3><ul><li>University cafeteria meal: <strong>RM 5–10</strong></li><li>Street food (hawker stalls): <strong>RM 8–15</strong></li><li>Restaurant meal: <strong>RM 20–40</strong></li><li>Monthly grocery budget: <strong>RM 300–600</strong></li></ul><h3>🚆 Transport</h3><ul><li>Monthly MRT/LRT pass: <strong>RM 100–150</strong></li><li>Grab rides (average): <strong>RM 10–25</strong></li></ul><h3>📊 Total Monthly Estimate</h3><ul><li>Budget lifestyle: <strong>RM 1,200–1,600/mo</strong></li><li>Moderate lifestyle: <strong>RM 1,800–2,500/mo</strong></li><li>Comfortable: <strong>RM 3,000+/mo</strong></li></ul>', pub:true},
+  {id:'def_b2', title:'Can International Students Work in Malaysia?', cat:'Work & Study', emoji:'💼', time:'5 min read', author:'EduPath Team', date:'February 28, 2026', coverImg:'', excerpt:'Work rights, permitted sectors, hour limits, and how to maximize your earnings while studying in Malaysia.', content:'<h3>✅ Yes — With Conditions</h3><p>International students on a valid Student Pass can work part-time in Malaysia under specific conditions set by the Immigration Department.</p><h3>⏱ Hours Allowed</h3><ul><li>Up to <strong>20 hours per week</strong> during semester breaks, public holidays, and gazetted holidays</li><li>Not permitted during active semester (study weeks)</li></ul><h3>🏪 Permitted Sectors</h3><ul><li>Restaurants and food service</li><li>Hotels and hospitality industry</li><li>Mini-markets and retail stores</li><li>Gas stations</li></ul><h3>🚫 Not Permitted</h3><ul><li>Full-time employment during the semester</li><li>Freelance/self-employment</li><li>Online businesses (grey area)</li></ul><p><strong>💡 Tip:</strong> Always check the latest EMGS and Immigration Department guidelines before taking up any work.</p>', pub:true},
+  {id:'def_b3', title:'Top Universities in Malaysia by QS Ranking 2026', cat:'Rankings', emoji:'🏆', time:'6 min read', author:'EduPath Team', date:'January 10, 2026', coverImg:'', excerpt:'QS-ranked universities in Malaysia with fees, programs, and what makes each one special for international students.', content:'<h3>🏆 QS World University Rankings — Malaysia 2026</h3><ul><li>🥇 <strong>University of Malaya (UM)</strong> — QS #58 · KL</li><li>🥈 <strong>UKM</strong> — QS #126 · Bangi</li><li>🥈 <strong>UPM</strong> — QS #134 · Serdang</li><li>🥈 <strong>USM</strong> — QS #134 · Penang</li><li>🥉 <strong>UTM</strong> — QS #153 · Johor Bahru</li><li><strong>UTP</strong> — QS #251 · Perak</li><li><strong>Taylor\'s University</strong> — QS #253 · Subang Jaya</li><li><strong>UCSI University</strong> — QS #265 · KL</li><li><strong>Sunway University</strong> — QS #410 · Subang Jaya</li></ul><h3>🌐 International Branch Campuses</h3><ul><li>🇦🇺 <strong>Monash University Malaysia</strong> — QS #36 globally</li><li>🇬🇧 <strong>University of Nottingham Malaysia</strong> — QS #97 globally</li></ul>', pub:true},
+  {id:'def_b4', title:'Malaysia Student Visa (Student Pass) — Step by Step Guide 2026', cat:'Visa', emoji:'🛂', time:'7 min read', author:'EduPath Team', date:'December 5, 2025', coverImg:'', excerpt:'Everything about getting your Malaysian Student Pass — EMGS application, eVAL, medical check, and collection.', content:'<h3>🛂 Malaysia Student Visa Process</h3><p>International students must obtain a <strong>Student Pass</strong> (not a visa sticker) via the <strong>EMGS system</strong> before studying in Malaysia.</p><h3>📋 Step-by-Step Process</h3><ol style="padding-right:20px"><li>Receive your university <strong>Offer Letter</strong></li><li>Submit EMGS application (EduPath can handle this for you)</li><li>Receive <strong>eVAL approval</strong> (4–6 weeks)</li><li>Fly to Malaysia on a tourist/social visit pass</li><li>Complete a <strong>medical check-up</strong> at an EMGS-approved clinic</li><li>Collect your <strong>Student Pass</strong> at the university</li></ol><h3>📄 Required Documents</h3><ul><li>Valid passport (min 18 months)</li><li>Offer letter from university</li><li>Academic certificates (certified copies)</li><li>Passport-size photos</li><li>Bank statement (min RM 15,000)</li><li>Medical report from home country</li></ul><p>✅ <strong>EduPath manages your entire EMGS process as part of the $699 full application service.</strong></p>', pub:true},
+  {id:'def_b5', title:'Student Life in Kuala Lumpur — What to Expect', cat:'Student Life', emoji:'🌆', time:'5 min read', author:'EduPath Team', date:'November 20, 2025', coverImg:'', excerpt:'Street food, weekend getaways, malls, mosques, and the KL social scene — the ultimate student life guide.', content:'<h3>🌆 Why KL is One of the Best Student Cities in Asia</h3><ul><li>🍜 Incredible food scene — Malay, Chinese, Indian, Middle Eastern all under one roof</li><li>🕌 Muslim-friendly with halal food everywhere and mosques on every campus</li><li>🛍️ KLCC, Mid Valley, Pavilion — world-class malls for leisure and part-time work</li><li>✈️ Budget airlines (AirAsia hub!) — easy weekend trips to Bali, Bangkok, Seoul</li><li>🏞️ Day trips to Batu Caves, Genting Highlands, Cameron Highlands</li></ul><h3>📡 Student-Friendly Connectivity</h3><ul><li>MRT & LRT connect major universities to the city center</li><li>Grab is cheaper than Uber — avg RM 8–15 per ride</li><li>4G/5G coverage is excellent across KL and major cities</li></ul>', pub:true},
+  {id:'def_b6', title:'Complete Guide to Scholarships in Malaysia 2026', cat:'Scholarships', emoji:'🎁', time:'6 min read', author:'EduPath Team', date:'October 15, 2025', coverImg:'', excerpt:'Government grants, corporate awards, and university scholarships — how to find and win funding for your Malaysian education.', content:'<h3>🎁 Types of Scholarships Available</h3><h3>1. Government Scholarships</h3><ul><li><strong>MyBrainSc</strong> — Full funding for STEM postgrad (RM 2,000–3,900/mo)</li><li><strong>MARA</strong> — Undergrad + postgrad at local/overseas unis</li><li><strong>JPA</strong> — For Malaysian students (local + overseas)</li></ul><h3>2. Corporate Scholarships</h3><ul><li><strong>PETRONAS</strong> — Engineering, geoscience, business</li><li><strong>TNB</strong> — Engineering (electrical & mechanical)</li><li><strong>Khazanah</strong> — Most prestigious, world top-50 unis</li></ul><h3>3. University Scholarships</h3><ul><li><strong>Taylor\'s</strong> — Up to 50% tuition discount</li><li><strong>UM Merit Award</strong> — 25–100% coverage</li><li><strong>UCSI</strong> — 10–30% merit discounts</li></ul><p>💡 <strong>EduPath will match you to the right scholarships and handle your full application — $699 service.</strong></p>', pub:true},
+];
+
+const DEFAULT_INSTITUTES = [
+  {
+    id:'inst_sheffield', name:'Sheffield Academy', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🎓',
+    programs:['Intensive English','IELTS Preparation','General English'],
+    tuition:'RM 3,400/mo · 6-mo: RM 21,100',
+    website:'',
+    about:'Founded in 2010 and located 600m from KLCC Twin Towers. Offers intensive English with 10 proficiency levels from beginner to advanced. Accredited by the Ministry of Education, EMGS, and IDP. Special offer: register 2 months, get 1 month free (RM 6,300).',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_excel', name:'Excel Language Center', city:'Seri Kembangan', state:'Selangor',
+    icon:'📊',
+    programs:['Intensive English','IELTS Preparation','Online English'],
+    tuition:'RM 2,000/mo · 12-mo: RM 20,350',
+    website:'',
+    about:'Located in One South Street Mall, Seri Kembangan — 5 minutes from the MRT station and 19 minutes from KLCC. Offers 6 daily study hours, free ELLII platform access, and partnership with Newcastle University (UK) for dual international certification. ISO 9001:2015 and ISO 21001 certified.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_els', name:'ELS Malaysia', city:'Subang Jaya / Kuala Lumpur', state:'Selangor & WP KL',
+    icon:'🌐',
+    programs:['Intensive English','IELTS','TOEFL','University Pathway'],
+    tuition:'RM 4,705/mo · 12-mo: RM 47,790',
+    website:'https://www.els.edu.my',
+    about:"Malaysia's first professional English training facility, established 1990. Operates 3 branches: Subang Jaya, KL city centre, and Johor Bahru. The Certified Intensive English Program (CIEP) graduates can apply to 650+ partner universities worldwide without IELTS or TOEFL scores. 10 proficiency levels.",
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_stratford', name:'Stratford International Institute', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🏛️',
+    programs:['General English','IELTS Preparation','TOEFL Preparation'],
+    tuition:'RM 2,550/mo · 6-mo: RM 12,230 · 12-mo: RM 19,700',
+    website:'',
+    about:'4-star accredited by the Malaysian Ministry of Education. Located at Level 6, PNB Perdana, Jalan Binjai — 10 minutes from KLCC. Follows CEFR framework across 12 proficiency levels with 8-week level cycles (4 hours daily, Mon–Fri). Monthly intake.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_bright', name:'Bright Language Institute', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'✨',
+    programs:['General English','Intensive English','IELTS Preparation'],
+    tuition:'RM 2,900/mo · 3-mo: RM 5,800 · 6-mo: RM 16,010 · 12-mo: RM 25,364',
+    website:'',
+    about:'Located at Unit A-5-1, Megan Street 2, Jalan Yap Kwan Seng, KL. Classes limited to 8–18 students with native English-speaking instructors. Curriculum based on Oxford Headway methodology. 12 proficiency levels. Fees include tuition, registration, health insurance, textbooks, and airport transfers.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_iabt', name:'IABT Malaysia', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🏢',
+    programs:['Intensive English','Business English','IELTS','PTE','TOEFL'],
+    tuition:'RM 2,450/mo · 12-mo: RM 24,680',
+    website:'',
+    about:'Located at Level 10, Sheraton Imperial Hotel, Jalan Sultan Ismail, KL. Offers 6 hours of daily study across 6 proficiency levels. Specialises in general English plus business and IT tracks. Also prepares students for IELTS, PTE, and TOEFL exams. Year-round enrollment.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_bigben', name:'Big Ben Academy', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🏗️',
+    programs:['Intensive English','IELTS Preparation','Linguaskill Test Prep'],
+    tuition:'RM 6,018/mo · 3-mo: RM 10,076 · 6-mo: RM 15,966 · 12-mo: RM 25,891',
+    website:'',
+    about:'Located at Level 13A, Megan Avenue 2, Block C, Jalan Yap Kwan Seng, KL. 10 CEFR-aligned levels with experienced native English-speaking instructors. Focuses on listening, speaking, vocabulary, and grammar through role-play and group activities. Current promo: register 2 months, get 1 month free.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_california', name:'California KL Institute', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🌴',
+    programs:['General English','Intensive English','American English'],
+    tuition:'RM 4,700/mo · 12-mo: RM 35,800',
+    website:'',
+    about:"Located in KL's Golden Triangle near the Petronas Twin Towers and Bukit Bintang. Over 16 years of experience serving students from 35+ countries. Teaches American English with US-certified instructors. Accredited by Ministry of Education, EMGS, IDP, and the Saudi Arabian Embassy in Malaysia.",
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_ems', name:'EMS Language Institute', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'📡',
+    programs:['Intensive English','General English'],
+    tuition:'2-mo: RM 4,600 · 5-mo+1 free: RM 16,400 · 8-mo+2 free+IELTS: RM 24,500',
+    website:'',
+    about:'Located in central KL, 5 minutes from the train station near major shopping complexes. Offers the Intensive General English (IGE) program across 10 levels. Special 2026 packages include free months and a bundled IELTS exam. Airport pickup, accommodation assistance, and medical screening included.',
+    videoUrl:'', active:true
+  },
+  {
+    id:'inst_britannia', name:'Britannia Language Institute', city:'Kuala Lumpur', state:'WP Kuala Lumpur',
+    icon:'🇬🇧',
+    programs:['Intensive English','General English','IELTS Preparation'],
+    tuition:'RM 2,550/mo (4 hrs) · 12-mo intensive: RM 24,500',
+    website:'',
+    about:'Located in central KL, 5 minutes from the train station. Offers intensive (5 hrs/day) and general (4 hrs/day) English courses across 4 levels: beginner, two intermediate stages, and advanced. Small classes with native instructors and partnerships with international universities. Fully licensed by Ministry of Education, EMGS, and IDP.',
+    videoUrl:'', active:true
+  },
+];
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+function initAdmin() {
+  // ── Seed default data on first run (or if array is empty) ──
+  /* v3 — force re-seed scholarships if missing applyUrl (data upgrade) */
+  try {
+    const _sc = JSON.parse(localStorage.getItem(K.schol) || '[]');
+    if (!_sc.length || !_sc[0].applyUrl) ls_set(K.schol, DEFAULT_SCHOLARSHIPS);
+  } catch { ls_set(K.schol, DEFAULT_SCHOLARSHIPS); }
+  /* v3 — force re-seed blog if still has "for free" wording */
+  try {
+    const _bl = JSON.parse(localStorage.getItem(K.blog) || '[]');
+    const _hasOld = _bl.some(p => p.content && p.content.includes('for FREE'));
+    if (!_bl.length || _hasOld) ls_set(K.blog, DEFAULT_BLOG_POSTS);
+  } catch { ls_set(K.blog, DEFAULT_BLOG_POSTS); }
+  /* v2 — force re-seed institutes with real data if still on old defaults */
+  try {
+    const stored = JSON.parse(localStorage.getItem(K.institutes) || '[]');
+    const isOldSeed = stored.length === 0 || stored.some(i => i.id === 'def_i1' || i.id === 'def_i2');
+    if (isOldSeed) ls_set(K.institutes, DEFAULT_INSTITUTES);
+  } catch { ls_set(K.institutes, DEFAULT_INSTITUTES); }
+  updateBadges();
+  renderDashboard();
+  renderCourseList();
+  renderInstList();
+  loadSettingsFields();
+  initTheme();
+}
+
+function updateBadges() {
+  const allUnis  = getAllUnis();
+  const blog     = ls_get(K.blog);
+  const schol    = ls_get(K.schol);
+  const faq      = ls_get(K.faq);
+  const courses  = ls_get(K.courses);
+  const insts    = ls_get(K.institutes);
+  const apps     = ls_get(K.applications);
+  const students = ls_get(K.students);
+  const consults = ls_get(K.consultations);
+  document.getElementById('nb_unis').textContent    = allUnis.length;
+  document.getElementById('nb_blog').textContent    = blog.length;
+  document.getElementById('nb_schol').textContent   = schol.length;
+  document.getElementById('nb_courses').textContent = courses.length;
+  document.getElementById('nb_inst').textContent    = insts.length;
+  document.getElementById('nb_apps').textContent    = apps.filter(a=>a.status==='new').length || apps.length;
+  document.getElementById('nb_students').textContent= students.length;
+  const newConsults = consults.filter(c=>c.status==='new').length;
+  document.getElementById('nb_consults').textContent= newConsults || consults.length;
+}
+
+/* ══════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════ */
+function renderDashboard() {
+  const allUnis = getAllUnis();
+  const blog    = ls_get(K.blog);
+  const schol   = ls_get(K.schol);
+  const media   = ls_get(K.media);
+  const faq     = ls_get(K.faq);
+  const hidden  = ls_get(K.hiddenUni);
+  const apps    = ls_get(K.applications);
+  const students= ls_get(K.students);
+  const consults= ls_get(K.consultations);
+  const newApps = apps.filter(a=>a.status==='new').length;
+  const newConsults = consults.filter(c=>c.status==='new').length;
+  document.getElementById('dashStats').innerHTML = [
+    {icon:'📥', num: apps.length,              label:'طلب تقديم', tab:'applications', highlight: newApps > 0},
+    {icon:'💬', num: consults.length,          label:'استشارة', tab:'consultations', highlight: newConsults > 0},
+    {icon:'👥', num: students.length,          label:'طالب مسجّل', tab:'students'},
+    {icon:'🆕', num: newApps,                  label:'طلب جديد', tab:'applications'},
+    {icon:'🏛️', num: allUnis.length,          label:'جامعة', tab:'unis'},
+    {icon:'📝', num: blog.filter(b=>b.pub).length, label:'مقال منشور', tab:'blog'},
+  ].map(s=>`
+    <div class="dash-stat" onclick="tab('${s.tab}',document.querySelector('[onclick*=${s.tab}]'))" style="${s.highlight?'border-color:#0ea5e9;background:#f0f9ff':''}">
+      <div class="ds-icon">${s.icon}</div>
+      <div class="ds-num" style="${s.highlight?'color:#0369a1':''}">${s.num}</div>
+      <div class="ds-label">${s.label}</div>
+    </div>`).join('');
+}
+
+/* ══════════════════════════════════════
+   UNIVERSITIES
+══════════════════════════════════════ */
+function getAllUnis() {
+  const base   = (typeof UNIVERSITIES !== 'undefined') ? UNIVERSITIES : [];
+  const extras = ls_get(K.extraUni);
+  const edits  = ls_obj(K.uniEdits);
+  const logos  = ls_obj(K.uniLogos);
+  const merged = [...base];
+  extras.forEach(u => { if (!merged.find(x=>x.id===u.id)) merged.push(u); });
+  return merged.map(u => ({
+    ...u,
+    ...(edits[u.id] || {}),
+    _logo: logos[u.id] || u._logo || '',
+  }));
+}
+
+function filterUnis(q) {
+  document.querySelectorAll('.uni-row').forEach(row => {
+    const text = row.dataset.search || '';
+    row.style.display = (!q || text.toLowerCase().includes(q.toLowerCase())) ? '' : 'none';
+  });
+}
+
+function renderUniList() {
+  const hidden = ls_get(K.hiddenUni);
+  const unis   = getAllUnis();
+  const extras = ls_get(K.extraUni);
+  const list   = document.getElementById('uniList');
+  if(!list) return;
+  list.innerHTML = unis.map(u => {
+    const vis = !hidden.includes(u.id);
+    const isCustom = !!extras.find(e=>e.id===u.id);
+    const logoHtml = u._logo
+      ? `<img src="${u._logo}" alt="" onerror="this.parentElement.textContent='${u.icon||'🏫'}'"/>`
+      : (u.icon || '🏫');
+    return `<div class="uni-row" data-search="${u.name} ${u.city} ${u.type}" id="urow_${u.id}">
+      <div class="uni-logo-preview">${logoHtml}</div>
+      <div class="uni-row-info">
+        <strong>${u.name}</strong>
+        <small>${u.city||''} · ${u.type} ${u.qs?'· QS #'+u.qs:''} ${isCustom?'· <span style="color:var(--acc)">مضاف</span>':''}</small>
+      </div>
+      <div class="uni-row-actions">
+        <label class="toggle" title="${vis?'إخفاء':'إظهار'}">
+          <input type="checkbox" ${vis?'checked':''} onchange="toggleUni('${u.id}',this.checked)"/>
+          <span class="toggle-s"></span>
+        </label>
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="openUniModal('${u.id}')" title="تعديل">✏️</button>
+        ${isCustom?`<button class="btn btn-r btn-icon btn-sm" onclick="deleteUni('${u.id}')" title="حذف">🗑️</button>`:''}
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><div class="es-icon">🏛️</div><p>لا توجد جامعات</p></div>';
+}
+
+function toggleUni(id, vis) {
+  let h = ls_get(K.hiddenUni);
+  h = vis ? h.filter(x=>x!==id) : [...new Set([...h, id])];
+  ls_set(K.hiddenUni, h);
+  const row = document.getElementById('urow_'+id);
+  if(row) row.style.opacity = vis ? '' : '.45';
+  updateBadges();
+  toast(vis ? '👁 تم إظهار الجامعة' : '🙈 تم إخفاء الجامعة');
+}
+
+let _uniEditId = null;
+function openUniModal(id) {
+  _uniEditId = id;
+  const uni = id ? getAllUnis().find(u=>u.id===id) : null;
+  document.getElementById('uniModalTitle').textContent = id ? '✏️ تعديل جامعة' : '🏛️ إضافة جامعة';
+  sv('um_id', id || '');
+  sv('um_name',     uni?.name    || '');
+  sv('um_type',     uni?.type    || 'private');
+  sv('um_city',     uni?.city    || '');
+  sv('um_state',    uni?.state   || '');
+  sv('um_tuition',  uni?.tuition || '');
+  sv('um_qs',       uni?.qs      || '');
+  sv('um_est',      uni?.est     || '');
+  sv('um_website',  uni?.website || '');
+  sv('um_fields',   (uni?.fields||[]).join(', '));
+  sv('um_about',    uni?.about   || '');
+  sv('um_intakes',  (uni?.intakes||[]).join(', '));
+  sv('um_offerfee', uni?.offerLetterFee || '');
+  sv('um_icon',     uni?.icon    || '🏫');
+  const logo = uni?._logo || '';
+  sv('um_logoUrl', logo);
+  const prev = document.getElementById('um_logoPreview');
+  prev.innerHTML = logo ? `<img src="${logo}" style="width:100%;height:100%;object-fit:contain"/>` : (uni?.icon||'🏫');
+  // Load video URL — check uniVideos for base unis, or uni.videoUrl for extra unis
+  const uniVids = ls_obj(K.uniVideos);
+  const existingVideo = (id && uniVids[id]) ? uniVids[id] : (uni?.videoUrl || '');
+  sv('um_videoUrl', existingVideo);
+  previewUniVideo(existingVideo);
+  openModal('uniModal');
+}
+
+function previewUniLogo() {
+  const url = gv('um_logoUrl');
+  const prev = document.getElementById('um_logoPreview');
+  if(url) prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:contain" onerror="this.parentElement.textContent='❌'"/>`;
+  else prev.textContent = gv('um_icon') || '🏫';
+}
+
+function handleUniLogoFile(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    sv('um_logoUrl', e.target.result);
+    document.getElementById('um_logoPreview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:contain"/>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveUni() {
+  const name = gv('um_name');
+  if(!name) { toast('❗ أدخل اسم الجامعة', true); return; }
+  const id = gv('um_id') || 'custom_'+uid();
+  const isNew = !gv('um_id');
+
+  const logo = gv('um_logoUrl');
+  if(logo) {
+    const logos = ls_obj(K.uniLogos);
+    logos[id] = logo;
+    ls_set(K.uniLogos, logos);
+  }
+
+  const videoUrl = gv('um_videoUrl') || '';
+  // Save video for this uni in uniVideos
+  if (videoUrl || id) {
+    const vids = ls_obj(K.uniVideos);
+    if (videoUrl) vids[id] = videoUrl;
+    else delete vids[id];
+    ls_set(K.uniVideos, vids);
+  }
+
+  const data = {
+    id, name,
+    type:     gv('um_type'),
+    city:     gv('um_city'),
+    state:    gv('um_state'),
+    tuition:  gv('um_tuition'),
+    qs:       parseInt(gv('um_qs')) || null,
+    est:      parseInt(gv('um_est')) || 2000,
+    website:  gv('um_website'),
+    fields:   gv('um_fields').split(',').map(f=>f.trim()).filter(Boolean),
+    about:    gv('um_about'),
+    intakes:  gv('um_intakes').split(',').map(i=>i.trim()).filter(Boolean),
+    offerLetterFee: gv('um_offerfee'),
+    icon:     gv('um_icon') || '🏫',
+    videoUrl: videoUrl,
+    ielts: '5.5', locations:[], programs:[], facilities:[]
+  };
+
+  if(isNew) {
+    const extras = ls_get(K.extraUni);
+    extras.push(data);
+    ls_set(K.extraUni, extras);
+  } else {
+    // Check if it's a custom one
+    const extras = ls_get(K.extraUni);
+    const idx = extras.findIndex(e=>e.id===id);
+    if(idx >= 0) {
+      extras[idx] = { ...extras[idx], ...data };
+      ls_set(K.extraUni, extras);
+    } else {
+      // It's a base uni — save edits separately
+      const edits = ls_obj(K.uniEdits);
+      edits[id] = { name: data.name, type: data.type, city: data.city, state: data.state,
+                    tuition: data.tuition, qs: data.qs, est: data.est, website: data.website,
+                    fields: data.fields, about: data.about, icon: data.icon };
+      ls_set(K.uniEdits, edits);
+    }
+  }
+  closeModal('uniModal');
+  renderUniList();
+  updateBadges();
+  toast('✅ تم حفظ الجامعة بنجاح');
+}
+
+function deleteUni(id) {
+  if(!confirm('حذف هذه الجامعة؟ لا يمكن التراجع.')) return;
+  let extras = ls_get(K.extraUni);
+  extras = extras.filter(e=>e.id!==id);
+  ls_set(K.extraUni, extras);
+  const logos = ls_obj(K.uniLogos);
+  delete logos[id];
+  ls_set(K.uniLogos, logos);
+  renderUniList();
+  updateBadges();
+  toast('🗑️ تم حذف الجامعة');
+}
+
+/* ══════════════════════════════════════
+   BLOG
+══════════════════════════════════════ */
+function renderBlogList() {
+  const posts = ls_get(K.blog);
+  const list  = document.getElementById('blogList');
+  if(!list) return;
+  document.getElementById('blogCountLabel').textContent = posts.length;
+  list.innerHTML = posts.length ? posts.map(p=>`
+    <div class="blog-row">
+      <div class="blog-emoji" style="${p.coverImg?'padding:0;overflow:hidden':''}">
+        ${p.coverImg
+          ? `<img src="${p.coverImg}" style="width:44px;height:44px;object-fit:cover;border-radius:10px" onerror="this.parentElement.textContent='📝'"/>`
+          : (p.emoji||'📝')}
+      </div>
+      <div class="blog-row-info">
+        <strong>${p.title}</strong>
+        <div class="blog-row-meta">
+          <span>${p.date||''}</span>
+          <span class="badge badge-blue">${p.cat||''}</span>
+          <span class="badge ${p.pub?'badge-green':'badge-gray'}">${p.pub?'منشور':'مسودة'}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <label class="toggle" title="نشر/إخفاء">
+          <input type="checkbox" ${p.pub?'checked':''} onchange="toggleBlogPub('${p.id}',this.checked)"/>
+          <span class="toggle-s"></span>
+        </label>
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="openBlogModal('${p.id}')">✏️</button>
+        <button class="btn btn-r btn-icon btn-sm" onclick="deleteBlog('${p.id}')">🗑️</button>
+      </div>
+    </div>`).join('') :
+    '<div class="empty-state"><div class="es-icon">📝</div><p>لا توجد مقالات بعد</p></div>';
+}
+
+function openBlogModal(id) {
+  const posts = ls_get(K.blog);
+  const p = id ? posts.find(x=>x.id===id) : null;
+  document.getElementById('blogModalTitle').textContent = id ? '✏️ تعديل مقال' : '📝 مقال جديد';
+  sv('bm_id', id||'');
+  sv('bm_title',    p?.title    || '');
+  sv('bm_cat',      p?.cat      || 'Finance');
+  sv('bm_emoji',    p?.emoji    || '📝');
+  sv('bm_time',     p?.time     || '5 min read');
+  sv('bm_author',   p?.author   || 'EduPath Team');
+  sv('bm_date',     p?.date     || new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}));
+  sv('bm_excerpt',  p?.excerpt  || '');
+  sv('bm_content',  p?.content  || '');
+  sv('bm_published', p?.pub ? '1' : '0');
+  sv('bm_coverImg', p?.coverImg || '');
+  sv('bm_videoUrl', p?.videoUrl || '');
+  const prev = document.getElementById('bm_coverPreview');
+  if (p?.coverImg) {
+    document.getElementById('bm_coverImg_el').src = p.coverImg;
+    prev.style.display = 'block';
+  } else {
+    prev.style.display = 'none';
+    document.getElementById('bm_coverImg_el').src = '';
+  }
+  previewBlogVideo(p?.videoUrl || '');
+  openModal('blogModal');
+}
+
+function previewBlogCover(url) {
+  const prev = document.getElementById('bm_coverPreview');
+  const img  = document.getElementById('bm_coverImg_el');
+  if (url) { img.src = url; prev.style.display = 'block'; }
+  else { prev.style.display = 'none'; }
+}
+
+function handleBlogCoverFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    sv('bm_coverImg', e.target.result);
+    previewBlogCover(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveBlogPost() {
+  const title = gv('bm_title');
+  if(!title) { toast('❗ أدخل عنوان المقال', true); return; }
+  const posts = ls_get(K.blog);
+  const id    = gv('bm_id') || uid();
+  const post  = {
+    id, title,
+    cat:      gv('bm_cat'),
+    emoji:    gv('bm_emoji')    || '📝',
+    time:     gv('bm_time')     || '5 min read',
+    author:   gv('bm_author')   || 'EduPath Team',
+    date:     gv('bm_date'),
+    excerpt:  gv('bm_excerpt'),
+    content:  gv('bm_content'),
+    coverImg: gv('bm_coverImg') || '',
+    videoUrl: gv('bm_videoUrl') || '',
+    pub:      gv('bm_published') === '1',
+  };
+  const idx = posts.findIndex(p=>p.id===id);
+  if(idx>=0) posts[idx]=post; else posts.unshift(post);
+  ls_set(K.blog, posts);
+  closeModal('blogModal');
+  renderBlogList();
+  updateBadges();
+  toast('✅ تم حفظ المقال');
+}
+
+function toggleBlogPub(id, val) {
+  const posts = ls_get(K.blog);
+  const idx = posts.findIndex(p=>p.id===id);
+  if(idx>=0) { posts[idx].pub = val; ls_set(K.blog, posts); }
+  toast(val ? '✅ تم نشر المقال' : '📝 تحويل لمسودة');
+}
+
+function deleteBlog(id) {
+  if(!confirm('حذف هذا المقال؟')) return;
+  ls_set(K.blog, ls_get(K.blog).filter(p=>p.id!==id));
+  renderBlogList(); updateBadges();
+  toast('🗑️ تم حذف المقال');
+}
+
+function insertTag(id, open, close) {
+  const el = document.getElementById(id);
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.slice(0,s) + open + el.value.slice(s,e) + close + el.value.slice(e);
+  el.focus(); el.selectionStart = s + open.length; el.selectionEnd = e + open.length;
+}
+function insertInfoBox() {
+  const el = document.getElementById('bm_content');
+  el.value += '\n<div class="info-box"><p>💡 <strong>نقطة مهمة:</strong> أضف نصك هنا...</p></div>\n';
+}
+
+/* ══════════════════════════════════════
+   SCHOLARSHIPS
+══════════════════════════════════════ */
+function renderScholList() {
+  const schols = ls_get(K.schol);
+  const list = document.getElementById('scholList');
+  if(!list) return;
+  document.getElementById('scholCountLabel').textContent = schols.length;
+  list.innerHTML = schols.length ? schols.map(s=>`
+    <div class="schol-row">
+      <div class="schol-icon-preview" style="background:${s.type==='government'?'#dbeafe':s.type==='corporate'?'#fae8ff':s.type==='university'?'#d1fae5':'#fef3c7'}">${s.icon||'🎁'}</div>
+      <div style="flex:1;min-width:0">
+        <strong style="font-size:13px;display:block">${s.name}</strong>
+        <small style="color:var(--muted)">${s.provider||''} · ${s.deadline?'موعده: '+s.deadline:''}</small>
+        <div style="margin-top:4px">
+          <span class="badge badge-${s.type==='government'?'blue':s.type==='corporate'?'purple':s.type==='university'?'green':'amber'}">${{government:'حكومية',corporate:'شركات',university:'جامعية',international:'دولية'}[s.type]||s.type}</span>
+          ${s.full?'<span class="badge badge-green" style="margin-right:6px">ممولة بالكامل</span>':''}
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-shrink:0">
+        <button class="btn btn-ghost btn-icon btn-sm" onclick="openScholModal('${s.id}')">✏️</button>
+        <button class="btn btn-r btn-icon btn-sm" onclick="deleteSchol('${s.id}')">🗑️</button>
+      </div>
+    </div>`).join('') :
+    '<div class="empty-state"><div class="es-icon">🎁</div><p>لا توجد منح مضافة بعد</p></div>';
+}
+
+function openScholModal(id) {
+  const schols = ls_get(K.schol);
+  const s = id ? schols.find(x=>x.id===id) : null;
+  document.getElementById('scholModalTitle').textContent = id ? '✏️ تعديل منحة' : '🎁 منحة جديدة';
+  sv('sm_id',       id||'');
+  sv('sm_name',     s?.name     ||'');
+  sv('sm_provider', s?.provider ||'');
+  sv('sm_type',     s?.type     ||'government');
+  sv('sm_icon',     s?.icon     ||'🏛️');
+  sv('sm_coverage', s?.coverage ||'');
+  sv('sm_stipend',  s?.stipend  ||'');
+  sv('sm_duration', s?.duration ||'');
+  sv('sm_cgpa',     s?.cgpa     ||'');
+  sv('sm_deadline', s?.deadline ||'');
+  sv('sm_full',     s?.full ? '1':'0');
+  sv('sm_desc',     s?.desc     ||'');
+  sv('sm_applyUrl', s?.applyUrl ||'');
+  openModal('scholModal');
+}
+
+function saveSchol() {
+  const name = gv('sm_name');
+  if(!name) { toast('❗ أدخل اسم المنحة', true); return; }
+  const schols = ls_get(K.schol);
+  const id = gv('sm_id') || uid();
+  const obj = {
+    id, name,
+    provider: gv('sm_provider'),
+    type:     gv('sm_type'),
+    icon:     gv('sm_icon') || '🎁',
+    coverage: gv('sm_coverage'),
+    stipend:  gv('sm_stipend'),
+    duration: gv('sm_duration'),
+    cgpa:     gv('sm_cgpa'),
+    deadline: gv('sm_deadline'),
+    full:     gv('sm_full') === '1',
+    desc:     gv('sm_desc'),
+    applyUrl: gv('sm_applyUrl'),
+  };
+  const idx = schols.findIndex(s=>s.id===id);
+  if(idx>=0) schols[idx]=obj; else schols.unshift(obj);
+  ls_set(K.schol, schols);
+  closeModal('scholModal');
+  renderScholList();
+  updateBadges();
+  toast('✅ تم حفظ المنحة');
+}
+
+function deleteSchol(id) {
+  if(!confirm('حذف هذه المنحة؟')) return;
+  ls_set(K.schol, ls_get(K.schol).filter(s=>s.id!==id));
+  renderScholList(); updateBadges();
+  toast('🗑️ تم حذف المنحة');
+}
+
+/* ══════════════════════════════════════
+   MEDIA
+══════════════════════════════════════ */
+let _imgPickerCallback = null;
+
+function renderMediaGrid() {
+  const media = ls_get(K.media);
+  const grid  = document.getElementById('mediaGrid');
+  if(!grid) return;
+  document.getElementById('mediaCountLabel').textContent = media.length;
+  grid.innerHTML = media.length ? media.map((m,i)=>`
+    <div class="media-item" onclick="copyUrl('${m.url}')">
+      <button class="media-del" onclick="event.stopPropagation();deleteMedia(${i})">✕</button>
+      <div class="media-thumb">${m.url.startsWith('data:') || m.url.startsWith('http') ? `<img src="${m.url}" alt="" onerror="this.parentElement.textContent='🖼️'"/>` : '🖼️'}</div>
+      <div class="media-info" title="${m.name||m.url}">${m.name||'صورة'}</div>
+    </div>`).join('') :
+    '<div class="empty-state" style="grid-column:1/-1"><div class="es-icon">🖼️</div><p>لا توجد صور بعد</p></div>';
+}
+
+function handleMediaUpload(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const bar = document.getElementById('mediaProgressBar');
+  bar.style.width = '0';
+  const reader = new FileReader();
+  reader.onprogress = e => { if(e.lengthComputable) bar.style.width = (e.loaded/e.total*100)+'%'; };
+  reader.onload = e => {
+    bar.style.width = '100%';
+    addMedia(e.target.result, file.name);
+    setTimeout(()=>bar.style.width='0', 1000);
+    input.value = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function addMediaByUrl() {
+  const url  = gv('mediaUrlInput');
+  const name = gv('mediaNameInput');
+  if(!url) { toast('❗ أدخل رابط الصورة', true); return; }
+  addMedia(url, name || url.split('/').pop());
+  sv('mediaUrlInput',''); sv('mediaNameInput','');
+  document.getElementById('mediaUrlPreview').innerHTML = '🖼️';
+  toast('✅ تم إضافة الصورة');
+}
+
+document.getElementById('mediaUrlInput')?.addEventListener('input', function() {
+  const p = document.getElementById('mediaUrlPreview');
+  p.innerHTML = this.value ? `<img src="${this.value}" style="width:100%;height:100%;object-fit:contain" onerror="this.parentElement.textContent='❌'"/>` : '🖼️';
+});
+
+function addMedia(url, name) {
+  const media = ls_get(K.media);
+  media.push({ url, name: name || 'صورة', date: new Date().toLocaleDateString('ar') });
+  ls_set(K.media, media);
+  renderMediaGrid();
+  updateBadges();
+}
+
+function deleteMedia(i) {
+  if(!confirm('حذف هذه الصورة؟')) return;
+  const media = ls_get(K.media);
+  media.splice(i,1);
+  ls_set(K.media, media);
+  renderMediaGrid();
+  updateBadges();
+  toast('🗑️ تم حذف الصورة');
+}
+
+function clearMedia() {
+  if(!confirm('مسح كل الصور؟')) return;
+  ls_set(K.media, []);
+  renderMediaGrid();
+  updateBadges();
+  toast('🗑️ تم مسح المكتبة');
+}
+
+function copyUrl(url) {
+  navigator.clipboard?.writeText(url).then(()=>toast('📋 تم نسخ الرابط'))
+    .catch(()=>{ const i=document.createElement('input'); i.value=url; document.body.appendChild(i); i.select(); document.execCommand('copy'); i.remove(); toast('📋 تم نسخ الرابط'); });
+}
+
+function clearMedia() {
+  if(!confirm('مسح كل الصور؟')) return;
+  ls_set(K.media, []);
+  renderMediaGrid(); updateBadges();
+  toast('🗑️ تم مسح المكتبة');
+}
+
+/* ══════════════════════════════════════
+   HOMEPAGE
+══════════════════════════════════════ */
+function loadHomepageFields() {
+  const s = ls_obj(K.settings);
+  sv('hp_badge', s.heroBadge || '');
+  sv('hp_title', s.heroTitle || '');
+  sv('hp_desc',  s.heroDesc  || '');
+  const st = s.stats || {};
+  sv('hp_unis',    st.unis    || '36');
+  sv('hp_courses', st.courses || '4146');
+  sv('hp_centers', st.centers || '17');
+  sv('hp_students',st.students|| '1500');
+  sv('hp_wa',      s.whatsapp || '');
+  sv('hp_email',   s.email    || '');
+  sv('hp_ctaTitle',s.ctaTitle || '');
+  sv('hp_ctaDesc', s.ctaDesc  || '');
+  renderServicesEditor();
+  renderStepsEditor();
+  renderTestimonialsEditor();
+}
+
+function saveHero() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, heroBadge:gv('hp_badge'), heroTitle:gv('hp_title'), heroDesc:gv('hp_desc')});
+  toast('✅ تم حفظ قسم الهيرو');
+}
+function saveStats() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, stats:{unis:gv('hp_unis')||'36', courses:gv('hp_courses')||'4146', centers:gv('hp_centers')||'17', students:gv('hp_students')||'1500'}});
+  toast('✅ تم حفظ الإحصائيات');
+}
+function saveCTA() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, whatsapp:gv('hp_wa'), email:gv('hp_email'), ctaTitle:gv('hp_ctaTitle'), ctaDesc:gv('hp_ctaDesc')});
+  toast('✅ تم الحفظ');
+}
+
+// Services
+function renderServicesEditor() {
+  const svcs = ls_get(K.services, DEF_SERVICES);
+  document.getElementById('servicesList').innerHTML = svcs.map((s,i)=>`
+    <div class="section-item">
+      <div class="si-header"><div class="si-num">${s.num||i+1}</div><strong>${s.title}</strong></div>
+      <div class="form-grid cols3">
+        <div class="fg"><label>الإيموجي</label><input type="text" maxlength="4" value="${s.icon||''}" oninput="updateService(${i},'icon',this.value)"/></div>
+        <div class="fg" style="grid-column:span 2"><label>العنوان</label><input type="text" value="${s.title||''}" oninput="updateService(${i},'title',this.value)"/></div>
+        <div class="fg full"><label>الوصف</label><textarea oninput="updateService(${i},'desc',this.value)">${s.desc||''}</textarea></div>
+      </div>
+    </div>`).join('');
+}
+
+let _svcsDraft = null;
+function updateService(i,k,v) {
+  if(!_svcsDraft) _svcsDraft = ls_get(K.services, DEF_SERVICES);
+  _svcsDraft[i][k] = v;
+}
+function saveServices() {
+  ls_set(K.services, _svcsDraft || ls_get(K.services, DEF_SERVICES));
+  _svcsDraft = null;
+  toast('✅ تم حفظ الخدمات');
+}
+
+// Steps
+function renderStepsEditor() {
+  const steps = ls_get(K.steps, DEF_STEPS);
+  document.getElementById('stepsList').innerHTML = steps.map((s,i)=>`
+    <div class="section-item">
+      <div class="si-header"><div class="si-num">${i+1}</div><strong>${s.title}</strong></div>
+      <div class="form-grid cols2">
+        <div class="fg"><label>العنوان</label><input type="text" value="${s.title||''}" oninput="updateStep(${i},'title',this.value)"/></div>
+        <div class="fg"><label>الوصف</label><input type="text" value="${s.desc||''}" oninput="updateStep(${i},'desc',this.value)"/></div>
+      </div>
+    </div>`).join('');
+}
+
+let _stepsDraft = null;
+function updateStep(i,k,v) {
+  if(!_stepsDraft) _stepsDraft = ls_get(K.steps, DEF_STEPS);
+  _stepsDraft[i][k] = v;
+}
+function saveSteps() {
+  ls_set(K.steps, _stepsDraft || ls_get(K.steps, DEF_STEPS));
+  _stepsDraft = null;
+  toast('✅ تم حفظ الخطوات');
+}
+
+// Testimonials
+function renderTestimonialsEditor() {
+  const tests = ls_get(K.tests, DEF_TESTIMONIALS);
+  document.getElementById('testimonialsList').innerHTML = tests.map((t,i)=>`
+    <div class="section-item">
+      <div class="form-grid cols2">
+        <div class="fg"><label>الاسم</label><input type="text" value="${t.name||''}" oninput="updateTest(${i},'name',this.value)"/></div>
+        <div class="fg"><label>المعلومات (بلد · تخصص)</label><input type="text" value="${t.info||''}" oninput="updateTest(${i},'info',this.value)"/></div>
+        <div class="fg"><label>الإيموجي (علم)</label><input type="text" maxlength="4" value="${t.avatar||''}" oninput="updateTest(${i},'avatar',this.value)"/></div>
+        <div class="fg full"><label>الاقتباس</label><textarea oninput="updateTest(${i},'quote',this.value)">${t.quote||''}</textarea></div>
+      </div>
+      <button class="btn btn-r btn-sm" style="margin-top:8px" onclick="removeTestimonial(${i})">🗑️ حذف</button>
+    </div>`).join('');
+}
+
+let _testsDraft = null;
+function updateTest(i,k,v) {
+  if(!_testsDraft) _testsDraft = ls_get(K.tests, DEF_TESTIMONIALS);
+  _testsDraft[i][k] = v;
+}
+function addTestimonial() {
+  if(!_testsDraft) _testsDraft = ls_get(K.tests, DEF_TESTIMONIALS);
+  _testsDraft.push({name:'',info:'',avatar:'🎓',quote:''});
+  renderTestimonialsEditor();
+}
+function removeTestimonial(i) {
+  if(!_testsDraft) _testsDraft = [...ls_get(K.tests, DEF_TESTIMONIALS)];
+  _testsDraft.splice(i,1);
+  renderTestimonialsEditor();
+}
+function saveTestimonials() {
+  ls_set(K.tests, _testsDraft || ls_get(K.tests, DEF_TESTIMONIALS));
+  _testsDraft = null;
+  toast('✅ تم حفظ الشهادات');
+}
+
+/* ══════════════════════════════════════
+   FAQ
+══════════════════════════════════════ */
+function renderFaqList() {
+  const faqs = ls_get(K.faq);
+  const list = document.getElementById('faqList');
+  if(!list) return;
+  document.getElementById('faqCountLabel').textContent = faqs.length;
+  list.innerHTML = faqs.length ? faqs.map(f=>`
+    <div class="faq-row">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+        <div style="flex:1">
+          <div class="faq-q">${f.q}</div>
+          <div class="faq-a">${f.a}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn btn-ghost btn-icon btn-sm" onclick="openFaqModal('${f.id}')">✏️</button>
+          <button class="btn btn-r btn-icon btn-sm" onclick="deleteFaq('${f.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('') :
+    '<div class="empty-state"><div class="es-icon">❓</div><p>لا توجد أسئلة بعد — أضف أول سؤال</p></div>';
+}
+
+function openFaqModal(id) {
+  const faqs = ls_get(K.faq);
+  const f = id ? faqs.find(x=>x.id===id) : null;
+  document.getElementById('faqModalTitle').textContent = id ? '✏️ تعديل سؤال' : '❓ سؤال جديد';
+  sv('fm_id', id||'');
+  sv('fm_q', f?.q||'');
+  sv('fm_a', f?.a||'');
+  openModal('faqModal');
+}
+
+function saveFaq() {
+  const q = gv('fm_q'), a = gv('fm_a');
+  if(!q || !a) { toast('❗ أدخل السؤال والجواب', true); return; }
+  const faqs = ls_get(K.faq);
+  const id = gv('fm_id') || uid();
+  const obj = { id, q, a };
+  const idx = faqs.findIndex(f=>f.id===id);
+  if(idx>=0) faqs[idx]=obj; else faqs.push(obj);
+  ls_set(K.faq, faqs);
+  closeModal('faqModal');
+  renderFaqList();
+  updateBadges();
+  toast('✅ تم حفظ السؤال');
+}
+
+function deleteFaq(id) {
+  if(!confirm('حذف هذا السؤال؟')) return;
+  ls_set(K.faq, ls_get(K.faq).filter(f=>f.id!==id));
+  renderFaqList(); updateBadges();
+  toast('🗑️ تم حذف السؤال');
+}
+
+/* ══════════════════════════════════════
+   SETTINGS
+══════════════════════════════════════ */
+function loadSettingsFields() {
+  const s = ls_obj(K.settings);
+  sv('s_name',    s.businessName||'');
+  sv('s_tagline', s.tagline     ||'');
+  sv('s_wa',      s.whatsapp    ||'');
+  sv('s_email',   s.email       ||'');
+  sv('s_url',     s.siteUrl     ||'');
+  sv('s_year',    s.year        ||'');
+  sv('s_fb',  s.social?.fb ||'');
+  sv('s_ig',  s.social?.ig ||'');
+  sv('s_yt',  s.social?.yt ||'');
+  sv('s_tt',  s.social?.tt ||'');
+}
+
+function saveSettings() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, businessName:gv('s_name'), tagline:gv('s_tagline'), whatsapp:gv('s_wa'), email:gv('s_email'), siteUrl:gv('s_url'), year:gv('s_year')});
+  toast('✅ تم حفظ الإعدادات');
+}
+
+function saveSocials() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, social:{fb:gv('s_fb'), ig:gv('s_ig'), yt:gv('s_yt'), tt:gv('s_tt')}});
+  toast('✅ تم حفظ روابط التواصل');
+}
+
+function testWa() {
+  const num = gv('s_wa') || ls_obj(K.settings).whatsapp || '60123456789';
+  window.open('https://wa.me/'+num+'?text=مرحباً EduPath!', '_blank');
+}
+
+/* ══════════════════════════════════════
+   THEME
+══════════════════════════════════════ */
+const THEMES = [
+  {name:'أزرق',     p:'#0a5c8a',pd:'#074166',acc:'#f59e0b'},
+  {name:'سماوي',    p:'#2563eb',pd:'#1d4ed8',acc:'#f59e0b'},
+  {name:'بنفسجي',   p:'#7c3aed',pd:'#6d28d9',acc:'#f59e0b'},
+  {name:'زمردي',    p:'#059669',pd:'#047857',acc:'#f59e0b'},
+  {name:'أحمر',     p:'#dc2626',pd:'#b91c1c',acc:'#f59e0b'},
+  {name:'وردي',     p:'#db2777',pd:'#be185d',acc:'#3b82f6'},
+  {name:'برتقالي',  p:'#ea580c',pd:'#c2410c',acc:'#3b82f6'},
+  {name:'رمادي',    p:'#374151',pd:'#1f2937',acc:'#f59e0b'},
+  {name:'تيل',      p:'#0d9488',pd:'#0f766e',acc:'#f59e0b'},
+  {name:'نيلي',     p:'#4338ca',pd:'#3730a3',acc:'#f59e0b'},
+];
+
+function initTheme() {
+  const s   = ls_obj(K.settings);
+  const cur = s.primaryColor || '#0a5c8a';
+  document.getElementById('t_primary').value = cur;
+  document.getElementById('t_dark').value    = s.primaryDarkColor || '#074166';
+  document.getElementById('t_accent').value  = s.accentColor      || '#f59e0b';
+  document.getElementById('themePalette').innerHTML = THEMES.map((t,i)=>`
+    <div class="color-swatch ${t.p===cur?'sel':''}" onclick="applyTheme(${i},this)">
+      <div class="swatch-dot" style="background:${t.p}"></div>
+      <div class="swatch-lbl">${t.name}</div>
+    </div>`).join('');
+  updateColorPrev();
+  ['t_primary','t_dark','t_accent'].forEach(id=>
+    document.getElementById(id)?.addEventListener('input', updateColorPrev));
+}
+
+function applyTheme(i, el) {
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('sel'));
+  el.classList.add('sel');
+  const t = THEMES[i];
+  document.getElementById('t_primary').value = t.p;
+  document.getElementById('t_dark').value    = t.pd;
+  document.getElementById('t_accent').value  = t.acc;
+  updateColorPrev();
+}
+
+function updateColorPrev() {
+  document.getElementById('cp1').style.background = document.getElementById('t_primary').value;
+  document.getElementById('cp2').style.background = document.getElementById('t_dark').value;
+  document.getElementById('cp3').style.background = document.getElementById('t_accent').value;
+}
+
+function saveTheme() {
+  const s = ls_obj(K.settings);
+  ls_set(K.settings, {...s, primaryColor:document.getElementById('t_primary').value, primaryDarkColor:document.getElementById('t_dark').value, accentColor:document.getElementById('t_accent').value});
+  toast('✅ تم حفظ الألوان — أعد تحميل الموقع لرؤية التغيير');
+}
+function resetTheme() {
+  document.getElementById('t_primary').value = '#0a5c8a';
+  document.getElementById('t_dark').value    = '#074166';
+  document.getElementById('t_accent').value  = '#f59e0b';
+  saveTheme();
+  initTheme();
+}
+
+/* ══════════════════════════════════════
+   COURSES
+══════════════════════════════════════ */
+function renderCourseList() {
+  const courses = ls_get(K.courses);
+  const lbl = document.getElementById('courseCountLabel');
+  if (lbl) lbl.textContent = courses.length;
+  const nb = document.getElementById('nb_courses');
+  if (nb) nb.textContent = courses.length;
+  const el = document.getElementById('courseList');
+  if (!el) return;
+  if (!courses.length) { el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted)">لا توجد كورسات بعد. أضف أول كورس!</div>'; return; }
+  el.innerHTML = `<table class="data-table"><thead><tr>
+    <th>البرنامج</th><th>الجامعة</th><th>المجال</th><th>المستوى</th><th>الرسوم</th><th>حالة</th><th>إجراءات</th>
+  </tr></thead><tbody>` +
+  courses.map(c => `<tr>
+    <td><strong>${c.emoji||'📚'} ${c.name}</strong></td>
+    <td>${c.university||'—'}</td>
+    <td>${c.field||'—'}</td>
+    <td><span class="badge badge-blue">${c.level||'—'}</span></td>
+    <td style="font-size:12px">${c.tuition||'—'}</td>
+    <td>${c.active!==false ? '<span class="badge badge-green">متاح</span>' : '<span class="badge">متوقف</span>'}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick="openCourseModal('${c.id}')">✏️</button>
+      <button class="btn btn-r btn-sm" onclick="deleteCourse('${c.id}')">🗑️</button>
+    </td>
+  </tr>`).join('') + '</tbody></table>';
+}
+
+function openCourseModal(id) {
+  const course = id ? ls_get(K.courses).find(c => c.id === id) : null;
+  document.getElementById('courseModalTitle').textContent = id ? '✏️ تعديل كورس' : '📚 كورس جديد';
+  sv('cm_id', id || '');
+  sv('cm_name',       course?.name       || '');
+  sv('cm_university', course?.university || '');
+  sv('cm_field',      course?.field      || 'Engineering');
+  sv('cm_level',      course?.level      || 'Bachelor');
+  sv('cm_duration',   course?.duration   || '');
+  sv('cm_tuition',    course?.tuition    || '');
+  sv('cm_lang',       course?.lang       || 'English');
+  sv('cm_intake',     course?.intake     || '');
+  sv('cm_desc',       course?.desc       || '');
+  sv('cm_video',      course?.video      || '');
+  sv('cm_emoji',      course?.emoji      || '📚');
+  sv('cm_active',     course?.active !== false ? '1' : '0');
+  const img = course?.image || '';
+  sv('cm_image', img);
+  const prev = document.getElementById('cm_imgPreview');
+  const imgEl = document.getElementById('cm_imgEl');
+  if (img) { prev.style.display='block'; imgEl.src=img; } else { prev.style.display='none'; }
+  openModal('courseModal');
+}
+
+function previewCourseImg(url) {
+  const prev = document.getElementById('cm_imgPreview');
+  const imgEl = document.getElementById('cm_imgEl');
+  if (url) { prev.style.display='block'; imgEl.src=url; } else { prev.style.display='none'; }
+}
+function handleCourseImgFile(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => { sv('cm_image', e.target.result); previewCourseImg(e.target.result); };
+  reader.readAsDataURL(file);
+}
+
+function saveCourse() {
+  const name = gv('cm_name');
+  if (!name) { toast('❗ أدخل اسم البرنامج', true); return; }
+  const id = gv('cm_id') || 'course_' + uid();
+  const course = {
+    id, name,
+    university: gv('cm_university'),
+    field:      gv('cm_field'),
+    level:      gv('cm_level'),
+    duration:   gv('cm_duration'),
+    tuition:    gv('cm_tuition'),
+    lang:       gv('cm_lang'),
+    intake:     gv('cm_intake'),
+    desc:       gv('cm_desc'),
+    video:      gv('cm_video'),
+    image:      gv('cm_image'),
+    emoji:      gv('cm_emoji') || '📚',
+    active:     gv('cm_active') === '1',
+  };
+  const courses = ls_get(K.courses);
+  const idx = courses.findIndex(c => c.id === id);
+  if (idx >= 0) courses[idx] = course; else courses.push(course);
+  ls_set(K.courses, courses);
+  closeModal('courseModal');
+  renderCourseList();
+  updateBadges();
+  toast('✅ تم حفظ الكورس');
+}
+
+function deleteCourse(id) {
+  if (!confirm('حذف هذا الكورس؟')) return;
+  ls_set(K.courses, ls_get(K.courses).filter(c => c.id !== id));
+  renderCourseList();
+  updateBadges();
+  toast('🗑️ تم حذف الكورس');
+}
+
+/* ══════════════════════════════════════
+   INSTITUTES
+══════════════════════════════════════ */
+function renderInstList() {
+  const insts = ls_get(K.institutes);
+  const lbl = document.getElementById('instCountLabel');
+  if (lbl) lbl.textContent = insts.length;
+  const nb = document.getElementById('nb_inst');
+  if (nb) nb.textContent = insts.length;
+  const el = document.getElementById('instList');
+  if (!el) return;
+  if (!insts.length) { el.innerHTML = '<div style="padding:32px;text-align:center;color:var(--muted)">لا توجد معاهد بعد.</div>'; return; }
+  el.innerHTML = `<table class="data-table"><thead><tr>
+    <th>المعهد</th><th>المدينة</th><th>البرامج</th><th>الرسوم</th><th>حالة</th><th>إجراءات</th>
+  </tr></thead><tbody>` +
+  insts.map(inst => `<tr>
+    <td><strong>${inst.icon||'🏫'} ${inst.name}</strong></td>
+    <td>${inst.city||'—'}</td>
+    <td style="font-size:12px">${(inst.programs||[]).join(', ')||'—'}</td>
+    <td style="font-size:12px">${inst.tuition||'—'}</td>
+    <td>${inst.active!==false ? '<span class="badge badge-green">متاح</span>' : '<span class="badge">متوقف</span>'}</td>
+    <td>
+      <button class="btn btn-ghost btn-sm" onclick="openInstModal('${inst.id}')">✏️</button>
+      <button class="btn btn-r btn-sm" onclick="deleteInst('${inst.id}')">🗑️</button>
+    </td>
+  </tr>`).join('') + '</tbody></table>';
+}
+
+function openInstModal(id) {
+  const inst = id ? ls_get(K.institutes).find(i => i.id === id) : null;
+  document.getElementById('instModalTitle').textContent = id ? '✏️ تعديل معهد' : '🏫 معهد جديد';
+  sv('im_id',       id || '');
+  sv('im_name',     inst?.name    || '');
+  sv('im_city',     inst?.city    || '');
+  sv('im_state',    inst?.state   || '');
+  sv('im_icon',     inst?.icon    || '🏫');
+  sv('im_programs', (inst?.programs||[]).join(', '));
+  sv('im_tuition',  inst?.tuition || '');
+  sv('im_website',  inst?.website || '');
+  sv('im_intake',   inst?.intake  || '');
+  sv('im_about',    inst?.about   || '');
+  sv('im_active',   inst?.active !== false ? '1' : '0');
+  const vid = inst?.videoUrl || '';
+  sv('im_videoUrl', vid);
+  previewInstVideo(vid);
+  openModal('instModal');
+}
+
+function saveInst() {
+  const name = gv('im_name');
+  if (!name) { toast('❗ أدخل اسم المعهد', true); return; }
+  const id = gv('im_id') || 'inst_' + uid();
+  const inst = {
+    id, name,
+    city:     gv('im_city'),
+    state:    gv('im_state'),
+    icon:     gv('im_icon') || '🏫',
+    programs: gv('im_programs').split(',').map(p=>p.trim()).filter(Boolean),
+    tuition:  gv('im_tuition'),
+    website:  gv('im_website'),
+    intake:   gv('im_intake'),
+    about:    gv('im_about'),
+    videoUrl: gv('im_videoUrl'),
+    active:   gv('im_active') === '1',
+    type:     'language',
+  };
+  const insts = ls_get(K.institutes);
+  const idx = insts.findIndex(i => i.id === id);
+  if (idx >= 0) insts[idx] = inst; else insts.push(inst);
+  ls_set(K.institutes, insts);
+  closeModal('instModal');
+  renderInstList();
+  updateBadges();
+  toast('✅ تم حفظ المعهد');
+}
+
+function deleteInst(id) {
+  if (!confirm('حذف هذا المعهد؟')) return;
+  ls_set(K.institutes, ls_get(K.institutes).filter(i => i.id !== id));
+  renderInstList();
+  updateBadges();
+  toast('🗑️ تم حذف المعهد');
+}
+
+/* ══════════════════════════════════════
+   SECURITY
+══════════════════════════════════════ */
+function changePw() {
+  const cur  = document.getElementById('pw_cur').value;
+  const nw   = document.getElementById('pw_new').value;
+  const conf = document.getElementById('pw_conf').value;
+  if(cur !== getPw())  { toast('❌ كلمة المرور الحالية خاطئة', true); return; }
+  if(nw.length < 6)    { toast('❌ كلمة المرور قصيرة (6 أحرف على الأقل)', true); return; }
+  if(nw !== conf)      { toast('❌ كلمتا المرور غير متطابقتين', true); return; }
+  localStorage.setItem(K.pw, nw);
+  ['pw_cur','pw_new','pw_conf'].forEach(id=>sv(id,''));
+  toast('✅ تم تغيير كلمة المرور بنجاح');
+}
+
+function nukeAll() {
+  if(!confirm('⚠️ تأكيد: سيتم حذف كل بيانات الأدمن نهائياً. لا يمكن التراجع!')) return;
+  Object.values(K).forEach(k=>localStorage.removeItem(k));
+  toast('🗑️ تم مسح كل شيء');
+  setTimeout(()=>location.reload(), 1500);
+}
+
+/* ══════════════════════════════════════
+   APPLICATIONS MANAGEMENT
+══════════════════════════════════════ */
+const STATUS_LABELS = {
+  new:'🆕 جديد', review:'👀 قيد المراجعة', docs:'📎 ملفات ناقصة',
+  accepted:'✅ مقبول', visa:'🛂 تأشيرة', enrolled:'🎓 مسجّل', rejected:'❌ مرفوض'
+};
+const PAY_LABELS = { none:'لم يدفع', partial:'دفع جزئي', full:'مدفوع كامل' };
+const DOC_LABELS = { passport:'جواز السفر', photo:'الصورة الشخصية', transcript:'شهادة التخرج/الدرجات', english:'شهادة اللغة الإنجليزية', bank:'كشف الحساب البنكي', extra:'مستند إضافي' };
+
+function renderApplications() {
+  const apps = ls_get(K.applications);
+  const q = (document.getElementById('appSearch')?.value||'').toLowerCase();
+  const st = document.getElementById('appFilterStatus')?.value||'';
+  const py = document.getElementById('appFilterPay')?.value||'';
+
+  let filtered = apps.filter(a=>{
+    if(st && a.status!==st) return false;
+    if(py && a.paymentStatus!==py) return false;
+    if(q && !`${a.name} ${a.email} ${a.id}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  document.getElementById('appCountLabel').textContent = filtered.length;
+  const el = document.getElementById('appList');
+  if(!filtered.length){ el.innerHTML=`<div class="empty-state"><div class="es-icon">📭</div><p>لا توجد طلبات</p></div>`; return; }
+
+  el.innerHTML = filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(a=>{
+    const initials = (a.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const stCls = `badge app-status-${a.status}`;
+    const payCls = `pay-tag pay-${a.paymentStatus||'none'}`;
+    const docs = a.documents || {};
+    const docKeys = Object.keys(DOC_LABELS);
+    const dotsHtml = docKeys.map(k=>`<div class="doc-dot ${docs[k]?.submitted?'ok':'missing'}" title="${DOC_LABELS[k]}"></div>`).join('');
+    return `<div class="app-row" onclick="openAppModal('${a.id}')">
+      <div class="app-avatar">${initials}</div>
+      <div class="app-info">
+        <strong>${a.name||'—'}</strong>
+        <small>${a.email||''} · ${a.nationality||''} · ${a.id}</small>
+        <div class="doc-bar" title="المستندات">${dotsHtml}</div>
+      </div>
+      <div class="app-meta">
+        <span class="${payCls}">${PAY_LABELS[a.paymentStatus||'none']}</span>
+        <span class="badge ${stCls}">${STATUS_LABELS[a.status]||a.status}</span>
+        <small style="color:var(--muted);font-size:11px">${fmtDate(a.createdAt)}</small>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function fmtDate(d){ return d? new Date(d).toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric'}): '—'; }
+
+let _currentApp = null;
+function openAppModal(id){
+  const apps = ls_get(K.applications);
+  const a = apps.find(x=>x.id===id);
+  if(!a) return;
+  _currentApp = a;
+  document.getElementById('am_id').value = id;
+  document.getElementById('appModalTitle').textContent = `📋 طلب ${a.name||''} — ${a.id}`;
+  document.getElementById('am_status').value = a.status||'new';
+  document.getElementById('am_payment').value = a.paymentStatus||'none';
+  document.getElementById('am_payamt').value = a.paymentAmount||0;
+  document.getElementById('am_notes').value = a.adminNotes||'';
+  updateStatusColor();
+
+  // Personal info
+  document.getElementById('am_info').innerHTML = [
+    ['الاسم الكامل', a.name],['الإيميل', a.email],['الجوال / واتساب', a.phone],
+    ['الجنسية', a.nationality],['رقم الجواز', a.passportNo],['تاريخ الميلاد', a.dob],
+    ['العنوان الحالي', a.address],['تاريخ التقديم', fmtDate(a.createdAt)],
+  ].map(([l,v])=>`<div class="detail-row"><span class="dl">${l}</span><span class="dv">${v||'—'}</span></div>`).join('');
+
+  // Academic info
+  document.getElementById('am_academic').innerHTML = [
+    ['المستوى الحالي', a.level],['آخر مؤسسة تعليمية', a.lastSchool],
+    ['المعدل / الدرجة', a.gpa],['مستوى الإنجليزية', a.englishLevel],
+    ['البرنامج المطلوب', a.program],['الجامعة المستهدفة', a.targetUni],
+    ['موعد البدء المفضّل', a.startDate],['ملاحظات الطالب', a.notes],
+  ].map(([l,v])=>`<div class="detail-row"><span class="dl">${l}</span><span class="dv">${v||'—'}</span></div>`).join('');
+
+  // Documents
+  const docs = a.documents||{};
+  document.getElementById('am_docs').innerHTML = Object.entries(DOC_LABELS).map(([k,lbl])=>{
+    const d = docs[k]||{};
+    const icon = d.submitted? (d.approved?'✅':'⏳') : '❌';
+    const btnAppr = d.submitted && !d.approved ? `<button class="btn btn-g btn-sm" onclick="approveDoc('${id}','${k}')">قبول</button>`:'';
+    const viewBtn = d.submitted && d.data ? `<a href="${d.data}" target="_blank" class="btn btn-ghost btn-sm">عرض</a>`:'';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-size:18px">${icon}</span>
+      <div style="flex:1"><strong style="font-size:13px">${lbl}</strong>
+      <div style="font-size:11px;color:var(--muted)">${d.submitted?`رُفع بتاريخ ${fmtDate(d.submittedAt)}`:'لم يُرفع'} ${d.approved?'· ✅ موافق عليه':''}</div></div>
+      <div style="display:flex;gap:6px">${viewBtn}${btnAppr}
+        <label class="btn btn-ghost btn-sm" style="cursor:pointer">📎 رفع<input type="file" accept=".pdf,.jpg,.jpeg,.png" style="display:none" onchange="adminUploadDoc('${id}','${k}',this)"/></label>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Timeline
+  const tl = a.timeline||[];
+  const steps = [
+    {key:'new', label:'تم استلام الطلب'},
+    {key:'review', label:'قيد المراجعة'},
+    {key:'docs', label:'طلب مستندات إضافية'},
+    {key:'accepted', label:'تم القبول من الجامعة'},
+    {key:'visa', label:'معالجة التأشيرة'},
+    {key:'enrolled', label:'تم التسجيل النهائي'},
+  ];
+  const statusOrder = ['new','review','docs','accepted','visa','enrolled','rejected'];
+  const curIdx = statusOrder.indexOf(a.status);
+  document.getElementById('am_timeline').innerHTML = steps.map((s,i)=>{
+    const sIdx = statusOrder.indexOf(s.key);
+    const cls = sIdx < curIdx ? 'done' : sIdx === curIdx ? 'active' : 'pending';
+    const entry = tl.find(t=>t.status===s.key);
+    return `<li><div class="tl-dot ${cls}"></div><div class="tl-text"><div class="tl-title">${s.label}</div><div class="tl-date">${entry? fmtDate(entry.date): (cls==='pending'?'لم يتم بعد':'')}</div></div></li>`;
+  }).join('');
+
+  openModal('appModal');
+}
+
+function updateStatusColor(){
+  const s = document.getElementById('am_status').value;
+  const colors = {new:'#0ea5e9',review:'#f59e0b',docs:'#ef4444',accepted:'#10b981',visa:'#8b5cf6',enrolled:'#059669',rejected:'#ef4444'};
+  document.getElementById('am_status').style.borderColor = colors[s]||'var(--border)';
+}
+
+function saveApplication(){
+  const id = document.getElementById('am_id').value;
+  const apps = ls_get(K.applications);
+  const idx = apps.findIndex(a=>a.id===id);
+  if(idx===-1) return;
+  const oldStatus = apps[idx].status;
+  const newStatus = document.getElementById('am_status').value;
+  apps[idx].status = newStatus;
+  apps[idx].paymentStatus = document.getElementById('am_payment').value;
+  apps[idx].paymentAmount = parseFloat(document.getElementById('am_payamt').value)||0;
+  apps[idx].adminNotes = document.getElementById('am_notes').value;
+  apps[idx].updatedAt = new Date().toISOString();
+  if(oldStatus!==newStatus){
+    if(!apps[idx].timeline) apps[idx].timeline=[];
+    apps[idx].timeline.push({status:newStatus, date:new Date().toISOString(), by:'admin'});
+  }
+  ls_set(K.applications, apps);
+  updateBadges(); renderApplications();
+  toast('✅ تم حفظ الطلب');
+  closeModal('appModal');
+}
+
+function deleteApplication(){
+  const id = document.getElementById('am_id').value;
+  if(!confirm('⚠️ هل تريد حذف هذا الطلب نهائياً؟')) return;
+  const apps = ls_get(K.applications).filter(a=>a.id!==id);
+  ls_set(K.applications, apps);
+  updateBadges(); renderApplications();
+  toast('🗑️ تم حذف الطلب');
+  closeModal('appModal');
+}
+
+function approveDoc(appId, docKey){
+  const apps = ls_get(K.applications);
+  const a = apps.find(x=>x.id===appId);
+  if(!a) return;
+  if(!a.documents) a.documents={};
+  if(!a.documents[docKey]) a.documents[docKey]={};
+  a.documents[docKey].approved = true;
+  ls_set(K.applications, apps);
+  openAppModal(appId);
+  toast('✅ تم قبول المستند');
+}
+
+function adminUploadDoc(appId, docKey, input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const apps = ls_get(K.applications);
+    const a = apps.find(x=>x.id===appId);
+    if(!a) return;
+    if(!a.documents) a.documents={};
+    a.documents[docKey] = {submitted:true, data:e.target.result, name:file.name, submittedAt:new Date().toISOString(), approved:false, byAdmin:true};
+    ls_set(K.applications, apps);
+    openAppModal(appId);
+    toast('📎 تم رفع المستند');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ══════════════════════════════════════
+   STUDENTS MANAGEMENT
+══════════════════════════════════════ */
+let _currentStd = null;
+function renderStudents(){
+  const students = ls_get(K.students);
+  const apps = ls_get(K.applications);
+  const q = (document.getElementById('stdSearch')?.value||'').toLowerCase();
+  const filtered = students.filter(s=>!q||`${s.name} ${s.email}`.toLowerCase().includes(q));
+  document.getElementById('stdCountLabel').textContent = filtered.length;
+  const el = document.getElementById('studentList');
+  if(!filtered.length){ el.innerHTML=`<div class="empty-state"><div class="es-icon">👤</div><p>لا يوجد طلاب مسجّلون</p></div>`; return; }
+  el.innerHTML = filtered.map(s=>{
+    const initials = (s.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const appCount = apps.filter(a=>a.studentId===s.id).length;
+    return `<div class="std-row" onclick="openStdModal('${s.id}')">
+      <div class="std-avatar">${initials}</div>
+      <div class="std-info">
+        <strong>${s.name}</strong>
+        <small>${s.email} · ${s.nationality||''} · سُجّل: ${fmtDate(s.createdAt)}</small>
+      </div>
+      <div><span class="badge badge-blue">${appCount} طلب</span></div>
+    </div>`;
+  }).join('');
+}
+
+function openStdModal(id){
+  const students = ls_get(K.students);
+  const apps = ls_get(K.applications);
+  const s = students.find(x=>x.id===id);
+  if(!s) return;
+  _currentStd = s;
+  const stdApps = apps.filter(a=>a.studentId===id);
+  document.getElementById('stdModalBody').innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:white;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;margin:0 auto 12px">${(s.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}</div>
+      <div style="font-size:18px;font-weight:800">${s.name}</div>
+      <div style="font-size:13px;color:var(--muted)">${s.email}</div>
+    </div>
+    <div class="detail-grid" style="margin-bottom:20px">
+      ${[['الجنسية',s.nationality],['رقم الجوال',s.phone],['تاريخ التسجيل',fmtDate(s.createdAt)]].map(([l,v])=>`<div class="detail-row"><span class="dl">${l}</span><span class="dv">${v||'—'}</span></div>`).join('')}
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px">الطلبات (${stdApps.length})</div>
+    ${stdApps.length ? stdApps.map(a=>`<div class="app-row" style="cursor:pointer;margin-bottom:6px" onclick="closeModal('stdModal');openAppModal('${a.id}')">
+      <div class="app-info"><strong>${a.id}</strong><small>${a.targetUni||'—'} · ${STATUS_LABELS[a.status]||a.status}</small></div>
+      <span class="badge app-status-${a.status}">${STATUS_LABELS[a.status]}</span>
+    </div>`).join('') : '<div style="font-size:13px;color:var(--muted);padding:12px">لا توجد طلبات</div>'}
+  `;
+  openModal('stdModal');
+}
+
+function viewStudentApplications(){
+  if(!_currentStd) return;
+  closeModal('stdModal');
+  document.getElementById('appSearch').value = _currentStd.email;
+  tab('applications', document.querySelector('[onclick*=applications]'));
+  renderApplications();
+}
+
+/* ══════════════════════════════════════
+   CONSULTATIONS MANAGEMENT
+══════════════════════════════════════ */
+const CONSULT_STATUS_LABELS = {
+  new:'🆕 جديد', contacted:'📞 تم التواصل', converted:'🎓 تحوّل لطالب', closed:'🔒 مغلق'
+};
+const CONSULT_STATUS_CLS = {
+  new:'badge-blue', contacted:'badge-yellow', converted:'badge-green', closed:'badge-muted'
+};
+
+function renderConsultations(){
+  const list = ls_get(K.consultations);
+  const q  = (document.getElementById('consultSearch')?.value||'').toLowerCase();
+  const st = document.getElementById('consultFilterStatus')?.value||'';
+  const filtered = list.filter(c=>{
+    if(st && c.status!==st) return false;
+    if(q && !`${c.name||''} ${c.email||''} ${c.phone||''}`.toLowerCase().includes(q)) return false;
+    return true;
+  });
+  document.getElementById('consultCountLabel').textContent = filtered.length;
+  const el = document.getElementById('consultList');
+  if(!filtered.length){ el.innerHTML=`<div class="empty-state"><div class="es-icon">💬</div><p>لا توجد استشارات</p></div>`; return; }
+  el.innerHTML = filtered.sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(c=>{
+    const initials = (c.name||'?').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const cls = CONSULT_STATUS_CLS[c.status]||'badge-muted';
+    return `<div class="app-row" onclick="openConsultModal('${c.id}')">
+      <div class="app-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706)">${initials}</div>
+      <div class="app-info">
+        <strong>${c.name||'—'}</strong>
+        <small>${c.email||''} ${c.phone?'· '+c.phone:''} ${c.nationality?'· '+c.nationality:''}</small>
+        <small style="color:var(--muted)">${c.level||''} ${c.field?'· '+c.field:''}</small>
+      </div>
+      <div class="app-meta">
+        <span class="badge ${cls}">${CONSULT_STATUS_LABELS[c.status]||c.status}</span>
+        <small style="color:var(--muted);font-size:11px">${fmtDate(c.createdAt)}</small>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+let _currentConsult = null;
+function openConsultModal(id){
+  const list = ls_get(K.consultations);
+  const c = list.find(x=>x.id===id);
+  if(!c) return;
+  _currentConsult = c;
+  const levelMap={highschool:'ثانوية عامة',diploma:'دبلوم',bachelor:'بكالوريوس',master:'ماجستير'};
+  document.getElementById('consultModalBody').innerHTML = `
+    <input type="hidden" id="cm_id" value="${c.id}"/>
+    <div class="detail-grid" style="margin-bottom:16px">
+      ${[
+        ['الاسم',c.name],['الجنسية',c.nationality],
+        ['المستوى',levelMap[c.level]||c.level||'—'],['التخصص / المجال',c.field||'—'],
+        ['الإيميل',c.email||'—'],['الجوال / واتساب',c.phone||'—'],
+      ].map(([l,v])=>`<div class="detail-row"><span class="dl">${l}</span><span class="dv">${v||'—'}</span></div>`).join('')}
+    </div>
+    ${c.message?`<div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;border:1px solid var(--border)"><strong style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px">رسالة العميل</strong>${c.message}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:5px">الحالة</label>
+        <select id="cm_status" onchange="updateConsultStatusColor()" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;font-family:inherit;background:var(--bg)">
+          ${Object.entries(CONSULT_STATUS_LABELS).map(([k,l])=>`<option value="${k}" ${c.status===k?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:5px">تاريخ الطلب</label>
+        <div style="border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;background:var(--bg);color:var(--muted)">${fmtDate(c.createdAt)}</div>
+      </div>
+    </div>
+    <div>
+      <label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:5px">ملاحظات الأدمن</label>
+      <textarea id="cm_notes" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;background:var(--bg)" placeholder="اكتب ملاحظاتك هنا...">${c.adminNotes||''}</textarea>
+    </div>
+    ${c.phone?`<div style="margin-top:12px"><a href="https://wa.me/${c.phone.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-g btn-sm" style="background:#25d366;border-color:#25d366;color:white;display:inline-flex;align-items:center;gap:6px">💬 تواصل عبر واتساب</a></div>`:''}
+  `;
+  updateConsultStatusColor();
+  openModal('consultModal');
+}
+
+function updateConsultStatusColor(){
+  const s = document.getElementById('cm_status')?.value;
+  const colors = {new:'#0ea5e9',contacted:'#f59e0b',converted:'#10b981',closed:'#94a3b8'};
+  if(document.getElementById('cm_status')) document.getElementById('cm_status').style.borderColor = colors[s]||'var(--border)';
+}
+
+function saveConsultation(){
+  const id = document.getElementById('cm_id').value;
+  const list = ls_get(K.consultations);
+  const idx = list.findIndex(c=>c.id===id);
+  if(idx===-1) return;
+  list[idx].status = document.getElementById('cm_status').value;
+  list[idx].adminNotes = document.getElementById('cm_notes').value;
+  list[idx].updatedAt = new Date().toISOString();
+  ls_set(K.consultations, list);
+  updateBadges(); renderConsultations();
+  toast('✅ تم حفظ الاستشارة');
+  closeModal('consultModal');
+}
+
+function deleteConsultation(){
+  const id = document.getElementById('cm_id').value;
+  if(!confirm('⚠️ هل تريد حذف هذه الاستشارة نهائياً؟')) return;
+  const list = ls_get(K.consultations).filter(c=>c.id!==id);
+  ls_set(K.consultations, list);
+  updateBadges(); renderConsultations();
+  toast('🗑️ تم حذف الاستشارة');
+  closeModal('consultModal');
+}
+
+/* ══════════════════════════════════════
+   SAVE ALL
+══════════════════════════════════════ */
+function saveAll() {
+  const s = ls_obj(K.settings);
+  // Collect from settings fields if loaded
+  const wa = gv('s_wa') || gv('hp_wa');
+  if(wa) { ls_set(K.settings, {...ls_obj(K.settings), whatsapp: wa}); }
+  if(_svcsDraft)  { ls_set(K.services, _svcsDraft);  _svcsDraft=null; }
+  if(_stepsDraft) { ls_set(K.steps,    _stepsDraft); _stepsDraft=null; }
+  if(_testsDraft) { ls_set(K.tests,    _testsDraft); _testsDraft=null; }
+  toast('✅ تم حفظ جميع التغييرات');
+}
+
+/* ══════════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════════ */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) closeModal(el.id); }));
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>closeModal(m.id));
+});
+
+/* ══════════════════════════════════════
+   AUTO LOGIN
+══════════════════════════════════════ */
+if(sessionStorage.getItem(K.session)==='1') {
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminShell').style.display='block';
+  initAdmin();
+}
+</script>
+</body>
+</html>

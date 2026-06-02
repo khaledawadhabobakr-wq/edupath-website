@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scholarships in Malaysia 2026 – EduPath</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #0a5c8a; --primary-dark: #074166; --primary-light: #e8f4fb;
+      --accent: #f59e0b; --accent-light: #fef3c7;
+
+      --text: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+      --white: #ffffff; --bg: #f8fafc;
+      --radius: 12px; --shadow: 0 4px 24px rgba(10,92,138,.10); --shadow-lg: 0 12px 40px rgba(10,92,138,.15);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    html[lang="ar"] body { font-family: 'Noto Kufi Arabic', 'Inter', sans-serif; }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    ul { list-style: none; }
+
+    /* NAV — provided by shared.js */
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #1a7eb5 100%); color: white; padding: 80px 24px 70px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+    .breadcrumb { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 20px; }
+    .breadcrumb a { color: rgba(255,255,255,.7); }
+    .breadcrumb a:hover { color: white; }
+    .hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 17px; color: rgba(255,255,255,.85); max-width: 640px; line-height: 1.7; margin-bottom: 32px; }
+    .hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+    .hero-stat { text-align: center; }
+    .hero-stat .num { font-size: 28px; font-weight: 800; color: var(--accent); display: block; }
+    .hero-stat .lbl { font-size: 12px; color: rgba(255,255,255,.7); }
+
+    /* FILTERS */
+    .filters-bar { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 70px; z-index: 90; }
+    .filters-inner { max-width: 1200px; margin: 0 auto; padding: 16px 24px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .filter-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 30px; cursor: pointer; transition: .2s; font-family: inherit; }
+    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* MAIN LAYOUT */
+    .main { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+
+    /* FEATURED BANNER */
+    .featured-banner { background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%); color: white; border-radius: 20px; padding: 36px 40px; margin-bottom: 48px; display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center; }
+    @media (max-width: 640px) { .featured-banner { grid-template-columns: 1fr; } }
+    .feat-tag { background: rgba(255,255,255,.2); border: 1px solid rgba(255,255,255,.3); border-radius: 20px; font-size: 11px; font-weight: 700; padding: 3px 12px; display: inline-block; margin-bottom: 12px; }
+    .featured-banner h2 { font-size: clamp(20px, 2.5vw, 28px); font-weight: 800; margin-bottom: 10px; }
+    .featured-banner p { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.6; max-width: 500px; }
+    .feat-amount { font-size: 13px; color: rgba(255,255,255,.7); margin-top: 12px; }
+    .feat-amount strong { color: var(--accent); font-size: 20px; }
+    .feat-btn { background: white; color: #1d4ed8; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 10px; white-space: nowrap; transition: .2s; display: inline-block; }
+    .feat-btn:hover { background: var(--accent); color: white; }
+
+    /* SECTION HEADER */
+    .sec-head { margin-bottom: 28px; }
+    .sec-tag { display: inline-block; background: var(--primary-light); color: var(--primary-dark); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 4px 12px; border-radius: 30px; margin-bottom: 10px; }
+    .sec-title { font-size: clamp(22px, 2.5vw, 30px); font-weight: 800; }
+
+    /* SCHOLARSHIP CARDS */
+    .schol-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; margin-bottom: 60px; }
+    @media (max-width: 480px) { .schol-grid { grid-template-columns: 1fr; } }
+    .schol-card { background: var(--white); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all .25s; }
+    .schol-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: var(--primary); }
+    .schol-card-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); display: flex; gap: 16px; align-items: flex-start; }
+    .schol-icon { width: 56px; height: 56px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+    .schol-icon.gov { background: #dbeafe; }
+    .schol-icon.corp { background: #fae8ff; }
+    .schol-icon.uni { background: var(--primary-light); }
+    .schol-icon.intl { background: var(--accent-light); }
+    .schol-card-info h3 { font-size: 16px; font-weight: 700; margin-bottom: 5px; line-height: 1.3; }
+    .schol-card-info .provider { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .schol-card-body { padding: 20px 24px; }
+    .schol-desc { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .schol-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+    .s-tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+    .s-tag.green { background: var(--primary-light); color: var(--primary-dark); }
+    .s-tag.blue { background: #dbeafe; color: #1d4ed8; }
+    .s-tag.amber { background: var(--accent-light); color: #b45309; }
+    .s-tag.purple { background: #fae8ff; color: #7c3aed; }
+    .schol-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border); }
+    .schol-detail-item .label { font-size: 11px; color: var(--text-muted); margin-bottom: 2px; }
+    .schol-detail-item .val { font-size: 13px; font-weight: 700; color: var(--text); }
+    .schol-card-footer { padding: 16px 24px; background: var(--bg); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .schol-deadline { font-size: 12px; color: var(--text-muted); }
+    .schol-deadline strong { color: #dc2626; }
+    .apply-btns { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
+    .apply-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: white; font-weight: 700; font-size: 13px; padding: 9px 18px; border-radius: 8px; transition: .2s; }
+    .apply-btn:hover { background: var(--primary-dark); }
+    .edupath-btn { display: inline-flex; align-items: center; gap: 5px; background: var(--accent); color: white; font-weight: 700; font-size: 11px; padding: 5px 12px; border-radius: 6px; transition: .2s; white-space: nowrap; }
+    .edupath-btn:hover { background: #d97706; }
+    .price-tag { display: inline-block; background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 10px; border: 1px solid #fde68a; }
+
+    /* TIPS SECTION */
+    .tips-section { background: var(--bg); border-radius: 20px; padding: 40px; margin-bottom: 60px; }
+    .tips-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 28px; }
+    .tip-card { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+    .tip-icon { font-size: 28px; margin-bottom: 12px; }
+    .tip-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .tip-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* CTA */
+    .schol-cta { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; border-radius: 20px; padding: 48px 40px; text-align: center; }
+    .schol-cta h2 { font-size: clamp(22px, 3vw, 32px); font-weight: 800; margin-bottom: 12px; }
+    .schol-cta p { font-size: 16px; color: rgba(255,255,255,.8); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-wa { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; transition: .2s; }
+    .btn-wa:hover { background: #1ebe5d; }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.15); color: white; font-weight: 700; font-size: 15px; padding: 14px 28px; border-radius: 12px; border: 1px solid rgba(255,255,255,.3); transition: .2s; }
+    .btn-ghost:hover { background: rgba(255,255,255,.25); }
+
+    /* FOOTER — provided by shared.js */
+
+    /* WA FLOAT */
+    .wa-float { position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,.4); z-index: 999; transition: transform .2s; }
+    .wa-float:hover { transform: scale(1.1); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; }
+
+    /* REVEAL */
+    .reveal-ready { opacity: 0; transform: translateY(24px); transition: opacity .5s ease, transform .5s ease; }
+    .revealed { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<!-- NAV — replaced by shared.js -->
+<nav class="s-nav" id="sNavEl">
+  <div class="s-nav-in">
+    <a href="index.html" class="s-logo">
+      <div class="s-logo-ico"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span>EduPath</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Scholarships</div>
+    <h1>🎁 Scholarships for <span>International Students</span> in Malaysia</h1>
+    <p class="hero-desc">Malaysia offers some of the most generous scholarships in Southeast Asia — from full government funding to university merit awards. Explore every opportunity and let EduPath's expert advisors handle your application end-to-end.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="num">40+</span><span class="lbl">Scholarships Listed</span></div>
+      <div class="hero-stat"><span class="num">RM 500M+</span><span class="lbl">Total Funding Available</span></div>
+      <div class="hero-stat"><span class="num">$699</span><span class="lbl">EduPath Full Service</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <div class="filters-inner">
+    <span style="font-size:12px;font-weight:700;color:var(--text-muted);margin-right:4px">Filter:</span>
+    <button class="filter-btn active" onclick="filterSchol('all',this)">All</button>
+    <button class="filter-btn" onclick="filterSchol('government',this)">🏛️ Government</button>
+    <button class="filter-btn" onclick="filterSchol('corporate',this)">🏢 Corporate</button>
+    <button class="filter-btn" onclick="filterSchol('university',this)">🎓 University</button>
+    <button class="filter-btn" onclick="filterSchol('international',this)">🌍 International</button>
+    <button class="filter-btn" onclick="filterSchol('fullyfunded',this)">💯 Fully Funded</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FEATURED -->
+  <div class="featured-banner reveal-ready">
+    <div>
+      <span class="feat-tag">⭐ Featured — Most Applied</span>
+      <h2>MyBrainSc Scholarship 2026</h2>
+      <p>Malaysia's premier government scholarship for outstanding students pursuing postgraduate degrees in Science, Technology, Engineering & Mathematics (STEM). Covers full tuition, living allowance, and research costs.</p>
+      <div class="feat-amount">Monthly Stipend: <strong>Up to RM 3,900</strong> + Full Tuition</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+      <a href="https://biasiswa.mohe.gov.my/INTER/" target="_blank" rel="noopener" class="feat-btn">Apply Directly →</a>
+      <a href="apply.html" class="feat-btn" style="background:var(--accent);color:white;font-size:13px">🎓 EduPath Full Help — $699</a>
+    </div>
+  </div>
+
+  <!-- GOVERNMENT SCHOLARSHIPS -->
+  <div class="sec-head reveal-ready">
+    <span class="sec-tag">Government</span>
+    <h2 class="sec-title">🏛️ Malaysian Government Scholarships</h2>
+  </div>
+  <div class="schol-grid" id="scholGrid">
+
+    <div class="schol-card reveal-ready" data-type="government fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon gov">🇲🇾</div>
+        <div class="schol-card-info"><h3>MyBrainSc Scholarship</h3><div class="provider">Ministry of Higher Education Malaysia</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Full scholarship for Malaysian and international students pursuing Master's or PhD in STEM fields at recognized Malaysian public universities. One of the most prestigious scholarships in the region.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag blue">STEM</span>
+          <span class="s-tag amber">Fully Funded</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Stipend</div><div class="val">RM 2,000–3,900/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Tuition + Living</div></div>
+          <div class="schol-detail-item"><div class="label">Duration</div><div class="val">2–4 years</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.5</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Aug 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://biasiswa.mohe.gov.my/INTER/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="government fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon gov">🏛️</div>
+        <div class="schol-card-info"><h3>MARA Scholarship</h3><div class="provider">Majlis Amanah Rakyat (MARA)</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">One of Malaysia's largest scholarship providers, MARA funds undergraduate and postgraduate studies at leading local and overseas universities. Covers tuition, accommodation, and living allowances.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag amber">Fully Funded</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Full Tuition + RM 1,500/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Fields</div><div class="val">All Disciplines</div></div>
+          <div class="schol-detail-item"><div class="label">Duration</div><div class="val">3–5 years</div></div>
+          <div class="schol-detail-item"><div class="label">Bond</div><div class="val">2 years service</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Jul 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://biasiswa.mara.gov.my/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="government">
+      <div class="schol-card-header">
+        <div class="schol-icon gov">📚</div>
+        <div class="schol-card-info"><h3>JPA Public Service Scholarship</h3><div class="provider">Jabatan Perkhidmatan Awam (JPA)</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Malaysia's Public Service Department scholarship for top students, primarily targeting Malaysian students for overseas or local studies with a bond to serve the government.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag blue">STEM & Law</span>
+          <span class="s-tag amber">Full Coverage</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Value</div><div class="val">RM 3,000/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Tuition + Airfare</div></div>
+          <div class="schol-detail-item"><div class="label">Duration</div><div class="val">4–5 years</div></div>
+          <div class="schol-detail-item"><div class="label">Bond</div><div class="val">5 years</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Jun 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://biasiswa.spa.gov.my/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- CORPORATE -->
+    <div class="schol-card reveal-ready" data-type="corporate fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon corp">⚡</div>
+        <div class="schol-card-info"><h3>TNB Scholarship</h3><div class="provider">Tenaga Nasional Berhad</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Malaysia's national energy company funds engineering and technical students at UTM, UM, UPM and other local universities. Recipients are often offered employment upon graduation.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag blue">Engineering</span>
+          <span class="s-tag purple">Job Guarantee</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Allowance</div><div class="val">RM 1,800/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Full Tuition</div></div>
+          <div class="schol-detail-item"><div class="label">Fields</div><div class="val">Electrical & Mech Eng</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.5</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Sep 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://tnbscholarship.tnb.com.my/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="corporate fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon corp">🛢️</div>
+        <div class="schol-card-info"><h3>PETRONAS Education Scholarship</h3><div class="provider">PETRONAS</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Malaysia's national oil company offers prestigious scholarships for engineering, geoscience, and business students. One of the most sought-after corporate scholarships in Southeast Asia.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag blue">Engineering & Science</span>
+          <span class="s-tag amber">Fully Funded</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Allowance</div><div class="val">RM 2,500/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Full + Travel</div></div>
+          <div class="schol-detail-item"><div class="label">Bond</div><div class="val">5 years</div></div>
+          <div class="schol-detail-item"><div class="label">SPM/A-Level</div><div class="val">Excellent results</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Oct 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://www.petronas.com/careers/fresh-graduates-internships/scholarships-education" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="corporate fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon corp">💎</div>
+        <div class="schol-card-info"><h3>Khazanah Global Scholarship</h3><div class="provider">Khazanah Nasional Berhad</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">The most prestigious corporate scholarship in Malaysia, offered by the national sovereign wealth fund. For exceptional students to study at world-leading universities in Malaysia or abroad.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag amber">Fully Funded</span>
+          <span class="s-tag purple">Prestigious</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Full + All Expenses</div></div>
+          <div class="schol-detail-item"><div class="label">Universities</div><div class="val">World Top 50</div></div>
+          <div class="schol-detail-item"><div class="label">Bond</div><div class="val">6–8 years</div></div>
+          <div class="schol-detail-item"><div class="label">Fields</div><div class="val">All disciplines</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>May 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://www.khazanah.com.my/scholarship/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- UNIVERSITY SCHOLARSHIPS -->
+    <div class="schol-card reveal-ready" data-type="university">
+      <div class="schol-card-header">
+        <div class="schol-icon uni">🏫</div>
+        <div class="schol-card-info"><h3>UM Merit Award</h3><div class="provider">University of Malaya (QS #65)</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Malaysia's top-ranked university offers merit scholarships for outstanding international students covering 25–100% of tuition fees across all faculties.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag blue">All Fields</span>
+          <span class="s-tag amber">25–100% Tuition</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">25–100% Tuition</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.2</div></div>
+          <div class="schol-detail-item"><div class="label">Open to</div><div class="val">Intl. Students</div></div>
+          <div class="schol-detail-item"><div class="label">Apply via</div><div class="val">UM Admissions</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Rolling</strong></div>
+        <div class="apply-btns">
+          <a href="https://admissions.um.edu.my/international/scholarship" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="university">
+      <div class="schol-card-header">
+        <div class="schol-icon uni">🎓</div>
+        <div class="schol-card-info"><h3>UPM International Scholarship</h3><div class="provider">Universiti Putra Malaysia</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">UPM's scholarship program for international students provides generous tuition waivers for agricultural sciences, engineering, and natural sciences programs.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag blue">Agriculture & Science</span>
+          <span class="s-tag amber">50–100% Waiver</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">50–100% Tuition</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.5</div></div>
+          <div class="schol-detail-item"><div class="label">Level</div><div class="val">Master's & PhD</div></div>
+          <div class="schol-detail-item"><div class="label">Research</div><div class="val">Required</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Rolling</strong></div>
+        <div class="apply-btns">
+          <a href="https://gss.upm.edu.my/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="university">
+      <div class="schol-card-header">
+        <div class="schol-icon uni">🌿</div>
+        <div class="schol-card-info"><h3>UTM Global Excellence Award</h3><div class="provider">Universiti Teknologi Malaysia</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">UTM rewards outstanding international students in engineering and technology with tuition fee discounts up to 100% and a monthly research allowance.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag blue">Engineering & Tech</span>
+          <span class="s-tag purple">Research Award</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Full Tuition</div></div>
+          <div class="schol-detail-item"><div class="label">Allowance</div><div class="val">RM 1,200/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Duration</div><div class="val">Up to 4 years</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.0</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Jun 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://graduate.utm.my/scholarship/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERNATIONAL -->
+    <div class="schol-card reveal-ready" data-type="international fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon intl">🌍</div>
+        <div class="schol-card-info"><h3>Commonwealth Scholarship</h3><div class="provider">Commonwealth Scholarship Commission</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">Fully-funded scholarships for citizens of Commonwealth countries to study at Malaysian universities, covering travel, tuition, and a living stipend through the CSC program.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag blue">Commonwealth Citizens</span>
+          <span class="s-tag amber">Fully Funded</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Stipend</div><div class="val">£1,236/mo (UK rate)</div></div>
+          <div class="schol-detail-item"><div class="label">Travel</div><div class="val">Return airfare</div></div>
+          <div class="schol-detail-item"><div class="label">Eligibility</div><div class="val">Commonwealth nations</div></div>
+          <div class="schol-detail-item"><div class="label">Level</div><div class="val">Master's & PhD</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Dec 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://cscuk.fcdo.gov.uk/scholarships/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="international">
+      <div class="schol-card-header">
+        <div class="schol-icon intl">🤝</div>
+        <div class="schol-card-info"><h3>OIC Scholarship Programme</h3><div class="provider">Organisation of Islamic Cooperation</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">The OIC funds students from member states to study in Malaysia under a bilateral scholarship scheme, offering support across sciences, humanities, and Islamic studies.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Undergraduate</span>
+          <span class="s-tag blue">OIC Members</span>
+          <span class="s-tag amber">Partial–Full</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Tuition + Living</div></div>
+          <div class="schol-detail-item"><div class="label">Eligibility</div><div class="val">57 OIC countries</div></div>
+          <div class="schol-detail-item"><div class="label">Duration</div><div class="val">3–4 years</div></div>
+          <div class="schol-detail-item"><div class="label">Fields</div><div class="val">All disciplines</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Oct 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://www.oic-oci.org/page/?p_id=52&p_ref=27&lan=en" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="schol-card reveal-ready" data-type="international fullyfunded">
+      <div class="schol-card-header">
+        <div class="schol-icon intl">🇲🇾</div>
+        <div class="schol-card-info"><h3>Malaysia International Scholarship (MIS)</h3><div class="provider">Ministry of Higher Education Malaysia</div></div>
+      </div>
+      <div class="schol-card-body">
+        <p class="schol-desc">MIS is Malaysia's flagship scholarship for international students to pursue postgraduate studies at top Malaysian public universities. Covers full tuition, monthly stipend, and return airfare.</p>
+        <div class="schol-tags">
+          <span class="s-tag green">Postgraduate</span>
+          <span class="s-tag amber">Fully Funded</span>
+          <span class="s-tag blue">All Nationalities</span>
+        </div>
+        <div class="schol-details">
+          <div class="schol-detail-item"><div class="label">Stipend</div><div class="val">RM 1,700/mo</div></div>
+          <div class="schol-detail-item"><div class="label">Coverage</div><div class="val">Tuition + Airfare</div></div>
+          <div class="schol-detail-item"><div class="label">Level</div><div class="val">Master's & PhD</div></div>
+          <div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min 3.5</div></div>
+        </div>
+      </div>
+      <div class="schol-card-footer">
+        <div class="schol-deadline">Deadline: <strong>Mar 2026</strong></div>
+        <div class="apply-btns">
+          <a href="https://biasiswa.mohe.gov.my/INTER/" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>
+          <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end grid -->
+
+  <!-- TIPS -->
+  <div class="tips-section reveal-ready">
+    <div class="sec-tag">Pro Tips</div>
+    <h2 class="sec-title" style="margin-top:8px">💡 How to Maximise Your Scholarship Chances</h2>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">📄</div>
+        <h4>Start Your SOP Early</h4>
+        <p>A compelling Statement of Purpose is the most important document. Start writing 3 months before the deadline and get multiple revisions from advisors.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📊</div>
+        <h4>Maintain a Strong CGPA</h4>
+        <p>Most scholarships require a minimum CGPA of 3.2–3.5. Aim for 3.7+ to be competitive for the top government and corporate scholarships.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🏆</div>
+        <h4>Build Your Portfolio</h4>
+        <p>Research publications, community service, leadership roles, and relevant internships significantly strengthen your scholarship application.</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📅</div>
+        <h4>Apply to Multiple Scholarships</h4>
+        <p>Don't put all your eggs in one basket. Apply to 5–10 scholarships simultaneously to maximise your chances of success.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="schol-cta reveal-ready">
+    <h2>Let EduPath Handle Your Entire Application</h2>
+    <p style="margin-bottom:12px">Our advisors have helped hundreds of students successfully secure scholarships in Malaysia. We prepare your full application, SOP, documents — and track every deadline.</p>
+    <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.15);border-radius:12px;padding:12px 24px;margin-bottom:28px;flex-wrap:wrap;justify-content:center">
+      <span style="font-size:28px;font-weight:800;color:var(--accent)">$699</span>
+      <div style="text-align:left">
+        <div style="font-size:14px;font-weight:700">Full Scholarship Application Service</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.75)">SOP + Documents + Submission + Follow-up</div>
+      </div>
+    </div>
+    <div class="cta-btns">
+      <a href="apply.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:white;font-weight:700;font-size:15px;padding:14px 28px;border-radius:12px;transition:.2s">
+        🎓 Start Your Application — $699
+      </a>
+      <a href="https://wa.me/60123456789" class="btn-wa">
+        <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Ask on WhatsApp
+      </a>
+      <a href="index.html#contact" class="btn-ghost">📋 Free Consultation First</a>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 EduPath. All rights reserved. | <a href="index.html">Home</a> · <a href="universities.html">Universities</a> · <a href="courses.html">Courses</a> · <a href="blog.html">Blog</a></p>
+</footer>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/60123456789" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script src="shared.js"></script>
+<script>
+/* ── Render ALL scholarships from admin localStorage ── */
+(function renderScholsFromAdmin() {
+  try {
+    const raw = localStorage.getItem('ep_scholarships');
+    if (!raw) return;
+    const schols = JSON.parse(raw);
+    if (!schols.length) return;
+    const grid = document.getElementById('scholGrid');
+    if (!grid) return;
+
+    const iconClass = { government:'gov', corporate:'corp', university:'uni', international:'intl' };
+
+    const cards = schols.map(s => {
+      const typeAttr = [s.type, s.full ? 'fullyfunded' : ''].filter(Boolean).join(' ');
+      const cls = iconClass[s.type] || 'gov';
+      return `
+        <div class="schol-card reveal-ready" data-type="${typeAttr}">
+          <div class="schol-card-header">
+            <div class="schol-icon ${cls}">${s.icon || '🎓'}</div>
+            <div class="schol-card-info">
+              <h3>${s.name}</h3>
+              <div class="provider">${s.provider || ''}</div>
+            </div>
+          </div>
+          <div class="schol-card-body">
+            <p class="schol-desc">${s.desc || ''}</p>
+            <div class="schol-details">
+              ${s.coverage ? `<div class="schol-detail-item"><div class="label">Coverage</div><div class="val">${s.coverage}</div></div>` : ''}
+              ${s.stipend  ? `<div class="schol-detail-item"><div class="label">Stipend</div><div class="val">${s.stipend}</div></div>` : ''}
+              ${s.duration ? `<div class="schol-detail-item"><div class="label">Duration</div><div class="val">${s.duration}</div></div>` : ''}
+              ${s.cgpa     ? `<div class="schol-detail-item"><div class="label">CGPA</div><div class="val">Min ${s.cgpa}</div></div>` : ''}
+            </div>
+            ${s.full ? '<div style="margin-top:10px"><span class="s-tag amber" style="font-size:12px;font-weight:700">✅ Fully Funded</span></div>' : ''}
+          </div>
+          <div class="schol-card-footer">
+            <div class="schol-deadline">Deadline: <strong>${s.deadline || 'Open'}</strong></div>
+            <div class="apply-btns">
+              ${s.applyUrl ? `<a href="${s.applyUrl}" target="_blank" rel="noopener" class="apply-btn">Apply Now →</a>` : `<a href="apply.html" class="apply-btn">Apply Now →</a>`}
+              <a href="apply.html" class="edupath-btn">🎓 EduPath Help — $699</a>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    // REPLACE static HTML with admin data (admin is the source of truth)
+    grid.innerHTML = cards;
+  } catch(e) { console.warn('Admin scholarships error', e); }
+})();
+
+/* ── Apply settings (WhatsApp, colors) from admin ── */
+(function applyAdminSettings() {
+  try {
+    const raw = localStorage.getItem('ep_settings');
+    if (!raw) return;
+    const cfg = JSON.parse(raw);
+    const root = document.documentElement;
+    if (cfg.primaryColor)     root.style.setProperty('--primary',      cfg.primaryColor);
+    if (cfg.primaryDarkColor) root.style.setProperty('--primary-dark', cfg.primaryDarkColor);
+    if (cfg.accentColor)      root.style.setProperty('--accent',       cfg.accentColor);
+    if (cfg.whatsapp) {
+      document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
+        a.href = a.href.replace(/wa\.me\/[0-9]+/, 'wa.me/' + cfg.whatsapp);
+      });
+    }
+  } catch {}
+  // Re-observe any new reveal-ready elements added by this render
+  if(typeof observeRevealElements === 'function') observeRevealElements();
+})();
+
+/* ── Filter scholarships ── */
+function filterSchol(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.schol-card').forEach(card => {
+    card.style.display = (type === 'all' || card.dataset.type?.includes(type)) ? '' : 'none';
+  });
+}
+
+/* ── Scroll reveal ── */
+const ro = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); ro.unobserve(e.target); } });
+}, { threshold: 0.05 });
+function observeRevealElements(){
+  document.querySelectorAll('.reveal-ready:not(.revealed)').forEach((el, i) => {
+    el.style.transitionDelay = (i % 3) * 70 + 'ms';
+    ro.observe(el);
+  });
+}
+observeRevealElements();
+</script>
+</body>
+</html>

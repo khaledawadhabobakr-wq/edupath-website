@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Universities & Language Centres – EduPath</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#0a5c8a;--primary-dark:#074166;--primary-light:#e8f4fb;--accent:#f59e0b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--radius:12px;--shadow:0 4px 24px rgba(10,92,138,.10);--shadow-lg:0 12px 40px rgba(10,92,138,.15)}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+    a{text-decoration:none;color:inherit}
+
+    /* HERO STRIP */
+    .page-hero{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:52px 24px}
+    .page-hero-inner{max-width:1200px;margin:0 auto}
+    .page-hero h1{font-size:clamp(24px,3.5vw,38px);font-weight:800;margin-bottom:10px}
+    .page-hero p{font-size:16px;opacity:.85;max-width:560px;line-height:1.65}
+    .hero-stats{display:flex;gap:32px;margin-top:28px;flex-wrap:wrap}
+    .h-stat{text-align:center}
+    .h-stat .num{font-size:30px;font-weight:800;color:var(--accent)}
+    .h-stat .lbl{font-size:12px;opacity:.8;margin-top:2px}
+
+    /* FILTERS */
+    .filters-bar{background:#fff;border-bottom:1px solid var(--border);padding:20px 24px;position:sticky;top:70px;z-index:50;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .filters-inner{max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .search-wrap{position:relative;flex:1;min-width:220px}
+    .search-wrap svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;fill:var(--muted);pointer-events:none}
+    .search-wrap input{width:100%;border:1.5px solid var(--border);border-radius:24px;padding:11px 16px 11px 42px;font-size:14px;font-family:inherit;outline:none;transition:.2s;background:#fafafa}
+    .search-wrap input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light);background:#fff}
+    select.filter-sel{border:1.5px solid var(--border);border-radius:24px;padding:11px 16px;font-size:13px;font-family:inherit;color:var(--text);background:#fafafa;outline:none;cursor:pointer;transition:.2s}
+    select.filter-sel:focus{border-color:var(--primary)}
+    .type-filters{display:flex;gap:7px;flex-wrap:wrap}
+    .type-btn{background:#fff;border:1.5px solid var(--border);color:var(--muted);font-size:12.5px;font-weight:600;padding:9px 15px;border-radius:24px;cursor:pointer;transition:.2s;font-family:inherit}
+    .type-btn:hover,.type-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .reset-btn{background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;padding:8px 12px;border-radius:8px;font-family:inherit;transition:.15s}
+    .reset-btn:hover{background:var(--bg);color:var(--text)}
+
+    /* GRID */
+    .content{max-width:1200px;margin:0 auto;padding:28px 24px 56px}
+    .result-count{font-size:14px;color:var(--muted);margin-bottom:20px}
+    .result-count strong{color:var(--primary)}
+    .unis-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+    .uni-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:24px;transition:all .22s;display:flex;flex-direction:column;gap:14px;cursor:pointer;position:relative;overflow:hidden}
+    .uni-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent));opacity:0;transition:.22s}
+    .uni-card:hover{box-shadow:var(--shadow-lg);border-color:var(--primary);transform:translateY(-3px)}
+    .uni-card:hover::before{opacity:1}
+    .uni-card-top{display:flex;align-items:flex-start;gap:14px}
+    .uni-logo-wrap{width:56px;height:56px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+    .uni-head .uni-name{font-size:15px;font-weight:700;margin-bottom:5px;line-height:1.35;color:var(--text)}
+    .uni-loc{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+    .badges{display:flex;flex-wrap:wrap;gap:6px}
+    .badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+    .badge-public{background:#dcfce7;color:#15803d}
+    .badge-private{background:#dbeafe;color:#1d4ed8}
+    .badge-branch{background:#fae8ff;color:#a21caf}
+    .badge-language{background:#fff7ed;color:#c2410c}
+    .badge-qs{background:#fef3c7;color:#b45309}
+    .uni-fields{display:flex;flex-wrap:wrap;gap:5px}
+    .field-chip{font-size:11px;background:var(--bg);color:var(--muted);padding:3px 8px;border-radius:5px;border:1px solid var(--border)}
+    .uni-meta{display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:14px;font-size:12px;gap:8px}
+    .um-block .label{color:var(--muted);font-size:10.5px;margin-bottom:3px}
+    .um-block .val{font-weight:700;color:var(--text);font-size:13px}
+    .view-btn{display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:700;padding:10px 18px;border-radius:8px;transition:.2s;align-self:flex-start}
+    .uni-card:hover .view-btn{background:var(--primary);color:#fff}
+    .no-results{grid-column:1/-1;text-align:center;padding:80px 24px;color:var(--muted)}
+    .no-results .icon{font-size:52px;margin-bottom:16px}
+    .no-results h3{font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px}
+    .no-results p{font-size:14px;line-height:1.6}
+
+    @media(max-width:700px){.unis-grid{grid-template-columns:1fr}.filters-bar{top:0}}
+    @media(max-width:480px){.hero-stats{gap:18px}}
+  </style>
+</head>
+<body>
+
+<!-- shared.js will inject the unified navbar here -->
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <h1 id="heroTitle" data-i18n="unis.title">Universities &amp; Language Centres in Malaysia</h1>
+    <p id="heroDesc" data-i18n="unis.desc">Complete directory of all partner institutions — programs, fees, rankings and intakes.</p>
+    <div class="hero-stats">
+      <div class="h-stat"><div class="num" id="totalCount">--</div><div class="lbl" id="statTotal" data-i18n="unis.stat.total">Total Institutions</div></div>
+      <div class="h-stat"><div class="num" id="totalPrograms">--</div><div class="lbl" id="statPrograms" data-i18n="unis.stat.programs">Total Programs</div></div>
+      <div class="h-stat"><div class="num">Free</div><div class="lbl" id="statFree" data-i18n="unis.stat.free">Free Offer Letters</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="filters-bar">
+  <div class="filters-inner">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 10-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1114 9.5 4.5 4.5 0 019.5 14z"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by name, city, field…" oninput="renderUnis()"/>
+    </div>
+    <select class="filter-sel" id="filterField" onchange="renderUnis()">
+      <option value="" id="allFieldsOpt">All Fields</option>
+    </select>
+    <select class="filter-sel" id="filterState" onchange="renderUnis()">
+      <option value="" id="allStatesOpt">All States</option>
+    </select>
+    <div class="type-filters" id="typeFilters">
+      <button class="type-btn active" data-type="all" onclick="setType('all',this)">All</button>
+      <button class="type-btn" data-type="public" onclick="setType('public',this)">🏛️ Public</button>
+      <button class="type-btn" data-type="private" onclick="setType('private',this)">🏢 Private</button>
+      <button class="type-btn" data-type="branch" onclick="setType('branch',this)">🌐 Intl. Branch</button>
+      <button class="type-btn" data-type="language" onclick="setType('language',this)">🗣️ Language Centres</button>
+    </div>
+    <button class="reset-btn" id="resetBtn" onclick="resetFilters()">✕ Reset</button>
+  </div>
+</div>
+
+<div class="content">
+  <div class="result-count" id="resultCount"></div>
+  <div class="unis-grid" id="uniGrid"></div>
+</div>
+
+<script src="i18n.js"></script>
+<script src="data.js"></script>
+<script>
+  /* ══════════════════════════════════════════════════════════
+     universities.html — Admin-integrated university directory
+  ══════════════════════════════════════════════════════════ */
+
+  /* ── Language (delegates to shared.js lang switcher) ── */
+  let currentLang = localStorage.getItem('lang') || 'en';
+
+  function t(key) {
+    try { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; } catch { return key; }
+  }
+
+  /* Called by shared.js __sl() when user picks a language */
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    applyLang();
+  }
+
+  function applyLang() {
+    const dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir  = dir;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const tx = t(el.dataset.i18n);
+      if (tx !== el.dataset.i18n) el.textContent = tx;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      el.placeholder = t(el.dataset.i18nPh);
+    });
+    // Rebuild type filter labels
+    const typeLabels = { all:'All', public:'🏛️ Public', private:'🏢 Private', branch:'🌐 Intl. Branch', language:'🗣️ Language Centres' };
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      const ty = btn.dataset.type;
+      btn.textContent = t('filter.' + ty) !== ('filter.' + ty) ? t('filter.' + ty) : typeLabels[ty] || ty;
+    });
+    // Reset button
+    const rb = document.getElementById('resetBtn');
+    if (rb) rb.textContent = (t('unis.reset') !== 'unis.reset' ? t('unis.reset') : '✕ Reset');
+    // Dropdown "All" placeholders
+    const savedField = document.getElementById('filterField')?.value;
+    const savedState = document.getElementById('filterState')?.value;
+    const afo = document.getElementById('allFieldsOpt');
+    const aso = document.getElementById('allStatesOpt');
+    if (afo) afo.textContent = t('unis.allFields') !== 'unis.allFields' ? t('unis.allFields') : 'All Fields';
+    if (aso) aso.textContent = t('unis.allStates') !== 'unis.allStates' ? t('unis.allStates') : 'All States';
+    if (savedField !== undefined && document.getElementById('filterField')) document.getElementById('filterField').value = savedField;
+    if (savedState !== undefined && document.getElementById('filterState')) document.getElementById('filterState').value = savedState;
+    renderUnis();
+  }
+
+  /* ── Admin theme ── */
+  (function applyAdminTheme() {
+    try {
+      const sc = JSON.parse(localStorage.getItem('ep_settings') || '{}');
+      const r  = document.documentElement;
+      if (sc.primaryColor)     r.style.setProperty('--primary',      sc.primaryColor);
+      if (sc.primaryDarkColor) r.style.setProperty('--primary-dark', sc.primaryDarkColor);
+      if (sc.accentColor)      r.style.setProperty('--accent',       sc.accentColor);
+    } catch {}
+  })();
+
+  /* ── Load ALL universities (base + admin extras + apply edits) ── */
+  function getAdminUnis() {
+    let hidden = [], extra = [], edits = {}, logos = {};
+    try { hidden = JSON.parse(localStorage.getItem('ep_hidden_unis') || '[]'); } catch {}
+    try { extra  = JSON.parse(localStorage.getItem('ep_extra_unis')  || '[]'); } catch {}
+    try { edits  = JSON.parse(localStorage.getItem('ep_uni_edits')   || '{}'); } catch {}
+    try { logos  = JSON.parse(localStorage.getItem('ep_uni_logos')   || '{}'); } catch {}
+
+    // Merge: base unis + admin-added, remove duplicates
+    const all = [...UNIVERSITIES];
+    extra.forEach(u => { if (!all.find(x => x.id === u.id)) all.push(u); });
+
+    // Apply field edits
+    const merged = all.map(u => {
+      const e = edits[u.id];
+      if (!e) return u;
+      return {
+        ...u,
+        name:    e.name    || u.name,
+        city:    e.city    || u.city,
+        state:   e.state   || u.state,
+        type:    e.type    || u.type,
+        tuition: e.tuition || u.tuition,
+        intake:  e.intake  || u.intake,
+        website: e.website || u.website,
+        about:   e.about   || u.about,
+      };
+    });
+
+    // Filter hidden
+    const visible = merged.filter(u => !hidden.includes(u.id));
+
+    return { unis: visible, logos };
+  }
+
+  /* ── Logo helper ── */
+  function uniLogo(u, logos, size) {
+    // 1. Admin-uploaded logo (base64 or URL)
+    if (logos[u.id]) {
+      return `<img src="${logos[u.id]}" width="${size}" height="${size}" alt="" style="object-fit:contain;border-radius:8px">`;
+    }
+    // 2. Clearbit from website domain
+    if (u.website) {
+      try {
+        const domain = new URL(u.website).hostname.replace(/^www\./, '');
+        return `<img src="https://logo.clearbit.com/${domain}" width="${size}" height="${size}" alt=""
+          style="object-fit:contain;border-radius:8px"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <span style="display:none;font-size:${Math.round(size*0.5)}px;width:${size}px;height:${size}px;align-items:center;justify-content:center">${u.icon}</span>`;
+      } catch {}
+    }
+    // 3. Emoji fallback
+    return `<span style="font-size:${Math.round(size*0.5)}px">${u.icon}</span>`;
+  }
+
+  /* ── Populate filter dropdowns ── */
+  function populateDropdowns(unis) {
+    const fieldSel = document.getElementById('filterField');
+    const stateSel = document.getElementById('filterState');
+    if (!fieldSel || !stateSel) return;
+
+    const savedField = fieldSel.value;
+    const savedState = stateSel.value;
+
+    const allFields = [...new Set(unis.flatMap(u => u.fields || []))].sort();
+    const allStates = [...new Set(unis.map(u => u.state).filter(Boolean))].sort();
+
+    // Rebuild (keep "All" first option)
+    fieldSel.innerHTML = `<option value="" id="allFieldsOpt">All Fields</option>`;
+    allFields.forEach(f => { const o = document.createElement('option'); o.value = f; o.textContent = f; fieldSel.appendChild(o); });
+
+    stateSel.innerHTML = `<option value="" id="allStatesOpt">All States</option>`;
+    allStates.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; stateSel.appendChild(o); });
+
+    if (savedField) fieldSel.value = savedField;
+    if (savedState) stateSel.value = savedState;
+  }
+
+  /* ── Active type filter ── */
+  let activeType = 'all';
+
+  function setType(type, btn) {
+    activeType = type;
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === type));
+    renderUnis();
+  }
+
+  function resetFilters() {
+    const si = document.getElementById('searchInput');
+    const ff = document.getElementById('filterField');
+    const fs = document.getElementById('filterState');
+    if (si) si.value = '';
+    if (ff) ff.value = '';
+    if (fs) fs.value = '';
+    activeType = 'all';
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.toggle('active', b.dataset.type === 'all'));
+    renderUnis();
+  }
+
+  /* ── Main render ── */
+  function renderUnis() {
+    const { unis, logos } = getAdminUnis();
+    const grid = document.getElementById('uniGrid');
+    const countEl = document.getElementById('resultCount');
+    if (!grid) return;
+
+    const q  = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+    const fd = document.getElementById('filterField')?.value || '';
+    const st = document.getElementById('filterState')?.value || '';
+
+    const filtered = unis.filter(u => {
+      if (activeType !== 'all' && u.type !== activeType) return false;
+      if (fd && !(u.fields || []).includes(fd)) return false;
+      if (st && u.state !== st) return false;
+      if (q) {
+        const hay = (u.name + ' ' + u.city + ' ' + u.state + ' ' + (u.fields || []).join(' ') + ' ' + (u.programs || []).map(p => (p.field || '') + ' ' + (p.name || '')).join(' ')).toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    // Update stat counters
+    const tc = document.getElementById('totalCount');
+    const tp = document.getElementById('totalPrograms');
+    if (tc) tc.textContent = unis.length;
+    if (tp) tp.textContent = unis.reduce((a, u) => a + (u.programs || []).length, 0);
+
+    // Result count text
+    if (countEl) {
+      const total   = unis.length;
+      const shown   = filtered.length;
+      const rawText = t('unis.showing');
+      if (rawText !== 'unis.showing') {
+        countEl.innerHTML = rawText.replace('{n}', `<strong>${shown}</strong>`).replace('{total}', `<strong>${total}</strong>`);
+      } else {
+        countEl.innerHTML = `Showing <strong>${shown}</strong> of <strong>${total}</strong> institutions`;
+      }
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="no-results">
+          <div class="icon">🔍</div>
+          <h3>${t('unis.noMatch') !== 'unis.noMatch' ? t('unis.noMatch') : 'No results found'}</h3>
+          <p>Try adjusting your search or filters.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(u => {
+      const badgeCls  = 'badge-' + u.type;
+      const typeLabel = t('type.' + u.type) !== ('type.' + u.type) ? t('type.' + u.type) : u.type;
+      const qsBadge   = u.qs ? `<span class="badge badge-qs">QS #${u.qs}</span>` : '';
+      const fields    = (u.fields || []).map(f => `<span class="field-chip">${f}</span>`).join('');
+      return `
+        <a href="university.html?id=${u.id}" class="uni-card">
+          <div class="uni-card-top">
+            <div class="uni-logo-wrap">${uniLogo(u, logos, 54)}</div>
+            <div class="uni-head">
+              <div class="uni-name">${u.name}</div>
+              <div class="uni-loc">📍 ${u.city}, ${u.state}</div>
+            </div>
+          </div>
+          <div class="badges">
+            <span class="badge ${badgeCls}">${typeLabel}</span>
+            ${qsBadge}
+          </div>
+          <div class="uni-fields">${fields}</div>
+          <div class="uni-meta">
+            <div class="um-block">
+              <div class="label">${t('unis.est') !== 'unis.est' ? t('unis.est') : 'Est.'}</div>
+              <div class="val">${u.est || '—'}</div>
+            </div>
+            <div class="um-block">
+              <div class="label">${t('unis.programs') !== 'unis.programs' ? t('unis.programs') : 'Programs'}</div>
+              <div class="val">${(u.programs || []).length}</div>
+            </div>
+            <div class="um-block" style="text-align:right">
+              <div class="label">${t('unis.tuition') !== 'unis.tuition' ? t('unis.tuition') : 'Tuition'}</div>
+              <div class="val" style="font-size:11px">${u.tuition || '—'}</div>
+            </div>
+          </div>
+          <span class="view-btn">${t('unis.view') !== 'unis.view' ? t('unis.view') : 'View Details →'}</span>
+        </a>`;
+    }).join('');
+  }
+
+  /* ── Init ── */
+  (function init() {
+    const { unis } = getAdminUnis();
+    populateDropdowns(unis);
+    applyLang();
+  })();
+</script>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog – Study in Malaysia Insights | EduPath</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #0a5c8a; --primary-dark: #074166; --primary-light: #e8f4fb;
+      --accent: #f59e0b; --accent-light: #fef3c7;
+      --text: #1e293b; --text-muted: #64748b; --border: #e2e8f0;
+      --white: #ffffff; --bg: #f8fafc;
+      --radius: 12px; --shadow: 0 4px 24px rgba(10,92,138,.10); --shadow-lg: 0 12px 40px rgba(10,92,138,.15);
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+
+    /* NAV — provided by shared.js */
+
+    /* HERO */
+    .hero { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #1a7eb5 100%); color: white; padding: 72px 24px 60px; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); }
+    .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+    .breadcrumb { font-size: 13px; color: rgba(255,255,255,.7); margin-bottom: 20px; }
+    .breadcrumb a { color: rgba(255,255,255,.7); }
+    .breadcrumb a:hover { color: white; }
+    .hero h1 { font-size: clamp(26px, 4vw, 46px); font-weight: 800; line-height: 1.15; margin-bottom: 14px; }
+    .hero h1 span { color: var(--accent); }
+    .hero-desc { font-size: 16px; color: rgba(255,255,255,.85); max-width: 580px; line-height: 1.7; }
+
+    /* CATEGORY FILTERS */
+    .cat-bar { background: var(--white); border-bottom: 1px solid var(--border); position: sticky; top: 70px; z-index: 90; }
+    .cat-inner { max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .cat-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 30px; cursor: pointer; transition: .2s; font-family: inherit; }
+    .cat-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* MAIN */
+    .main { max-width: 1200px; margin: 0 auto; padding: 52px 24px 80px; }
+
+    /* FEATURED ARTICLE */
+    .featured-article { display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: white; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 52px; box-shadow: var(--shadow); transition: box-shadow .25s; }
+    .featured-article:hover { box-shadow: var(--shadow-lg); }
+    @media (max-width: 768px) { .featured-article { grid-template-columns: 1fr; } }
+    .feat-img { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%); display: flex; align-items: center; justify-content: center; font-size: 80px; min-height: 280px; position: relative; }
+    .feat-cat { position: absolute; top: 20px; left: 20px; background: var(--accent); color: white; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 4px 14px; border-radius: 20px; }
+    .feat-body { padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+    .feat-label { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
+    .feat-body h2 { font-size: clamp(20px, 2.5vw, 28px); font-weight: 800; line-height: 1.3; margin-bottom: 14px; }
+    .feat-body p { font-size: 15px; color: var(--text-muted); line-height: 1.7; margin-bottom: 24px; }
+    .feat-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+    .read-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: white; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 10px; transition: .2s; align-self: flex-start; }
+    .read-btn:hover { background: var(--primary-dark); }
+
+    /* BLOG GRID */
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 28px; }
+    @media (max-width: 480px) { .blog-grid { grid-template-columns: 1fr; } }
+    .blog-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: all .25s; display: flex; flex-direction: column; }
+    .blog-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); border-color: var(--primary-light); }
+    .blog-img { height: 200px; display: flex; align-items: center; justify-content: center; font-size: 56px; position: relative; flex-shrink: 0; }
+    .blog-img.finance { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+    .blog-img.work { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+    .blog-img.rankings { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .blog-img.visa { background: linear-gradient(135deg, #fae8ff, #e9d5ff); }
+    .blog-img.life { background: linear-gradient(135deg, #ffe4e6, #fecdd3); }
+    .blog-img.health { background: linear-gradient(135deg, #ccfbf1, #99f6e4); }
+    .blog-cat { position: absolute; top: 14px; left: 14px; background: var(--primary); color: white; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 3px 11px; border-radius: 20px; }
+    .blog-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
+    .blog-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+    .blog-body h3 { font-size: 16px; font-weight: 700; line-height: 1.4; margin-bottom: 10px; color: var(--text); }
+    .blog-body p { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; flex: 1; }
+    .read-more { font-size: 13px; font-weight: 700; color: var(--primary); display: inline-flex; align-items: center; gap: 4px; }
+    .read-more:hover { gap: 8px; }
+
+    /* ARTICLE FULL CONTENT */
+    .articles-section { margin-top: 72px; }
+    .article-divider { border: none; border-top: 2px solid var(--border); margin: 64px 0; }
+    .article { scroll-margin-top: 140px; }
+    .article-header { margin-bottom: 28px; }
+    .article-cat-tag { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; padding: 4px 14px; border-radius: 20px; margin-bottom: 14px; }
+    .article h2 { font-size: clamp(22px, 3vw, 34px); font-weight: 800; line-height: 1.25; margin-bottom: 12px; }
+    .article-meta { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .article-meta span { display: flex; align-items: center; gap: 5px; }
+    .article-body { margin-top: 24px; }
+    .article-body p { font-size: 15px; line-height: 1.8; color: var(--text); margin-bottom: 18px; }
+    .article-body h3 { font-size: 19px; font-weight: 700; margin: 32px 0 14px; color: var(--text); }
+    .article-body ul { padding-left: 20px; margin-bottom: 18px; }
+    .article-body ul li { font-size: 15px; line-height: 1.75; color: var(--text); margin-bottom: 8px; list-style: disc; }
+    .article-body strong { color: var(--primary-dark); }
+    .info-box { background: var(--primary-light); border-left: 4px solid var(--primary); border-radius: 8px; padding: 18px 20px; margin: 24px 0; }
+    .info-box p { margin: 0; font-size: 14px; color: var(--primary-dark); line-height: 1.65; }
+    .cost-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+    .cost-table th { background: var(--primary); color: white; padding: 12px 16px; text-align: left; font-weight: 700; }
+    .cost-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); }
+    .cost-table tr:last-child td { border-bottom: none; }
+    .cost-table tr:nth-child(even) td { background: var(--bg); }
+    .cost-table .total td { font-weight: 700; color: var(--primary); background: var(--primary-light) !important; }
+    .article-cta { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; border-radius: 14px; padding: 28px 32px; margin-top: 32px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .article-cta p { font-size: 15px; color: rgba(255,255,255,.85); margin: 4px 0 0; }
+    .article-cta h4 { font-size: 18px; font-weight: 800; }
+    .article-cta-btn { background: var(--accent); color: white; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 10px; transition: .2s; white-space: nowrap; display: inline-block; }
+    .article-cta-btn:hover { background: #d97706; }
+
+    /* NEWSLETTER */
+    .newsletter { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 40px; text-align: center; margin-top: 72px; }
+    .newsletter h3 { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+    .newsletter p { font-size: 15px; color: var(--text-muted); margin-bottom: 24px; }
+    .newsletter-form { display: flex; gap: 10px; max-width: 480px; margin: 0 auto; flex-wrap: wrap; justify-content: center; }
+    .newsletter-form input { flex: 1; min-width: 200px; border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 14px; font-family: inherit; outline: none; }
+    .newsletter-form input:focus { border-color: var(--primary); }
+    .newsletter-form button { background: var(--primary); color: white; font-weight: 700; font-size: 14px; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; transition: .2s; }
+    .newsletter-form button:hover { background: var(--primary-dark); }
+
+    /* WA FLOAT */
+    .wa-float { position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px; background: #25d366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(37,211,102,.4); z-index: 999; transition: transform .2s; }
+    .wa-float:hover { transform: scale(1.1); }
+    .wa-float svg { width: 28px; height: 28px; fill: white; }
+
+    /* FOOTER — provided by shared.js */
+
+    /* REVEAL */
+    .reveal-ready { opacity: 0; transform: translateY(22px); transition: opacity .5s ease, transform .5s ease; }
+    .revealed { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+<!-- NAV — injected by shared.js -->
+<nav class="s-nav" id="sNavEl">
+  <div class="s-nav-in">
+    <a href="index.html" class="s-logo">
+      <div class="s-logo-ico"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+      <span>EduPath</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="breadcrumb"><a href="index.html">Home</a> / Blog</div>
+    <h1>📖 Study in Malaysia — <span>Insights & Guides</span></h1>
+    <p class="hero-desc">Practical, researched articles to help you plan, budget, and thrive as an international student in Malaysia. Updated regularly by our team of education advisors.</p>
+  </div>
+</div>
+
+<!-- CATEGORY FILTERS -->
+<div class="cat-bar">
+  <div class="cat-inner">
+    <button class="cat-btn active" onclick="filterCat('all',this)">All</button>
+    <button class="cat-btn" onclick="filterCat('Finance',this)">💰 Finance</button>
+    <button class="cat-btn" onclick="filterCat('Work & Study',this)">💼 Work & Study</button>
+    <button class="cat-btn" onclick="filterCat('Rankings',this)">🏆 Rankings</button>
+    <button class="cat-btn" onclick="filterCat('Visa',this)">🛂 Visa</button>
+    <button class="cat-btn" onclick="filterCat('Student Life',this)">🎓 Student Life</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- FEATURED -->
+  <a href="#cost-of-living" class="featured-article reveal-ready">
+    <div class="feat-img">
+      💰
+      <span class="feat-cat">Finance</span>
+    </div>
+    <div class="feat-body">
+      <div class="feat-label">⭐ Featured Article</div>
+      <h2>Cost of Living for International Students in Malaysia 2026</h2>
+      <p>A complete, up-to-date breakdown of every expense you'll face as an international student — from rent to food, transport to health insurance. Plan your budget before you even land.</p>
+      <div class="feat-meta">📅 May 28, 2026 &nbsp;·&nbsp; ✍️ EduPath Team &nbsp;·&nbsp; ⏱ 6 min read</div>
+      <span class="read-btn">Read Article →</span>
+    </div>
+  </a>
+
+  <!-- ARTICLE CARDS -->
+  <div class="blog-grid" id="blogGrid">
+    <a href="#work-while-studying" class="blog-card reveal-ready" data-cat="Work & Study">
+      <div class="blog-img work">💼<span class="blog-cat">Work & Study</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 May 15, 2026 · ⏱ 5 min</div>
+        <h3>Can International Students Work While Studying in Malaysia?</h3>
+        <p>We answer the most common questions about part-time work rules, permitted hours, and how to legally earn income as an international student.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+    <a href="#top-universities" class="blog-card reveal-ready" data-cat="Rankings">
+      <div class="blog-img rankings">🏆<span class="blog-cat">Rankings</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 May 3, 2026 · ⏱ 8 min</div>
+        <h3>Top Universities in Malaysia You Can't Afford to Miss in 2026</h3>
+        <p>Our experts rank the best universities by quality, affordability, and graduate outcomes — with the QS rankings, programs offered, and insider tips.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+    <a href="#student-visa" class="blog-card reveal-ready" data-cat="Visa">
+      <div class="blog-img visa">🛂<span class="blog-cat">Visa</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 Apr 20, 2026 · ⏱ 7 min</div>
+        <h3>Malaysia Student Visa Guide 2026: Everything You Need to Know</h3>
+        <p>EMGS, eVAL, Student Pass — we decode Malaysia's entire student visa system so you know exactly what to prepare and when.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+    <a href="#student-life" class="blog-card reveal-ready" data-cat="Student Life">
+      <div class="blog-img life">🎓<span class="blog-cat">Student Life</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 Apr 8, 2026 · ⏱ 6 min</div>
+        <h3>What Is Student Life Really Like in Kuala Lumpur?</h3>
+        <p>Food, culture, transport, nightlife, safety — an honest guide to living in KL as an international student from someone who's been there.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+    <a href="#top-universities" class="blog-card reveal-ready" data-cat="Finance">
+      <div class="blog-img finance">📊<span class="blog-cat">Finance</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 Mar 25, 2026 · ⏱ 5 min</div>
+        <h3>How to Open a Bank Account as an International Student in Malaysia</h3>
+        <p>Maybank, CIMB, or RHB? We compare the best student bank accounts, fees, and the exact documents you'll need to open one on arrival.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+    <a href="#student-visa" class="blog-card reveal-ready" data-cat="Student Life">
+      <div class="blog-img health">🏥<span class="blog-cat">Health</span></div>
+      <div class="blog-body">
+        <div class="blog-meta">📅 Mar 10, 2026 · ⏱ 4 min</div>
+        <h3>Health Insurance for International Students in Malaysia</h3>
+        <p>Is it mandatory? How much does it cost? What does it cover? Everything you need to know about medical insurance requirements and options in Malaysia.</p>
+        <span class="read-more">Read More →</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- FULL ARTICLES -->
+  <div class="articles-section">
+
+    <!-- ARTICLE 1: COST OF LIVING -->
+    <div class="article" id="cost-of-living">
+      <div class="article-header reveal-ready">
+        <span class="article-cat-tag">💰 Finance</span>
+        <h2>Cost of Living for International Students in Malaysia 2026</h2>
+        <div class="article-meta">
+          <span>📅 May 28, 2026</span>
+          <span>✍️ EduPath Research Team</span>
+          <span>⏱ 6 min read</span>
+        </div>
+      </div>
+      <div class="article-body reveal-ready">
+        <p>Malaysia is consistently ranked as one of the most affordable countries for international students in Asia. But knowing the <strong>exact numbers</strong> before you arrive is essential for planning your finances with confidence. This guide breaks down every single expense category based on 2026 data.</p>
+
+        <div class="info-box">
+          <p>💡 <strong>Quick Summary:</strong> A typical international student in Kuala Lumpur spends between <strong>RM 1,800–3,500 per month</strong> all-in — including rent, food, transport, and personal expenses. In Johor Bahru or Penang, expect RM 1,400–2,800.</p>
+        </div>
+
+        <h3>🏠 Accommodation</h3>
+        <p>Accommodation is usually your largest single expense. Here's what to expect across different options:</p>
+        <table class="cost-table">
+          <thead><tr><th>Type</th><th>Location</th><th>Monthly Cost</th></tr></thead>
+          <tbody>
+            <tr><td>On-campus hostel (shared room)</td><td>Any university</td><td>RM 200–450</td></tr>
+            <tr><td>Off-campus shared apartment (1 room)</td><td>KL / Petaling Jaya</td><td>RM 500–900</td></tr>
+            <tr><td>Off-campus studio apartment (solo)</td><td>KL</td><td>RM 900–1,600</td></tr>
+            <tr><td>Shared house</td><td>Johor Bahru / Penang</td><td>RM 300–600</td></tr>
+            <tr class="total"><td colspan="2"><strong>Recommended Budget</strong></td><td><strong>RM 500–900/mo</strong></td></tr>
+          </tbody>
+        </table>
+
+        <h3>🍜 Food</h3>
+        <p>Malaysia is a food paradise with incredibly affordable eating options. Local hawker stalls, mamak restaurants and food courts can feed you well for very little:</p>
+        <ul>
+          <li>Hawker meal (nasi lemak, mee goreng, etc.): <strong>RM 4–8</strong></li>
+          <li>Mamak restaurant meal + drink: <strong>RM 7–14</strong></li>
+          <li>Cafeteria meal at university: <strong>RM 5–9</strong></li>
+          <li>Mid-range restaurant: <strong>RM 20–40 per meal</strong></li>
+          <li>Grocery shopping (monthly): <strong>RM 200–350</strong></li>
+          <li><strong>Average food budget: RM 400–700/month</strong></li>
+        </ul>
+
+        <h3>🚌 Transport</h3>
+        <p>Kuala Lumpur has an extensive public transport network including the LRT, MRT, Monorail, KTM and Rapid KL buses. As a student, you can get discounted MyRapid cards:</p>
+        <ul>
+          <li>Monthly unlimited MyRapid Card (KL): <strong>RM 100–150</strong></li>
+          <li>Grab (ride-hailing) — occasional trips: <strong>RM 50–120/month</strong></li>
+          <li>If you have a car/motorbike: <strong>RM 150–300/month</strong> (fuel + parking)</li>
+          <li><strong>Average transport budget: RM 100–200/month</strong></li>
+        </ul>
+
+        <h3>📱 Utilities & Internet</h3>
+        <ul>
+          <li>Mobile SIM with data (Celcom/Maxis/Digi/U Mobile): <strong>RM 35–80/month</strong></li>
+          <li>Home internet (fibre, shared): <strong>RM 30–60/month</strong></li>
+          <li>Electricity + water (if not included in rent): <strong>RM 60–120/month</strong></li>
+        </ul>
+
+        <h3>🏥 Health Insurance</h3>
+        <p>Most Malaysian universities require international students to have health insurance. The cost is usually bundled into your enrollment fees:</p>
+        <ul>
+          <li>University-provided health plan: <strong>RM 400–800/year</strong></li>
+          <li>Private plan (more comprehensive): <strong>RM 800–2,000/year</strong></li>
+        </ul>
+
+        <h3>📊 Full Monthly Budget Summary</h3>
+        <table class="cost-table">
+          <thead><tr><th>Expense</th><th>Budget (RM)</th><th>Moderate (RM)</th></tr></thead>
+          <tbody>
+            <tr><td>Accommodation</td><td>400–600</td><td>600–900</td></tr>
+            <tr><td>Food</td><td>400–500</td><td>600–800</td></tr>
+            <tr><td>Transport</td><td>100–150</td><td>150–250</td></tr>
+            <tr><td>Utilities & Internet</td><td>80–120</td><td>120–180</td></tr>
+            <tr><td>Personal & Entertainment</td><td>150–250</td><td>300–500</td></tr>
+            <tr><td>Health Insurance (monthly)</td><td>40–70</td><td>70–170</td></tr>
+            <tr class="total"><td><strong>Total</strong></td><td><strong>RM 1,170–1,690</strong></td><td><strong>RM 1,840–2,800</strong></td></tr>
+          </tbody>
+        </table>
+        <p>These figures are for <strong>living expenses only</strong> and do not include tuition fees, which vary between RM 8,000–35,000+ per year depending on university and program.</p>
+
+        <div class="article-cta">
+          <div>
+            <h4>Need help planning your budget?</h4>
+            <p>Use our free Cost Calculator or speak to an advisor — completely free.</p>
+          </div>
+          <a href="index.html#contact" class="article-cta-btn">Get Free Advice →</a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="article-divider">
+
+    <!-- ARTICLE 2: WORK WHILE STUDYING -->
+    <div class="article" id="work-while-studying">
+      <div class="article-header reveal-ready">
+        <span class="article-cat-tag">💼 Work & Study</span>
+        <h2>Can International Students Work While Studying in Malaysia?</h2>
+        <div class="article-meta">
+          <span>📅 May 15, 2026</span>
+          <span>✍️ EduPath Legal Team</span>
+          <span>⏱ 5 min read</span>
+        </div>
+      </div>
+      <div class="article-body reveal-ready">
+        <p>Yes — international students in Malaysia <strong>are legally allowed to work part-time</strong> while studying, but with specific restrictions. Understanding these rules is critical to avoid visa violations.</p>
+
+        <div class="info-box">
+          <p>✅ <strong>Key Rule:</strong> International students may work up to <strong>20 hours per week</strong> during semester, and full-time during official semester breaks, provided they are enrolled at an approved private higher education institution (PHEI).</p>
+        </div>
+
+        <h3>📋 Who Is Eligible?</h3>
+        <ul>
+          <li>You must be enrolled at a recognised private university or college</li>
+          <li>You must hold a valid Student Pass (eVAL / VAL)</li>
+          <li>Your university must have approved part-time employment status for you</li>
+          <li>You must work only in permitted sectors (see below)</li>
+        </ul>
+
+        <h3>✅ Permitted Sectors for Part-Time Work</h3>
+        <ul>
+          <li>Restaurants and food service</li>
+          <li>Mini markets and retail</li>
+          <li>Petrol stations</li>
+          <li>Hotels (non-nightclub positions)</li>
+          <li>Family businesses</li>
+        </ul>
+
+        <h3>❌ Restricted Sectors</h3>
+        <ul>
+          <li>Casinos or gaming establishments</li>
+          <li>Pubs, nightclubs, or bars</li>
+          <li>Health spas or massage parlours</li>
+          <li>Any sector violating Malaysian law</li>
+        </ul>
+
+        <h3>💡 Practical Earning Potential</h3>
+        <p>The minimum wage in Malaysia is currently <strong>RM 1,700/month</strong> (full-time). Part-time workers typically earn <strong>RM 7–15/hour</strong>. At 20 hours/week, you could earn approximately <strong>RM 550–1,200/month</strong> — enough to cover a significant portion of your living expenses.</p>
+
+        <h3>📌 How to Get Permission</h3>
+        <ul>
+          <li>Speak to your university's International Student Office</li>
+          <li>Submit a Part-Time Employment Approval Form to the Immigration Department</li>
+          <li>Wait for written approval before starting work</li>
+          <li>Keep all documents accessible at your place of work</li>
+        </ul>
+
+        <div class="article-cta">
+          <div>
+            <h4>Questions about your eligibility?</h4>
+            <p>Our advisors can guide you through the exact process for your specific situation.</p>
+          </div>
+          <a href="index.html#contact" class="article-cta-btn">Ask an Advisor →</a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="article-divider">
+
+    <!-- ARTICLE 3: TOP UNIVERSITIES -->
+    <div class="article" id="top-universities">
+      <div class="article-header reveal-ready">
+        <span class="article-cat-tag">🏆 Rankings</span>
+        <h2>Top Universities in Malaysia You Can't Afford to Miss in 2026</h2>
+        <div class="article-meta">
+          <span>📅 May 3, 2026</span>
+          <span>✍️ EduPath Rankings Team</span>
+          <span>⏱ 8 min read</span>
+        </div>
+      </div>
+      <div class="article-body reveal-ready">
+        <p>Malaysia is home to some of Southeast Asia's finest universities — including several ranked in the global QS Top 200. Whether you're looking for prestige, affordability, or a specific field of study, here are the institutions our advisors recommend most in 2026.</p>
+
+        <h3>🥇 Top Public Universities by QS Ranking</h3>
+        <table class="cost-table">
+          <thead><tr><th>University</th><th>QS 2026</th><th>Best For</th><th>Int'l Tuition/yr</th></tr></thead>
+          <tbody>
+            <tr><td><strong>University of Malaya (UM)</strong></td><td>#65</td><td>Medicine, Law, Engineering</td><td>RM 16,000–35,000</td></tr>
+            <tr><td><strong>Universiti Putra Malaysia (UPM)</strong></td><td>#129</td><td>Agriculture, Sciences, Engineering</td><td>RM 12,000–28,000</td></tr>
+            <tr><td><strong>Universiti Teknologi Malaysia (UTM)</strong></td><td>#181</td><td>Engineering, Architecture, IT</td><td>RM 10,000–24,000</td></tr>
+            <tr><td><strong>Universiti Kebangsaan Malaysia (UKM)</strong></td><td>#186</td><td>Medicine, Sciences, Islamic Studies</td><td>RM 12,000–30,000</td></tr>
+            <tr><td><strong>Universiti Sains Malaysia (USM)</strong></td><td>#201</td><td>Health Sciences, Engineering, Arts</td><td>RM 11,000–27,000</td></tr>
+          </tbody>
+        </table>
+
+        <h3>🏢 Top Private Universities</h3>
+        <table class="cost-table">
+          <thead><tr><th>University</th><th>QS 2026</th><th>Best For</th><th>Int'l Tuition/yr</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Monash University Malaysia</strong></td><td>#42 (global)</td><td>Business, Engineering, IT, Medicine</td><td>RM 30,000–65,000</td></tr>
+            <tr><td><strong>Taylor's University</strong></td><td>#501–550</td><td>Hospitality, Business, Architecture</td><td>RM 22,000–48,000</td></tr>
+            <tr><td><strong>Sunway University</strong></td><td>#601–650</td><td>Business, Law, Sciences</td><td>RM 18,000–40,000</td></tr>
+            <tr><td><strong>HELP University</strong></td><td>Ranked</td><td>Psychology, Business, Education</td><td>RM 14,000–28,000</td></tr>
+            <tr><td><strong>UCSI University</strong></td><td>Top 300 Asia</td><td>Music, Pharmacy, Nursing</td><td>RM 13,000–30,000</td></tr>
+          </tbody>
+        </table>
+
+        <h3>🌐 Top International Branch Campuses</h3>
+        <ul>
+          <li><strong>University of Nottingham Malaysia</strong> — exact same UK degree, at ~40% of UK cost</li>
+          <li><strong>Heriot-Watt University Malaysia</strong> — top for engineering and petroleum studies</li>
+          <li><strong>Newcastle University Medicine Malaysia (NUMed)</strong> — MBBS in Malaysia, UK-recognized</li>
+          <li><strong>EduCity Iskandar (Johor)</strong> — multiple UK university campuses in one location</li>
+        </ul>
+
+        <h3>💡 How to Choose the Right University</h3>
+        <p>The "best" university depends entirely on your goals. Consider these factors before deciding:</p>
+        <ul>
+          <li><strong>Your field of study</strong> — some universities dominate specific fields (e.g., UM for Medicine, UTM for Engineering)</li>
+          <li><strong>Your budget</strong> — public universities cost 30–60% less than private ones</li>
+          <li><strong>Location</strong> — KL offers more career opportunities; smaller cities offer cheaper living</li>
+          <li><strong>Recognition</strong> — check if the degree is recognized in your home country</li>
+          <li><strong>Scholarship availability</strong> — some universities offer significant merit scholarships</li>
+        </ul>
+
+        <div class="article-cta">
+          <div>
+            <h4>Not sure which university is right for you?</h4>
+            <p>Our advisors match you with the perfect institution — for free.</p>
+          </div>
+          <a href="index.html#contact" class="article-cta-btn">Get Matched Free →</a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="article-divider">
+
+    <!-- ARTICLE 4: STUDENT VISA -->
+    <div class="article" id="student-visa">
+      <div class="article-header reveal-ready">
+        <span class="article-cat-tag">🛂 Visa</span>
+        <h2>Malaysia Student Visa Guide 2026: Everything You Need to Know</h2>
+        <div class="article-meta">
+          <span>📅 Apr 20, 2026</span>
+          <span>✍️ EduPath Visa Team</span>
+          <span>⏱ 7 min read</span>
+        </div>
+      </div>
+      <div class="article-body reveal-ready">
+        <p>Getting your Malaysian student visa can feel overwhelming — EMGS, eVAL, Student Pass, VAL... the terminology alone is confusing. This guide cuts through the jargon and gives you a clear, step-by-step understanding of the entire process.</p>
+
+        <div class="info-box">
+          <p>📌 <strong>Important:</strong> Malaysia's student visa process is managed by <strong>EMGS (Education Malaysia Global Services)</strong> — a government-authorized body that processes all international student applications. Your university cannot bypass EMGS.</p>
+        </div>
+
+        <h3>📋 Step-by-Step Visa Process</h3>
+        <ul>
+          <li><strong>Step 1 — Get Your Offer Letter:</strong> Your university issues a conditional or unconditional offer letter after reviewing your academic documents</li>
+          <li><strong>Step 2 — Medical Screening:</strong> Undergo a medical check-up at an EMGS-approved clinic in your home country (or arrive on a Social Visit Pass first)</li>
+          <li><strong>Step 3 — EMGS Application:</strong> Your university submits your eVAL (Electronic Visa Approval Letter) application through the EMGS portal</li>
+          <li><strong>Step 4 — Pay EMGS Fees:</strong> Typically RM 1,200–2,500 depending on nationality and program duration</li>
+          <li><strong>Step 5 — Receive eVAL:</strong> Processing takes 4–8 weeks. The eVAL is sent to your university email</li>
+          <li><strong>Step 6 — Travel to Malaysia:</strong> Enter on your eVAL and present it at the airport immigration counter</li>
+          <li><strong>Step 7 — Convert to Student Pass:</strong> Your university converts the eVAL to a full Student Pass/VAL within 30 days of arrival</li>
+        </ul>
+
+        <h3>📄 Required Documents</h3>
+        <ul>
+          <li>Valid passport (minimum 18 months validity)</li>
+          <li>Academic transcripts and certificates (original + certified translations)</li>
+          <li>IELTS/TOEFL or English proficiency proof (if applicable)</li>
+          <li>Passport-sized photographs</li>
+          <li>Medical examination results from an approved clinic</li>
+          <li>Financial proof (bank statements showing minimum RM 20,000–30,000)</li>
+          <li>Police Clearance Certificate</li>
+        </ul>
+
+        <h3>⏱ How Long Does It Take?</h3>
+        <ul>
+          <li>Simple cases (ASEAN students): <strong>4–6 weeks</strong></li>
+          <li>Complex cases (Middle East, South Asia): <strong>6–12 weeks</strong></li>
+          <li>Expedited processing (extra fee): <strong>2–4 weeks</strong></li>
+        </ul>
+
+        <h3>💰 Total Visa Costs</h3>
+        <table class="cost-table">
+          <thead><tr><th>Item</th><th>Approx. Cost</th></tr></thead>
+          <tbody>
+            <tr><td>EMGS Processing Fee</td><td>RM 1,200–2,500</td></tr>
+            <tr><td>Medical Examination</td><td>RM 200–400</td></tr>
+            <tr><td>Insurance (OSHC or equivalent)</td><td>RM 400–800/yr</td></tr>
+            <tr><td>Visa Sticker</td><td>RM 90–120</td></tr>
+            <tr class="total"><td><strong>Total</strong></td><td><strong>RM 1,890–3,820</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="article-cta">
+          <div>
+            <h4>Confused about your visa application?</h4>
+            <p>EduPath handles the entire process on your behalf — no extra charge.</p>
+          </div>
+          <a href="index.html#contact" class="article-cta-btn">Get Visa Help Free →</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end articles -->
+
+  <!-- NEWSLETTER -->
+  <div class="newsletter reveal-ready">
+    <h3>📬 Stay Updated</h3>
+    <p>Get the latest scholarship deadlines, university news, and Malaysia study tips delivered to your inbox.</p>
+    <div class="newsletter-form">
+      <input type="email" placeholder="your@email.com" />
+      <button onclick="this.textContent='✓ Subscribed!';this.style.background='#059669'">Subscribe Free</button>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 EduPath. All rights reserved. | <a href="index.html">Home</a> · <a href="universities.html">Universities</a> · <a href="courses.html">Courses</a> · <a href="scholarships.html">Scholarships</a></p>
+</footer>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/60123456789" class="wa-float" aria-label="Chat on WhatsApp">
+  <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script src="shared.js"></script>
+<script>
+
+/* ── Render ALL published blog posts from admin localStorage ── */
+(function renderAdminPosts() {
+  try {
+    const raw = localStorage.getItem('ep_blog_posts');
+    if (!raw) return;
+    const posts = JSON.parse(raw).filter(p => p.pub);
+    if (!posts.length) return;
+    const grid = document.getElementById('blogGrid');
+    if (!grid) return;
+
+    const catBg = {
+      'Finance':      'linear-gradient(135deg,#d1fae5,#a7f3d0)',
+      'Work & Study': 'linear-gradient(135deg,#dbeafe,#bfdbfe)',
+      'Rankings':     'linear-gradient(135deg,#fef3c7,#fde68a)',
+      'Visa':         'linear-gradient(135deg,#fae8ff,#e9d5ff)',
+      'Student Life': 'linear-gradient(135deg,#fff7ed,#fed7aa)',
+      'Scholarships': 'linear-gradient(135deg,#ecfdf5,#bbf7d0)',
+      'Health':       'linear-gradient(135deg,#fce7f3,#fbcfe8)',
+    };
+
+    const cards = posts.map(p => {
+      const hasCover = p.coverImg && p.coverImg.trim();
+      const imgContent = hasCover
+        ? `<img src="${p.coverImg}" style="width:100%;height:200px;object-fit:cover" onerror="this.parentElement.innerHTML='<span style=font-size:56px>${p.emoji||'📝'}</span>'" alt=""/>`
+        : `<span style="font-size:56px">${p.emoji || '📝'}</span>`;
+      const imgStyle = hasCover
+        ? 'background:#0f172a;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden'
+        : `background:${catBg[p.cat] || 'linear-gradient(135deg,#e2e8f0,#cbd5e1)'}`;
+
+      return `
+        <a class="blog-card reveal-ready" data-cat="${p.cat || 'General'}"
+           href="#" onclick="showAdminPost('${p.id}');return false;" style="cursor:pointer">
+          <div class="blog-img" style="${imgStyle}">${imgContent}</div>
+          <div class="blog-body">
+            <div class="blog-cat">${p.cat || 'General'}</div>
+            <h3 class="blog-title">${p.title}</h3>
+            <p class="blog-excerpt">${p.excerpt || ''}</p>
+            <div class="blog-meta">
+              <span>✍️ ${p.author || 'EduPath'}</span>
+              <span>⏱ ${p.time || '5 min read'}</span>
+              <span>📅 ${p.date || ''}</span>
+            </div>
+          </div>
+        </a>`;
+    }).join('');
+
+    // Replace the static blog cards grid with admin-managed posts
+    grid.innerHTML = cards;
+  } catch(e) { console.warn('Admin posts error', e); }
+})();
+
+/* Full-screen post reader modal */
+function showAdminPost(id) {
+  try {
+    const posts = JSON.parse(localStorage.getItem('ep_blog_posts') || '[]');
+    const p = posts.find(x => x.id === id);
+    if (!p) return;
+
+    let modal = document.getElementById('adminPostModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'adminPostModal';
+      modal.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px';
+      modal.onclick = e => { if (e.target === modal) modal.remove(); };
+      document.body.appendChild(modal);
+    }
+
+    const coverHtml = p.coverImg
+      ? `<div style="width:100%;height:260px;overflow:hidden;border-radius:16px 16px 0 0;flex-shrink:0">
+           <img src="${p.coverImg}" style="width:100%;height:100%;object-fit:cover" alt=""/>
+         </div>`
+      : `<div style="height:100px;background:linear-gradient(135deg,#074166,#0a5c8a);border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:center;font-size:52px;flex-shrink:0">${p.emoji||'📝'}</div>`;
+
+    // Build video embed HTML (placed after cover, before content)
+    function toYoutubeEmbed(url) {
+      if (!url) return null;
+      const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+      if (ytMatch) return 'https://www.youtube.com/embed/' + ytMatch[1];
+      return null;
+    }
+    let videoHtml = '';
+    if (p.videoUrl) {
+      const embedUrl = toYoutubeEmbed(p.videoUrl);
+      if (embedUrl) {
+        videoHtml = `<div style="position:relative;padding-top:56.25%;background:#000;margin:0 0 28px">
+          <iframe src="${embedUrl}" frameborder="0" allowfullscreen
+            style="position:absolute;top:0;left:0;width:100%;height:100%"></iframe>
+        </div>`;
+      } else {
+        videoHtml = `<video controls style="width:100%;border-radius:10px;margin-bottom:28px">
+          <source src="${p.videoUrl}"/>
+        </video>`;
+      }
+    }
+
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;max-width:820px;width:100%;position:relative;margin:auto;overflow:hidden">
+        <button onclick="document.getElementById('adminPostModal').remove()"
+                style="position:absolute;top:14px;right:14px;z-index:10;background:rgba(0,0,0,.5);border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;color:white;display:flex;align-items:center;justify-content:center">✕</button>
+        ${coverHtml}
+        ${videoHtml}
+        <div style="padding:36px 40px 44px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0a5c8a;margin-bottom:10px">${p.cat || ''}</div>
+          <h2 style="font-size:clamp(22px,3vw,32px);font-weight:800;line-height:1.25;margin-bottom:14px;color:#1e293b">${p.title}</h2>
+          <div style="font-size:13px;color:#64748b;margin-bottom:30px;display:flex;gap:16px;flex-wrap:wrap">
+            <span>✍️ ${p.author || 'EduPath'}</span>
+            <span>📅 ${p.date || ''}</span>
+            <span>⏱ ${p.time || '5 min read'}</span>
+          </div>
+          <div style="font-size:15px;line-height:1.85;color:#1e293b">${p.content || p.excerpt || ''}</div>
+          <div style="margin-top:36px;padding-top:24px;border-top:1px solid #e2e8f0;display:flex;gap:12px;flex-wrap:wrap">
+            <a href="index.html#contact" style="background:var(--primary,#0a5c8a);color:white;font-weight:700;font-size:14px;padding:12px 24px;border-radius:10px;text-decoration:none">📞 Free Consultation</a>
+            <a href="https://wa.me/60123456789" class="blog-wa-cta" style="background:#25d366;color:white;font-weight:700;font-size:14px;padding:12px 20px;border-radius:10px;text-decoration:none">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>`;
+    modal.style.display = 'flex';
+  } catch(e) {}
+}
+
+/* ── Category filter ── */
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.blog-card').forEach(card => {
+    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+/* ── Scroll reveal ── */
+const ro = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); ro.unobserve(e.target); } });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal-ready').forEach((el, i) => {
+  el.style.transitionDelay = (i % 3) * 60 + 'ms';
+  ro.observe(el);
+});
+</script>
+</body>
+</html>

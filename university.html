@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>University Details – EduPath</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--primary:#0a5c8a;--primary-dark:#074166;--primary-light:#e8f4fb;--accent:#f59e0b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--radius:12px;--shadow:0 4px 24px rgba(10,92,138,.10);--shadow-lg:0 12px 40px rgba(10,92,138,.15)}
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter',sans-serif;color:var(--text);background:var(--bg)}
+    a{text-decoration:none;color:inherit}
+
+    /* HERO */
+    .uni-hero{background:linear-gradient(135deg,var(--primary-dark),var(--primary));color:#fff;padding:40px 24px 0}
+    .uni-hero-inner{max-width:1200px;margin:0 auto}
+    .uni-hero-top{display:flex;align-items:flex-start;gap:24px;margin-bottom:28px;flex-wrap:wrap}
+    .uni-big-logo{width:90px;height:90px;border-radius:18px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:44px;flex-shrink:0;border:2px solid rgba(255,255,255,.25);overflow:hidden}
+    .uni-hero-info{flex:1;min-width:200px}
+    .uni-hero-info h1{font-size:clamp(20px,3vw,32px);font-weight:800;margin-bottom:10px;line-height:1.25}
+    .uni-hero-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .meta-pill{display:flex;align-items:center;gap:5px;font-size:13px;background:rgba(255,255,255,.14);padding:5px 12px;border-radius:20px}
+    .meta-pill.qs{background:var(--accent);color:#000;font-weight:700}
+    .uni-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;padding-bottom:28px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;border:2px solid transparent;font-family:inherit}
+    .btn-white{background:#fff;color:var(--primary)}
+    .btn-white:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+    .btn-outline{background:transparent;color:#fff;border-color:rgba(255,255,255,.5)}
+    .btn-outline:hover{background:rgba(255,255,255,.12);border-color:#fff}
+
+    /* INFO BAR */
+    .info-bar{background:#fff;border-bottom:1px solid var(--border)}
+    .info-bar-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+    .info-item{padding:18px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:4px}
+    html[dir=rtl] .info-item{border-right:none;border-left:1px solid var(--border)}
+    .info-item:last-child{border:none}
+    .info-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+    .info-value{font-size:15px;font-weight:700;color:var(--text)}
+
+    /* COUNTDOWN */
+    .countdown-bar{background:linear-gradient(90deg,var(--accent),#f97316);color:#fff;text-align:center;padding:12px 24px;font-size:14px;font-weight:600}
+    .countdown-inner{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+    .cd-block{text-align:center}
+    .cd-num{font-size:22px;font-weight:800;line-height:1}
+    .cd-label{font-size:10px;opacity:.85;text-transform:uppercase;letter-spacing:.05em}
+
+    /* TABS */
+    .tabs-bar{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:70px;z-index:50;overflow-x:auto}
+    .tabs-inner{max-width:1200px;margin:0 auto;padding:0 20px;display:flex;gap:0;white-space:nowrap}
+    .tab-btn{padding:16px 22px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:.2s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;white-space:nowrap;flex-shrink:0}
+    .tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+    .tab-btn:hover:not(.active){color:var(--text);background:var(--bg)}
+
+    /* MAIN LAYOUT */
+    .main{max-width:1200px;margin:0 auto;padding:32px 24px 56px;display:grid;grid-template-columns:1fr 310px;gap:28px;align-items:start}
+    @media(max-width:860px){.main{grid-template-columns:1fr;padding:24px 16px 48px}}
+
+    /* TAB PANELS */
+    .tab-panel{display:none}.tab-panel.active{display:block}
+
+    /* CARDS */
+    .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:22px}
+    .card:last-child{margin-bottom:0}
+    .card h2{font-size:17px;font-weight:800;margin-bottom:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+    .card p{font-size:15px;color:var(--muted);line-height:1.8}
+    .facilities-grid{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+    .fac-chip{background:var(--primary-light);color:var(--primary);font-size:13px;font-weight:600;padding:6px 14px;border-radius:20px}
+
+    /* VIDEO */
+    .video-wrap{position:relative;padding-top:56.25%;background:#000;border-radius:10px;overflow:hidden;margin-top:4px}
+    .video-wrap iframe,.video-wrap video{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+    /* COURSES */
+    .course-controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center}
+    .course-controls select{border:1.5px solid var(--border);border-radius:8px;padding:9px 14px;font-size:13px;font-family:inherit;color:var(--text);background:#fff;outline:none;cursor:pointer;transition:.2s}
+    .course-controls select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-light)}
+    .course-count{font-size:13px;color:var(--muted);margin-bottom:14px}
+    .course-count strong{color:var(--primary)}
+    .programs-list{display:flex;flex-direction:column;gap:11px}
+    .program-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:18px 20px;transition:.2s;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+    .program-card:hover{border-color:var(--primary);box-shadow:var(--shadow)}
+    .prog-name{font-size:15px;font-weight:700;margin-bottom:8px;color:var(--text)}
+    .prog-tags{display:flex;flex-wrap:wrap;gap:6px}
+    .prog-tag{font-size:11.5px;padding:3px 10px;border-radius:6px;font-weight:600}
+    .tag-level{background:#dbeafe;color:#1d4ed8}
+    .tag-field{background:var(--bg);color:var(--muted);border:1px solid var(--border)}
+    .tag-campus{background:#dcfce7;color:#15803d}
+    .prog-price{text-align:right;flex-shrink:0}
+    .price-num{font-size:18px;font-weight:800;color:var(--primary);white-space:nowrap}
+    .price-label{font-size:11px;color:var(--muted);margin-top:2px}
+    .prog-duration{font-size:12px;color:var(--muted);margin-top:6px}
+    html[dir=rtl] .prog-price{text-align:left}
+    .no-results{text-align:center;padding:48px;color:var(--muted)}
+
+    /* FAQ */
+    .faq-item{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:10px;background:#fff;transition:.2s}
+    .faq-item:hover{border-color:var(--primary)}
+    .faq-q{padding:18px 20px;font-size:15px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;user-select:none;line-height:1.5}
+    .faq-q:hover{background:var(--bg)}
+    .faq-arrow{font-size:18px;color:var(--muted);transition:.3s;flex-shrink:0}
+    .faq-item.open .faq-arrow{transform:rotate(180deg)}
+    .faq-item.open{border-color:var(--primary)}
+    .faq-a{display:none;padding:0 20px 18px;font-size:14px;color:var(--muted);line-height:1.8}
+    .faq-item.open .faq-a{display:block}
+
+    /* SIDEBAR */
+    .sidebar{display:flex;flex-direction:column;gap:18px}
+    .sidebar-card{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:20px}
+    .sidebar-card h3{font-size:14px;font-weight:800;margin-bottom:14px;color:var(--text)}
+    .apply-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--primary);color:#fff;font-weight:700;font-size:15px;padding:14px;border-radius:10px;transition:.2s;margin-bottom:10px;cursor:pointer;text-decoration:none}
+    .apply-btn:hover{background:var(--primary-dark);color:#fff}
+    .wa-btn{display:flex;align-items:center;justify-content:center;gap:8px;background:#25d366;color:#fff;font-weight:700;font-size:14px;padding:11px;border-radius:10px;transition:.2s;cursor:pointer;text-decoration:none}
+    .wa-btn:hover{background:#1da853;color:#fff}
+    .facts-list{display:flex;flex-direction:column;gap:10px}
+    .fact-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--muted);line-height:1.5}
+    .fact-ico{width:28px;height:28px;border-radius:8px;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+    .similar-grid{display:flex;flex-direction:column;gap:10px}
+    .similar-card{display:flex;align-items:center;gap:12px;padding:11px;border:1.5px solid var(--border);border-radius:10px;transition:.2s;cursor:pointer;text-decoration:none}
+    .similar-card:hover{border-color:var(--primary);background:var(--primary-light)}
+    .sim-logo{width:38px;height:38px;border-radius:9px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;border:1px solid var(--border)}
+    .sim-name{font-size:13px;font-weight:700;color:var(--text)}
+    .sim-loc{font-size:11px;color:var(--muted);margin-top:2px}
+    .view-all-link{display:block;text-align:center;font-size:13.5px;font-weight:700;color:var(--primary);padding:12px;border:1.5px solid var(--primary-light);border-radius:10px;transition:.2s;text-decoration:none}
+    .view-all-link:hover{background:var(--primary);color:#fff}
+
+    @media(max-width:600px){
+      .uni-hero-top{flex-direction:column}
+      .info-bar-inner{grid-template-columns:1fr 1fr}
+      .info-item{border-right:none;border-bottom:1px solid var(--border)}
+      .info-item:last-child{border:none}
+      .tabs-bar{top:0}
+    }
+  </style>
+</head>
+<body>
+
+<!-- shared.js injects unified nav here -->
+
+<div id="uniHero"></div>
+
+<div class="countdown-bar">
+  <div class="countdown-inner">
+    <span id="cdLabel">🗓️ Next Intake Deadline:</span>
+    <div class="cd-block"><div class="cd-num" id="cdDays">--</div><div class="cd-label">DAYS</div></div>
+    <div class="cd-block"><div class="cd-num" id="cdHours">--</div><div class="cd-label">HOURS</div></div>
+    <div class="cd-block"><div class="cd-num" id="cdMins">--</div><div class="cd-label">MINS</div></div>
+    <div class="cd-block"><div class="cd-num" id="cdSecs">--</div><div class="cd-label">SECS</div></div>
+  </div>
+</div>
+
+<div id="infoBar"></div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" id="tabBtnOverview" onclick="showTab('overview',this)">Overview</button>
+    <button class="tab-btn" id="tabBtnCourses" onclick="showTab('courses',this)">Courses</button>
+    <button class="tab-btn" id="tabBtnFaqs" onclick="showTab('faqs',this)">FAQs</button>
+  </div>
+</div>
+
+<div class="main">
+  <div id="mainContent">
+    <div id="tabOverview" class="tab-panel active"></div>
+    <div id="tabCourses" class="tab-panel"></div>
+    <div id="tabFaqs" class="tab-panel"></div>
+  </div>
+  <aside class="sidebar" id="sidebar"></aside>
+</div>
+
+<script src="i18n.js"></script>
+<script src="data.js"></script>
+<script>
+  /* ══════════════════════════════════════════════════════
+     university.html — Fully admin-integrated & shared-nav
+  ══════════════════════════════════════════════════════ */
+
+  /* ── i18n ── */
+  let currentLang = localStorage.getItem('lang') || 'en';
+  function t(key) {
+    try { return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key; } catch { return key; }
+  }
+
+  /* Called by shared.js __sl() on language change */
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir  = lang === 'ar' ? 'rtl' : 'ltr';
+    buildPage(); // re-render everything in new language
+  }
+
+  function applyLang() {
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir  = currentLang === 'ar' ? 'rtl' : 'ltr';
+  }
+
+  /* ── Admin theme ── */
+  (function applyAdminTheme() {
+    try {
+      const sc = JSON.parse(localStorage.getItem('ep_settings') || '{}');
+      const r  = document.documentElement;
+      if (sc.primaryColor)     r.style.setProperty('--primary',      sc.primaryColor);
+      if (sc.primaryDarkColor) r.style.setProperty('--primary-dark', sc.primaryDarkColor);
+      if (sc.accentColor)      r.style.setProperty('--accent',       sc.accentColor);
+    } catch {}
+  })();
+
+  /* ── Load university (base + admin extras + edits) ── */
+  const params = new URLSearchParams(location.search);
+  const uniId  = params.get('id') || localStorage.getItem('uniId');
+
+  function getUni() {
+    let _extra = [], _edits = {}, _logos = {}, _videos = {};
+    try { _extra  = JSON.parse(localStorage.getItem('ep_extra_unis') || '[]'); } catch {}
+    try { _edits  = JSON.parse(localStorage.getItem('ep_uni_edits')  || '{}'); } catch {}
+    try { _logos  = JSON.parse(localStorage.getItem('ep_uni_logos')  || '{}'); } catch {}
+    try { _videos = JSON.parse(localStorage.getItem('ep_uni_videos') || '{}'); } catch {}
+
+    const all = [...UNIVERSITIES, ..._extra.filter(u => !UNIVERSITIES.find(x => x.id === u.id))];
+    let u = all.find(u => u.id === uniId);
+    if (!u) return null;
+
+    // Apply field edits
+    const e = _edits[u.id];
+    if (e) {
+      u = { ...u };
+      if (e.name)    u.name    = e.name;
+      if (e.type)    u.type    = e.type;
+      if (e.city)    u.city    = e.city;
+      if (e.state)   u.state   = e.state;
+      if (e.tuition) u.tuition = e.tuition;
+      if (e.qs !== undefined) u.qs = e.qs || null;
+      if (e.est)     u.est     = e.est;
+      if (e.website) u.website = e.website;
+      if (e.fields && e.fields.length) u.fields = e.fields;
+      if (e.icon)    u.icon    = e.icon;
+      if (e.about)   u.about   = e.about;
+    }
+
+    // Attach admin logo + video
+    if (_logos[u.id])  u._logo  = _logos[u.id];
+    if (_videos[u.id]) u.videoUrl = _videos[u.id];
+    return u;
+  }
+
+  const uni = getUni();
+
+  if (!uni) {
+    document.body.innerHTML = `
+      <div style="text-align:center;padding:80px 24px;font-family:Inter,sans-serif">
+        <div style="font-size:52px;margin-bottom:16px">🔍</div>
+        <h2 style="font-size:22px;font-weight:800;margin-bottom:8px">University not found</h2>
+        <p style="color:#64748b;margin-bottom:24px">This university may have been removed or the link is incorrect.</p>
+        <a href="universities.html" style="color:#0a5c8a;font-weight:700;background:#e8f4fb;padding:12px 24px;border-radius:8px;text-decoration:none">← Back to Universities</a>
+      </div>`;
+    throw new Error('Not found');
+  }
+
+  document.title = uni.name + ' – EduPath';
+
+  /* ── Logo helper ── */
+  function uniLogo(u, size) {
+    if (u._logo) return `<img src="${u._logo}" width="${size}" height="${size}" alt="" style="object-fit:contain;border-radius:8px">`;
+    if (!u.website) return `<span style="font-size:${Math.round(size*0.5)}px">${u.icon}</span>`;
+    try {
+      const domain = new URL(u.website).hostname.replace(/^www\./, '');
+      return `<img src="https://logo.clearbit.com/${domain}" width="${size}" height="${size}" alt=""
+        style="object-fit:contain;border-radius:8px"
+        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <span style="display:none;font-size:${Math.round(size*0.5)}px;width:${size}px;height:${size}px;align-items:center;justify-content:center">${u.icon}</span>`;
+    } catch { return `<span style="font-size:${Math.round(size*0.5)}px">${u.icon}</span>`; }
+  }
+
+  /* ── YouTube embed ── */
+  function toEmbed(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+    return m ? 'https://www.youtube.com/embed/' + m[1] : null;
+  }
+
+  /* ── WhatsApp number (from admin settings) ── */
+  function waNum() {
+    try { return JSON.parse(localStorage.getItem('ep_settings') || '{}').whatsapp || '60123456789'; } catch { return '60123456789'; }
+  }
+
+  /* ── Build / Re-render page ── */
+  let _activeTab = 'overview';
+
+  function buildPage() {
+    applyLang();
+    buildHero();
+    buildInfoBar();
+    buildTabLabels();
+    buildOverview();
+    buildCourses();
+    buildFaqs();
+    buildSidebar();
+    showTab(_activeTab, document.getElementById('tabBtn' + _activeTab.charAt(0).toUpperCase() + _activeTab.slice(1)));
+  }
+
+  /* ── HERO ── */
+  function buildHero() {
+    const WA = waNum();
+    const typeKey = 'univ.type.' + (uni.type || 'private');
+    const typeLabel = t(typeKey) !== typeKey ? t(typeKey) : uni.type;
+    document.getElementById('uniHero').innerHTML = `
+      <div class="uni-hero">
+        <div class="uni-hero-inner">
+          <div class="uni-hero-top">
+            <div class="uni-big-logo">${uniLogo(uni, 80)}</div>
+            <div class="uni-hero-info">
+              <h1>${uni.name}</h1>
+              <div class="uni-hero-meta">
+                <span class="meta-pill">📍 ${uni.city}, ${uni.state}</span>
+                <span class="meta-pill">${typeLabel}</span>
+                ${uni.qs ? `<span class="meta-pill qs">QS #${uni.qs}</span>` : ''}
+                <span class="meta-pill">📅 Est. ${uni.est}</span>
+                ${uni.fields && uni.fields[0] ? `<span class="meta-pill">📚 ${uni.fields[0]}</span>` : ''}
+              </div>
+            </div>
+          </div>
+          <div class="uni-hero-actions">
+            <a href="https://wa.me/${WA}?text=${encodeURIComponent('I\'m interested in ' + uni.name)}" class="btn btn-white" target="_blank">${t('univ.apply') !== 'univ.apply' ? t('univ.apply') : '🎓 Apply Now'}</a>
+            <a href="https://wa.me/${WA}" class="btn btn-outline" target="_blank">${t('univ.ask') !== 'univ.ask' ? t('univ.ask') : '💬 Ask Us'}</a>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ── INFO BAR ── */
+  function buildInfoBar() {
+    const intakesVal = (uni.intakes || []).join(' · ') || '—';
+    const locsVal    = (uni.locations || []).join(' · ') || (uni.city + ', ' + uni.state);
+    document.getElementById('infoBar').innerHTML = `
+      <div class="info-bar"><div class="info-bar-inner">
+        <div class="info-item">
+          <div class="info-label">${t('univ.offerLetter') !== 'univ.offerLetter' ? t('univ.offerLetter') : 'Offer Letter'}</div>
+          <div class="info-value">${uni.offerLetterFee || 'Free'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">${t('univ.intakes') !== 'univ.intakes' ? t('univ.intakes') : 'Intakes'}</div>
+          <div class="info-value" style="font-size:13px">${intakesVal}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">${t('univ.ielts') !== 'univ.ielts' ? t('univ.ielts') : 'IELTS'}</div>
+          <div class="info-value">${uni.ielts || '5.5'}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">${t('univ.locations') !== 'univ.locations' ? t('univ.locations') : 'Location'}</div>
+          <div class="info-value" style="font-size:13px">${locsVal}</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">${t('univ.programs') !== 'univ.programs' ? t('univ.programs') : 'Programs'}</div>
+          <div class="info-value">${(uni.programs || []).length} ${t('univ.programs') !== 'univ.programs' ? t('univ.programs') : 'programs'}</div>
+        </div>
+      </div></div>`;
+  }
+
+  /* ── TAB LABELS ── */
+  function buildTabLabels() {
+    const ov = document.getElementById('tabBtnOverview');
+    const co = document.getElementById('tabBtnCourses');
+    const fq = document.getElementById('tabBtnFaqs');
+    if (ov) ov.textContent = t('univ.tab.overview') !== 'univ.tab.overview' ? t('univ.tab.overview') : 'Overview';
+    if (co) co.textContent = t('univ.tab.courses')  !== 'univ.tab.courses'  ? t('univ.tab.courses')  : 'Courses';
+    if (fq) fq.textContent = t('univ.tab.faq')      !== 'univ.tab.faq'      ? t('univ.tab.faq')      : 'FAQs';
+  }
+
+  /* ── OVERVIEW TAB ── */
+  function buildOverview() {
+    const facHtml = (uni.facilities || []).map(f => `<span class="fac-chip">${f}</span>`).join('');
+    const steps   = [
+      t('univ.step1') !== 'univ.step1' ? t('univ.step1') : 'Fill in the interest form',
+      t('univ.step2') !== 'univ.step2' ? t('univ.step2') : 'Receive your offer letter',
+      t('univ.step3') !== 'univ.step3' ? t('univ.step3') : 'Apply for student visa (EMGS)',
+      t('univ.step4') !== 'univ.step4' ? t('univ.step4') : 'Book accommodation',
+      t('univ.step5') !== 'univ.step5' ? t('univ.step5') : 'Arrive & start studying',
+    ];
+
+    // Video
+    const embedUrl  = toEmbed(uni.videoUrl);
+    let videoHtml = '';
+    if (embedUrl) {
+      videoHtml = `<div class="card">
+        <h2>🎬 ${uni.name}</h2>
+        <div class="video-wrap"><iframe src="${embedUrl}" allowfullscreen loading="lazy"></iframe></div>
+      </div>`;
+    } else if (uni.videoUrl) {
+      videoHtml = `<div class="card">
+        <h2>🎬 ${uni.name}</h2>
+        <div class="video-wrap" style="padding-top:0">
+          <video controls style="width:100%;border-radius:10px;display:block"><source src="${uni.videoUrl}"/></video>
+        </div>
+      </div>`;
+    }
+
+    document.getElementById('tabOverview').innerHTML = `
+      <div class="card">
+        <h2>🏛️ ${t('univ.about') !== 'univ.about' ? t('univ.about') : 'About'} ${uni.name}</h2>
+        <p>${uni.about || 'A leading institution in Malaysia offering world-class education.'}</p>
+      </div>
+      ${videoHtml}
+      ${facHtml ? `<div class="card"><h2>🏗️ ${t('univ.facilities') !== 'univ.facilities' ? t('univ.facilities') : 'Facilities'}</h2><div class="facilities-grid">${facHtml}</div></div>` : ''}
+      <div class="card">
+        <h2>📋 ${t('univ.process') !== 'univ.process' ? t('univ.process') : 'Enrolment Process'}</h2>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:4px">
+          ${steps.map((s, i) => `
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--muted)">
+              <div style="width:28px;height:28px;border-radius:50%;background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;flex-shrink:0">${i + 1}</div>
+              <span>${s}</span>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  /* ── COURSES TAB ── */
+  function buildCourses() {
+    const programs = uni.programs || [];
+    if (!programs.length) {
+      document.getElementById('tabCourses').innerHTML = `<div class="card"><p style="text-align:center;padding:32px">No programs listed yet.</p></div>`;
+      return;
+    }
+    const levels = [...new Set(programs.map(p => p.level))].sort();
+    const fields = [...new Set(programs.map(p => p.field))].sort();
+    const allLvl = t('univ.allLevels') !== 'univ.allLevels' ? t('univ.allLevels') : 'All Levels';
+    const allFld = t('univ.allFields') !== 'univ.allFields' ? t('univ.allFields') : 'All Fields';
+
+    document.getElementById('tabCourses').innerHTML = `
+      <div class="course-controls">
+        <select id="filterLevel" onchange="filterCourses()">
+          <option value="">${allLvl}</option>
+          ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
+        </select>
+        <select id="filterCourseField" onchange="filterCourses()">
+          <option value="">${allFld}</option>
+          ${fields.map(f => `<option value="${f}">${f}</option>`).join('')}
+        </select>
+      </div>
+      <div class="course-count" id="courseCount"></div>
+      <div class="programs-list" id="programsList"></div>`;
+
+    filterCourses();
+  }
+
+  function filterCourses() {
+    const programs = uni.programs || [];
+    const lv = document.getElementById('filterLevel')?.value || '';
+    const fd = document.getElementById('filterCourseField')?.value || '';
+    const filtered = programs.filter(p => (!lv || p.level === lv) && (!fd || p.field === fd));
+
+    const cc = document.getElementById('courseCount');
+    if (cc) cc.innerHTML = `Showing <strong>${filtered.length}</strong> of <strong>${programs.length}</strong> programs`;
+
+    const pl = document.getElementById('programsList');
+    if (!pl) return;
+    if (!filtered.length) { pl.innerHTML = `<div class="no-results">No matching programs.</div>`; return; }
+
+    pl.innerHTML = filtered.map(p => {
+      const yrs = p.duration === 1 ? 'year' : 'years';
+      return `<div class="program-card">
+        <div>
+          <div class="prog-name">${p.name}</div>
+          <div class="prog-tags">
+            <span class="prog-tag tag-level">${p.level}</span>
+            <span class="prog-tag tag-field">${p.field}</span>
+            <span class="prog-tag tag-campus">📍 ${p.campus}</span>
+          </div>
+        </div>
+        <div class="prog-price">
+          <div class="price-num">RM ${(p.fee || 0).toLocaleString()}</div>
+          <div class="price-label">per year</div>
+          <div class="prog-duration">⏱ ${p.duration} ${yrs}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ── FAQS TAB ── */
+  function buildFaqs() {
+    const faqs = [
+      { q: `What is ${uni.name}'s global ranking?`,
+        a: uni.qs ? `${uni.name} is ranked <strong>#${uni.qs}</strong> in the QS World University Rankings 2026.` : `${uni.name} is a well-regarded institution in Malaysia, holding strong national ratings.` },
+      { q: `When are the intakes?`,
+        a: `${uni.name} has intakes in: <strong>${(uni.intakes || []).join(', ') || '—'}</strong>. Contact us for exact registration deadlines.` },
+      { q: `What English proficiency is required?`,
+        a: `Most programs require <strong>${uni.ielts || '5.5'}</strong>. Students without IELTS can first enrol in a language centre.` },
+      { q: `What documents do I need?`,
+        a: `Passport copy, academic certificates & transcripts, passport-size photos, IELTS certificate (if available). We help you compile everything for free.` },
+      { q: `Is accommodation available?`,
+        a: `Yes. ${uni.name} offers on-campus accommodation and we assist with nearby private housing before you arrive.` },
+      { q: `How does the student visa work?`,
+        a: `International students need a Student Pass via <strong>EMGS</strong>. After receiving your offer letter, we guide you through the full visa application — free of charge.` },
+      { q: `Is the offer letter free?`,
+        a: `The offer letter from ${uni.name} is <strong>${uni.offerLetterFee || 'Free'}</strong>. Our consultancy service is also completely free for students.` },
+    ];
+    document.getElementById('tabFaqs').innerHTML = faqs.map((f, i) => `
+      <div class="faq-item" id="faq${i}">
+        <div class="faq-q" onclick="toggleFaq(${i})">
+          <span>${f.q}</span><span class="faq-arrow">⌄</span>
+        </div>
+        <div class="faq-a">${f.a}</div>
+      </div>`).join('');
+  }
+
+  function toggleFaq(i) {
+    document.getElementById('faq' + i).classList.toggle('open');
+  }
+
+  /* ── SIDEBAR ── */
+  function buildSidebar() {
+    const WA = waNum();
+    let _extra = [];
+    try { _extra = JSON.parse(localStorage.getItem('ep_extra_unis') || '[]'); } catch {}
+    const allUnis = [...UNIVERSITIES, ..._extra.filter(u => !UNIVERSITIES.find(x => x.id === u.id))];
+
+    let _hidden = [];
+    try { _hidden = JSON.parse(localStorage.getItem('ep_hidden_unis') || '[]'); } catch {}
+
+    const similar = allUnis.filter(u =>
+      u.id !== uni.id &&
+      !_hidden.includes(u.id) &&
+      (u.type === uni.type || (u.fields || []).some(f => (uni.fields || []).includes(f)))
+    ).slice(0, 3);
+
+    const offerLabel   = t('univ.offerLetter') !== 'univ.offerLetter' ? t('univ.offerLetter') : 'Offer Letter';
+    const intakesLabel = t('univ.intakes')      !== 'univ.intakes'     ? t('univ.intakes')     : 'Intakes';
+    const ieltsLabel   = t('univ.ielts')        !== 'univ.ielts'       ? t('univ.ielts')       : 'IELTS Req.';
+    const locsLabel    = t('univ.locations')    !== 'univ.locations'   ? t('univ.locations')   : 'Location';
+    const progsLabel   = t('univ.programs')     !== 'univ.programs'    ? t('univ.programs')    : 'Programs';
+    const applyLabel   = t('univ.apply')        !== 'univ.apply'       ? t('univ.apply')       : 'Apply Now';
+    const askLabel     = t('univ.ask')          !== 'univ.ask'         ? t('univ.ask')         : 'Ask Us';
+    const similarLbl   = t('univ.similar')      !== 'univ.similar'     ? t('univ.similar')     : 'Similar Universities';
+    const viewAllLbl   = t('univ.viewAll')      !== 'univ.viewAll'     ? t('univ.viewAll')     : 'View all institutions →';
+    const applyPrgLbl  = t('univ.applyProgram') !== 'univ.applyProgram'? t('univ.applyProgram'): 'Apply to this University';
+    const qfLbl        = t('univ.quickFacts')   !== 'univ.quickFacts'  ? t('univ.quickFacts')  : 'Quick Facts';
+
+    document.getElementById('sidebar').innerHTML = `
+      <div class="sidebar-card">
+        <h3>${applyPrgLbl}</h3>
+        <a href="https://wa.me/${WA}?text=${encodeURIComponent('I want to apply to ' + uni.name)}" class="apply-btn" target="_blank">${applyLabel} — Free</a>
+        <a href="https://wa.me/${WA}" class="wa-btn" target="_blank">${askLabel}</a>
+      </div>
+      <div class="sidebar-card">
+        <h3>${qfLbl}</h3>
+        <div class="facts-list">
+          <div class="fact-item"><div class="fact-ico">📋</div><span><strong>${offerLabel}:</strong> ${uni.offerLetterFee || 'Free'}</span></div>
+          <div class="fact-item"><div class="fact-ico">📅</div><span><strong>${intakesLabel}:</strong> ${(uni.intakes || []).join(', ') || '—'}</span></div>
+          <div class="fact-item"><div class="fact-ico">🗣️</div><span><strong>${ieltsLabel}:</strong> ${uni.ielts || '5.5'}</span></div>
+          <div class="fact-item"><div class="fact-ico">📍</div><span><strong>${locsLabel}:</strong> ${uni.city}, ${uni.state}</span></div>
+          <div class="fact-item"><div class="fact-ico">🎓</div><span><strong>${progsLabel}:</strong> ${(uni.programs || []).length} available</span></div>
+          ${uni.website ? `<div class="fact-item"><div class="fact-ico">🌐</div><span><a href="${uni.website}" target="_blank" style="color:var(--primary);font-weight:600">Official Website ↗</a></span></div>` : ''}
+        </div>
+      </div>
+      ${similar.length ? `
+      <div class="sidebar-card">
+        <h3>${similarLbl}</h3>
+        <div class="similar-grid">
+          ${similar.map(s => `
+            <a href="university.html?id=${s.id}" class="similar-card">
+              <div class="sim-logo">${uniLogo(s, 36)}</div>
+              <div>
+                <div class="sim-name">${s.name}</div>
+                <div class="sim-loc">📍 ${s.city}${s.qs ? ' · QS #' + s.qs : ''}</div>
+              </div>
+            </a>`).join('')}
+        </div>
+      </div>` : ''}
+      <a href="universities.html" class="view-all-link">${viewAllLbl}</a>`;
+  }
+
+  /* ── TABS ── */
+  function showTab(name, btn) {
+    _activeTab = name;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('tab' + name.charAt(0).toUpperCase() + name.slice(1));
+    if (panel) panel.classList.add('active');
+    if (btn)   btn.classList.add('active');
+  }
+
+  /* ── COUNTDOWN (to next July 1) ── */
+  function updateCountdown() {
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 6, 1);
+    if (now >= target) target = new Date(now.getFullYear() + 1, 6, 1);
+    const diff = target - now;
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor((diff % 864e5) / 36e5);
+    const m = Math.floor((diff % 36e5) / 6e4);
+    const s = Math.floor((diff % 6e4) / 1e3);
+    const el = id => document.getElementById(id);
+    if (el('cdDays'))  el('cdDays').textContent  = String(d).padStart(2, '0');
+    if (el('cdHours')) el('cdHours').textContent = String(h).padStart(2, '0');
+    if (el('cdMins'))  el('cdMins').textContent  = String(m).padStart(2, '0');
+    if (el('cdSecs'))  el('cdSecs').textContent  = String(s).padStart(2, '0');
+  }
+
+  /* ── INIT ── */
+  buildPage();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+<script src="shared.js"></script>
+</body>
+</html>
