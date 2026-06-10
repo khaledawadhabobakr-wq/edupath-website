@@ -4,6 +4,14 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Student Portal – EduPath</title>
+  <meta name="description" content="بوابة الطالب EduPath — قدّم طلبك للجامعات الماليزية، ارفع مستنداتك وتابع حالة طلبك خطوة بخطوة."/>
+  <meta name="theme-color" content="#0a5c8a"/>
+  <meta property="og:title" content="Student Portal – EduPath"/>
+  <meta property="og:description" content="بوابة الطالب EduPath — قدّم طلبك للجامعات الماليزية، ارفع مستنداتك وتابع حالة طلبك خطوة بخطوة."/>
+  <meta property="og:type" content="website"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%230a5c8a'/><path d='M12 4L2.5 9l9.5 5 8-4.2V16h1.5V9L12 4zm-6 8.6v3.9L12 19.5l6-3v-3.9l-6 3.2-6-3.2z' fill='white'/></svg>"/>
+  <link rel="preconnect" href="https://mtmgffebrdxqucoiwltx.supabase.co"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -1015,8 +1023,8 @@ function doRegister(){
   const students = lsGet(SK.students);
   if(students.find(s=>s.email.toLowerCase()===email)){ err.textContent=t('valRegEmail'); err.style.display='block'; return; }
   const std = { id:genId('STD'), name, email, phone, nationality:nat, pwHash:hashPw(pw), createdAt:new Date().toISOString() };
-  students.push(std);
-  lsSet(SK.students, students);
+  if(window.dbSubmit){ window.dbSubmit(SK.students, std); } // دمج آمن — لا يمسح حسابات سُجلت من أجهزة أخرى
+  else { students.push(std); lsSet(SK.students, students); }
   startSession(std);
 }
 
@@ -1318,9 +1326,8 @@ function submitApp(){
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  const apps = lsGet(SK.applications);
-  apps.push(app);
-  lsSet(SK.applications, apps);
+  if(window.dbSubmit){ window.dbSubmit(SK.applications, app); } // دمج آمن مع طلبات الأجهزة الأخرى
+  else { const apps = lsGet(SK.applications); apps.push(app); lsSet(SK.applications, apps); }
 
   // Show success
   document.getElementById('appFormWrap').style.display='none';

@@ -4,6 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Blog – Study in Malaysia Insights | EduPath</title>
+  <meta name="description" content="Practical guides for studying in Malaysia: living costs, student visa steps, work rules, rankings and student life — by the EduPath team."/>
+  <meta name="theme-color" content="#0a5c8a"/>
+  <meta property="og:title" content="Blog – Study in Malaysia Insights | EduPath"/>
+  <meta property="og:description" content="Practical guides for studying in Malaysia: living costs, student visa steps, work rules, rankings and student life — by the EduPath team."/>
+  <meta property="og:type" content="website"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='5' fill='%230a5c8a'/><path d='M12 4L2.5 9l9.5 5 8-4.2V16h1.5V9L12 4zm-6 8.6v3.9L12 19.5l6-3v-3.9l-6 3.2-6-3.2z' fill='white'/></svg>"/>
+  <link rel="preconnect" href="https://mtmgffebrdxqucoiwltx.supabase.co"/>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin/>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
@@ -616,8 +624,16 @@ function renderAdminPosts() {
 }
 
 // Wait for Supabase cloud data before rendering
-if (window.DB_READY) { renderAdminPosts(); }
-else { window.addEventListener('db-ready', renderAdminPosts, { once: true }); }
+function initBlog() {
+  renderAdminPosts();
+  // Deep link: blog.html#post-<id> opens the post directly (used by homepage cards)
+  if (location.hash.startsWith('#post-')) {
+    const id = location.hash.slice(6);
+    showAdminPost(id);
+  }
+}
+if (window.DB_READY) { initBlog(); }
+else { window.addEventListener('db-ready', initBlog, { once: true }); }
 
 /* Full-screen post reader modal */
 function showAdminPost(id) {

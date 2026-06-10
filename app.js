@@ -196,7 +196,9 @@ function submitConsultForm() {
     `Email: ${email || "—"}`,
     msg ? `Message: ${msg}` : ""
   ].filter(Boolean).join("\n");
-  window.open("https://wa.me/60123456789?text=" + encodeURIComponent(body), "_blank");
+  let waNum = "60123456789";
+  try { waNum = JSON.parse(localStorage.getItem("ep_settings") || "{}").whatsapp || waNum; } catch {}
+  window.open("https://wa.me/" + waNum + "?text=" + encodeURIComponent(body), "_blank");
 
   // ── Save consultation to admin panel ──
   try {
@@ -207,9 +209,13 @@ function submitConsultForm() {
       adminNotes: '',
       createdAt: new Date().toISOString()
     };
-    const list = JSON.parse(localStorage.getItem('ep_consultations') || '[]');
-    list.push(consult);
-    localStorage.setItem('ep_consultations', JSON.stringify(list));
+    if (window.dbSubmit) {
+      window.dbSubmit('ep_consultations', consult); // دمج آمن مع السحابة — لا يمسح استشارات الأجهزة الأخرى
+    } else {
+      const list = JSON.parse(localStorage.getItem('ep_consultations') || '[]');
+      list.push(consult);
+      localStorage.setItem('ep_consultations', JSON.stringify(list));
+    }
   } catch(e) { /* silent — localStorage might be full */ }
 
   document.getElementById("formStep2").style.display = "none";
@@ -412,7 +418,7 @@ const UNI_ALIASES = {
   'unimap': 'unimap', 'perlis': 'unimap',
   'umt': 'umt', 'terengganu': 'umt',
   'umk': 'umk', 'kelantan': 'umk',
-  'unisza': 'uniszа',
+  'unisza': 'unisza',
   'upnm': 'upnm',
   'uniten': 'uniten'
 };
@@ -1029,12 +1035,47 @@ function renderTestimonialsFromAdmin() {
   } catch(e) { console.warn('Testimonials load error', e); }
 }
 
+// ── Latest published blog posts from admin (homepage preview) ──
+function renderBlogFromAdmin() {
+  const grid = document.querySelector('#blog .blog-grid');
+  if (!grid) return;
+  try {
+    const raw = localStorage.getItem('ep_blog_posts');
+    if (!raw) return;
+    const posts = JSON.parse(raw).filter(p => p && p.pub).slice(0, 3);
+    if (!posts.length) return;
+    grid.innerHTML = posts.map(p => `
+      <a href="blog.html#post-${p.id}" class="blog-card reveal-ready" style="text-decoration:none;color:inherit">
+        <div class="blog-img">${p.coverImg ? `<img src="${p.coverImg}" style="width:100%;height:100%;object-fit:cover" alt=""/>` : (p.emoji || '📝')}<div class="blog-cat">${p.cat || 'General'}</div></div>
+        <div class="blog-body">
+          <div class="blog-meta">${p.date || ''} · ${p.time || ''}</div>
+          <h3>${p.title}</h3>
+          <p>${p.excerpt || ''}</p>
+          <span class="read-more"><span data-i18n="blog.more">${t('blog.more')}</span> →</span>
+        </div>
+      </a>`).join('');
+    grid.querySelectorAll('.blog-card').forEach((el, i) => {
+      el.style.transitionDelay = (i % 4) * 60 + 'ms';
+      revealObserver.observe(el);
+    });
+  } catch(e) { console.warn('Blog preview load error', e); }
+}
+
 /* ═══════════════ INIT ═══════════════ */
 chatBody = document.getElementById('chatBody');
 chatInput = document.getElementById('chatInput');
-loadUniEdits();        // patch base university fields first
-loadSiteSettings();    // apply colors, stats, hero, WhatsApp
-renderServicesFromAdmin();
-renderStepsFromAdmin();
-renderTestimonialsFromAdmin();
-applyLang();           // render everything (calls buildFAQ, renderUnis, etc.)
+
+function initHomepage() {
+  loadUniEdits();        // patch base university fields first
+  loadSiteSettings();    // apply colors, stats, hero, WhatsApp
+  renderServicesFromAdmin();
+  renderStepsFromAdmin();
+  renderTestimonialsFromAdmin();
+  renderBlogFromAdmin();
+  applyLang();           // render everything (calls buildFAQ, renderUnis, etc.)
+}
+
+initHomepage();
+// أعد العرض بعد وصول بيانات السحابة — كانت الصفحة الرئيسية الوحيدة
+// التي لا تنتظر db-ready فتظهر للزائر البيانات الافتراضية بدل تعديلات الأدمن
+window.addEventListener('db-ready', initHomepage, { once: true });
