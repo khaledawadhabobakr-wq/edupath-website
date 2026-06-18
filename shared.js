@@ -234,7 +234,10 @@
   </div>
   <div class="sf-bot">
     <span>© ${Y} ${B}. All rights reserved.</span>
-    <a href="admin.html">⚙ Admin Panel</a>
+    <div style="display:flex;gap:20px;align-items:center">
+      <a href="privacy.html" style="color:rgba(255,255,255,.6);font-size:13px">Privacy Policy</a>
+      <a href="admin.html">⚙ Admin Panel</a>
+    </div>
   </div>
 </footer>`;
   }

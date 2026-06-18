@@ -36,6 +36,14 @@ const DB_SYNC_KEYS = [...DB_PUBLIC_KEYS, ...DB_PRIVATE_KEYS];
 
 let _client = null;
 
+/* النسخة الأصلية من setItem — تُحفظ في متغيّر وليس على localStorage نفسه:
+   إسناد أي خاصية لكائن Storage يحوّلها المتصفح إلى نص مخزّن، وهذا كان
+   الخطأ القاتل في النسخة السابقة (localStorage._set is not a function)
+   الذي عطّل سحب بيانات السحابة على كل الأجهزة. */
+const _origSetItem = localStorage.setItem.bind(localStorage);
+function _rawSet(key, value) { _origSetItem(key, value); }
+try { localStorage.removeItem('_set'); } catch {} // تنظيف بقايا الخطأ القديم
+
 function _getSB() {
   if (_client) return _client;
   if (!window.supabase) throw new Error('Supabase SDK not loaded');
@@ -65,7 +73,7 @@ async function _pullFromCloud() {
     if (data && data.length > 0) {
       data.forEach(row => {
         if (row.value !== null && row.value !== undefined) {
-          localStorage._set(row.key, row.value);
+          _rawSet(row.key, row.value);
         }
       });
       console.log(`✅ EduPath DB: ${data.length} keys loaded from cloud`);
@@ -92,11 +100,8 @@ async function _pushToCloud(key, value) {
 
 /* ── Override localStorage.setItem لمزامنة السحابة تلقائياً ── */
 (function _patchStorage() {
-  const orig = localStorage.setItem.bind(localStorage);
-  localStorage._set = orig; // نسخة أصلية للاستخدام الداخلي
-
   localStorage.setItem = function(key, value) {
-    orig(key, value); // دائماً احفظ محلياً أولاً
+    _rawSet(key, value); // دائماً احفظ محلياً أولاً
     if (DB_SYNC_KEYS.includes(key)) {
       _pushToCloud(key, value); // ثم ارفع للسحابة في الخلفية
     }
@@ -111,7 +116,7 @@ window.dbSubmit = async function(key, item) {
   let local = [];
   try { local = JSON.parse(localStorage.getItem(key) || '[]') || []; } catch {}
   if (item) local.push(item);
-  localStorage._set(key, JSON.stringify(local));
+  _rawSet(key, JSON.stringify(local));
 
   // 2) في الخلفية: اجلب أحدث نسخة من السحابة وادمج بالـ id ثم ارفع
   try {
@@ -127,7 +132,7 @@ window.dbSubmit = async function(key, item) {
     local.forEach(x => { if (x && x.id && !ids.has(x.id)) merged.push(x); });
 
     const value = JSON.stringify(merged);
-    localStorage._set(key, value);
+    _rawSet(key, value);
     await sb.from('store').upsert({ key, value, updated_at: new Date().toISOString() }, { onConflict: 'key' });
     return true;
   } catch (err) {
